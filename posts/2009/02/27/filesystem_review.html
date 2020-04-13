@@ -1,0 +1,940 @@
+
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="https://cctags.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gang Up Atom">
+
+
+
+
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#eff3f9">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#eff3f9">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Microsoft EDGE -->
+    <meta name="msapplication-TileColor" content="#eff3f9">
+
+<meta name="author" content="cctags" />
+<meta name="description" content="环境搭建 1.1. 宿主机的安装 1.2. 虚拟机的安装 编译内核 文件系统相关工具的使用 文件系统的层次 VFS 5.1. 内存里的结构 5.2. 操作 ext3 文件系统 6.1. 源代码位置 6.2. 数据结构 6.3. 磁盘上的布局 6.4. inode、block 的管理 6.5. 日志 6.6. e2fsprogs xfs 文件系统 7.1. 源代码位置 7.2. 数据结构 7.3. 磁盘上的布局 …" />
+<meta name="keywords" content="Linux, kernel, filesystem">
+
+<meta property="og:site_name" content="Gang Up"/>
+<meta property="og:title" content="文件系统学习笔记"/>
+<meta property="og:description" content="环境搭建 1.1. 宿主机的安装 1.2. 虚拟机的安装 编译内核 文件系统相关工具的使用 文件系统的层次 VFS 5.1. 内存里的结构 5.2. 操作 ext3 文件系统 6.1. 源代码位置 6.2. 数据结构 6.3. 磁盘上的布局 6.4. inode、block 的管理 6.5. 日志 6.6. e2fsprogs xfs 文件系统 7.1. 源代码位置 7.2. 数据结构 7.3. 磁盘上的布局 …"/>
+<meta property="og:locale" content="zh_CN"/>
+<meta property="og:url" content="https://cctags.github.io/posts/2009/02/27/filesystem_review.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2009-02-27 06:00:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://cctags.github.io/author/cctags.html">
+<meta property="article:section" content="Programming"/>
+<meta property="article:tag" content="Linux"/>
+<meta property="article:tag" content="kernel"/>
+<meta property="article:tag" content="filesystem"/>
+<meta property="og:image" content="">
+
+  <title>Gang Up &ndash; 文件系统学习笔记</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://cctags.github.io">
+        <img src="https://cctags.github.io/theme/img/profile.png" alt="Gang Up" title="Gang Up">
+      </a>
+      <h1><a href="https://cctags.github.io">Gang Up</a></h1>
+
+<p>Random notes from a random developer</p>
+      <nav>
+        <ul class="list">
+          <li><a href="https://cctags.github.io/pages/about.html#about">About</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cctags" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-envelope-o" href="https://github.com/cctags" target="_blank"><i class="fa fa-envelope-o"></i></a></li>
+        <li><a class="sc-rss" href="feeds/all.rss.xml" target="_blank"><i class="fa fa-rss"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="https://cctags.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+      <a href="/pages/about.html">About</a>
+      <a href="/feeds/all.rss.xml">Rss</a>
+
+      <a href="https://cctags.github.io/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+      
+    <h1 id="filesystem_review">文件系统学习笔记</h1>
+    <p>
+          Posted on 2009-02-27 星期五 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+  <OL>
+  <LI><A HREF="#toc1">环境搭建</A>
+    <UL>
+    <LI><A HREF="#toc2">1.1. 宿主机的安装</A>
+    <LI><A HREF="#toc3">1.2. 虚拟机的安装</A>
+    </UL>
+  <LI><A HREF="#toc4">编译内核</A>
+  <LI><A HREF="#toc5">文件系统相关工具的使用</A>
+  <LI><A HREF="#toc6">文件系统的层次</A>
+  <LI><A HREF="#toc7">VFS</A>
+    <UL>
+    <LI><A HREF="#toc8">5.1. 内存里的结构</A>
+    <LI><A HREF="#toc9">5.2. 操作</A>
+    </UL>
+  <LI><A HREF="#toc10">ext3 文件系统</A>
+    <UL>
+    <LI><A HREF="#toc11">6.1. 源代码位置</A>
+    <LI><A HREF="#toc12">6.2. 数据结构</A>
+    <LI><A HREF="#toc13">6.3. 磁盘上的布局</A>
+    <LI><A HREF="#toc14">6.4. inode、block 的管理</A>
+    <LI><A HREF="#toc15">6.5. 日志</A>
+    <LI><A HREF="#toc16">6.6. e2fsprogs</A>
+    </UL>
+  <LI><A HREF="#toc17">xfs 文件系统</A>
+    <UL>
+    <LI><A HREF="#toc18">7.1. 源代码位置</A>
+    <LI><A HREF="#toc19">7.2. 数据结构</A>
+    <LI><A HREF="#toc20">7.3. 磁盘上的布局</A>
+    <LI><A HREF="#toc21">7.4. inode、block 的管理</A>
+    <LI><A HREF="#toc22">7.5. 日志</A>
+    <LI><A HREF="#toc23">7.6. xfsprogs</A>
+    </UL>
+  </OL>
+
+<P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+<P>
+以下主要包括了宿主机（Windows XP）和虚拟机（CentOS）开发环境的搭建、Linux 文件系统相关工具的使用、文件系统的结构、ext3、xfs 文件系统的学习。
+</P>
+
+<A NAME="toc1"></A>
+<H1>1. 环境搭建</H1>
+
+<A NAME="toc2"></A>
+<H2>1.1. 宿主机的安装</H2>
+
+<P>
+以 Windows XP 作为宿主机，以下是一些需要安装的软件，用于虚拟机的搭建，以及登录、访问虚拟机的工具。
+</P>
+
+<OL>
+<LI>安装 VMware Workstation。
+<LI>安装 PuTTY，作为远程登录虚拟机的工具。
+<LI>安装 WinSCP，它是实现了 SCP（Secure Copy Protocol）协议的 Windows 软件，用于宿主机访问虚拟机的文件系统。
+</OL>
+
+<A NAME="toc3"></A>
+<H2>1.2. 虚拟机的安装</H2>
+
+<OL>
+<LI>运行 VMware Workstation，创建一个新的虚拟机，指定 <CODE>CentOS-4.5-i386-binDVD.iso</CODE> 为安装源。
+<P></P>
+<LI>选择 NAT（VMnet8） 作为虚拟机的网络模式，这样的好处是宿主机与虚拟机以同一个 IP 对外访问，另外宿主机与虚拟机可以相互访问。
+<P></P>
+    <OL>
+    <LI>虚拟机访问局域网里的资源，比如：
+<PRE>
+  mount -o username=xx%yy &lt;path_on_net&gt; /mnt/t
+</PRE>
+
+    <LI>宿主机通过 WinSCP 访问虚拟机的文件系统；
+    <LI>安装 VMware tools 以后，可以指定宿主机的一个目录，虚拟机可以自动地挂载这个目录并访问。
+    </OL>
+</OL>
+
+<A NAME="toc4"></A>
+<H1>2. 编译内核</H1>
+
+<OL>
+<LI>下载源码，这里使用的是 2.6.9-78.25.EL 的版本：
+<PRE>
+  // 宿主机和虚拟机都在局域网里，所以都可以进行下载
+  // 下载需要设置代理
+  wget --proxy=on -e "http_proxy=&lt;ip&gt;:&lt;port&gt;" --proxy-user=xx --proxy-passwd=yy
+  http://people.redhat.com/vgoyal/rhel4/SRPMS.kernel/kernel-2.6.9-78.25.EL.src.rpm
+</PRE>
+
+<LI>安装源码
+<PRE>
+  rpm -ivh kernel-2.6.9-78.25.EL.src.rpm
+</PRE>
+
+<P></P>
+<LI>编译
+<PRE>
+  cd /usr/src/redhat/SPECS
+  rpmbuild -bp --target i686 kernel-2.6.spec
+  cd /usr/src/redhat/BUILD/..
+  make xx_config  // 实验中使用的是 oldconfig
+  make
+  make modules_install
+  make install
+</PRE>
+
+<P></P>
+<LI>编译出来的内核已经在 /boot 目录下了，启动的时候可以在 grub 里选择。如果 grub 里没有，需要配置 menu.lst。
+</OL>
+
+<A NAME="toc5"></A>
+<H1>3. 文件系统相关工具的使用</H1>
+
+<OL>
+<LI>为虚拟机增加一块磁盘
+<P></P>
+为虚拟机增加一块磁盘（比如，1G 的 IDE 硬盘）。虚拟机启动后，可以使用 <CODE>fdisk -l</CODE> 来看到这块磁盘（当然这时它处于未分区状态）。
+<P></P>
+<LI>分区
+<P></P>
+比如这块新的磁盘是 /dev/hda，使用 <CODE>fdisk /dev/hda</CODE> 来进行分区。分区可以有主分区和扩展分区，扩展分区里可以包括若干个逻辑分区。这里把这块 1G 的磁盘分成了大小为 768M 和 256M 的两个分区，分别为 /dev/hda1 和 /dev/hda2。
+<P></P>
+<LI>创建文件系统
+<P></P>
+mkfs 工具用来创建各种格式的文件系统。
+<P></P>
+最简单的，使用 <CODE>mkfs.ext3 /dev/hda1</CODE> 命令，就可以把这个分区格式成 ext3 的文件系统。也可以指定 ext3 相关的参数，比如 block 的大小、日志类型等等。
+<P></P>
+<LI>挂载到系统
+<P></P>
+mount 是用来挂载磁盘的工具，比如：
+<PRE>
+  mkdir /mnt/dev_hda1
+  mount -t ext3 /dev/hda1 /mnt/dev_hda1
+</PRE>
+
+<P></P>
+就把刚才已经创建了文件系统的分区挂载进来了。
+<P></P>
+<LI>显示磁盘的相关信息
+<P></P>
+df 工具可以显示磁盘的相关信息。比如 <CODE>df -T -h</CODE>：
+<PRE>
+  Filesystem    Type    容量  已用 可用 已用 % 挂载点
+  /dev/sda1     ext2    7.9G  4.4G  3.1G  59% /
+  none         tmpfs    125M     0  125M   0% /dev/shm
+  /dev/sda2     ext2    1.5G  316M  1.1G  22% /home
+  /dev/hda1     ext3    745M   17M  690M   3% /mnt/dev_hda1
+  /dev/hda2     ext3    260M   11M  236M   5% /mnt/dev_hda2
+</PRE>
+
+<P></P>
+最后两行是新添加进来那块 IDE 硬盘上的两个分区。
+</OL>
+
+<A NAME="toc6"></A>
+<H1>4. 文件系统的层次</H1>
+
+<P>
+文件系统从上到下被划分成了 VFS 层、具体的文件系统（例如 ext3）、Page Cache 层、Generic Block Layer、IO 调度、块设备驱动以及物理块设备等多个层次。
+</P>
+
+<UL>
+<LI>VFS： 屏蔽了下层的具体文件系统操作的差异，为上层提供统一的文件系统接口。
+<LI>具体的文件系统层：各个文件系统的实现。
+<LI>Page Cache：把内存作为磁盘的一个缓存，以此来提高磁盘访问的性能。
+<LI>Generic Block Layer：接收上层发出的磁盘请求，向下层发出 IO 请求。
+<LI>IO 调度层：处理各个请求，进行优先次序的安排。
+<LI>块设备驱动以及物理块设备：针对具体的物理设备。
+</UL>
+
+<A NAME="toc7"></A>
+<H1>5. VFS</H1>
+
+<P>
+Linux 支持多种文件系统，VFS 的作用就是向上提供统一的文件系统接口、而屏蔽下层不同的实现。
+</P>
+
+<A NAME="toc8"></A>
+<H2>5.1. 内存里的结构</H2>
+
+<P>
+VFS 定义了表示路径和文件的两个结构：dentry 以及 inode。实际使用时会在内存里形成一个树形结构，比如：
+</P>
+
+<PRE>
+  d +-- d ----------&gt; inode
+    |
+    +-- d +-- d  -------------&gt; inode
+    |     +-- d
+    |     +-- d +-- ...
+    ...         +-- ..
+                +-- d ---------&gt; inode
+</PRE>
+
+<OL>
+<LI>dentry 里有 d_parent 以及 d_subdirs 来形成这样一个树形的结构；d_name / d_iname 来记录名字；d_inode 来指向真正的 inode。
+<P></P>
+<LI>inode 记录了文件的各种属性。在 ext3 的实现里，额外定义了一个 ext3_inode_info，把 inode 作为一个成员包了起来。根据这个结构里的几个指针，可以找到文件的完整内容。
+</OL>
+
+<A NAME="toc9"></A>
+<H2>5.2. 操作</H2>
+
+<P>
+VFS 定义了各种操作，包括 file_operations、inode_operations、address_space_operations、super_operations 等结构，这些结构里面是一些函数指针，具体的文件系统（比如 ext3）就会实现这些函数、把这些函数挂在指定的结构里、并把这个结构告诉 VFS。比如：
+</P>
+
+<PRE>
+  /* ① file_operations 结构的定义 */
+  struct file_operations {
+      /* 定义了一个函数指针，表示 sync 的操作 */
+      int (*fsync)(struct file *, struct dentry *, int datasync);
+  
+      /* 其他的操作，忽略 */
+  };
+  
+  /* ② 声明 ext3 文件系统里这个类型的变量 */
+  struct file_operations ext3_file_operations = {
+      /* 把 ext3_sync_file 这个函数挂上去 */
+      .fsync = ext3_sync_file,
+  
+      /* 其他的操作，忽略 */
+  };
+  
+  /* ③ ext3_sync_file 的实现，这里按 ext3 的设计原理来实现这个函数 */
+</PRE>
+
+<P>
+这样，在发起文件系统调用时，通过 VFS，会间接地调用到具体文件系统的实现上来。这个做法跟其他操作系统平台里定义一些通用的接口（比如 IAbsoluteIO、IBasicFile）、文件系统按自己的设计原理来实现这些接口是一样的（包括表现形式、内存结构、运行时的栈的使用）。上层的调用都只关心接口、而不关心实现，从而屏蔽文件系统之间的差异。
+</P>
+
+<A NAME="toc10"></A>
+<H1>6. ext3 文件系统</H1>
+
+<A NAME="toc11"></A>
+<H2>6.1. 源代码位置</H2>
+
+<P>
+内核的源代码被安装到了 /usr/src/redhat/BUILD/kernel-2.6.9/linux-2.6.9 目录下。
+</P>
+<P>
+而文件系统相关的代码分布在：
+</P>
+
+<PRE>
+  linux-2.6.9
+      +---/include/linux 目录下的 fs 相关的 *.h 文件
+      +---/fs
+      |     +---/ext2
+      |     +---/ext3
+      |     +---/ 其他文件系统
+</PRE>
+
+<A NAME="toc12"></A>
+<H2>6.2. 数据结构</H2>
+
+<OL>
+<LI>block
+<P></P>
+一个 ext3 的分区按指定的大小划分成多个 block，block 的大小一般为 (2^n×1024) 字节。mkfs.ext3 有个参数 -b，就是用于指定这个分区的 block 大小。
+<P></P>
+<LI>block group
+<P></P>
+一个分区上的 block 数量较多，所以又平均地分成若干个 block group，这应该是根据局部性原理设计的。
+<P></P>
+<LI>group descriptor
+<P></P>
+每个  block group 都有一个 group descriptor，里面需要记录这个 group 名下的所有 block 的位置、各自使用情况，等等。一个分区有多少个 block group，就有多少个 group descriptor，这些 group descriptor 被连续地安排在分区的开头部分，跟在 super block 后面。
+<P></P>
+<LI>super block
+<P></P>
+super block 用于记录分区的详细信息，包括 block 大小、空闲情况、访问时间、签名、日志相关信息，等等。这个数据结构被保存在分区的第 1025 字节开始的地方，一共 1024 个字节。
+<P></P>
+<LI>data block bitmap
+<P></P>
+位图表，用于记录当前 group 里的 block 的空闲情况。
+<P></P>
+<LI>inode bitmap
+<P></P>
+位图表，用于记录当前 group 里的 inode 的空闲情况。
+<P></P>
+<LI>ext3_dir_entry_2
+<P></P>
+记录了文件（目录）的名字。每个目录 inode 的数据 block 里，会依次排列了多个这样的结构，记录了这个目录下的所有目录、文件的名字以及对应的 inode。
+<P></P>
+<LI>inode
+<P></P>
+inode 定义了文件、目录的信息，包括访问、大小、各种时间、数据占用了多少 block，等等。
+<P></P>
+inode 的结构里定义了一个数组 __le32 i_block[15]，这个数组里记录了存储数据的 block 的位置。
+<PRE>
+  这个数组被分成了四部分：
+  ① i_block[0] ～ i_block[11] 直接指向了数据 block：
+  ② i_block[12] 指向了一个 block，它里面全是指针，指向了数据 block；
+  ③ i_block[13] 指向了一个 block，它里面的指针指向的所有 block 里存储的也全是指针，指向了数据 block；
+  ④ i_block[14] 则比 i_block[13] 还要多出一层指针。
+</PRE>
+
+</OL>
+
+<A NAME="toc13"></A>
+<H2>6.3. 磁盘上的布局</H2>
+
+<P>
+一个分区被分成了多个 block，第 1 个是 boot block，跟文件系统没有关系，剩下的会等分成多个 group。每个 group 里从前往后依次包括了 super block、grub descriptor、data block bitmap、inode bitmap、inode table 以及 data block。其中 super block、group descriptor 只有 group 0 里的那份才是有效的，其他 group 里相应的字段只是用于备份、文件系统恢复时才有用。
+</P>
+<P>
+一个目录下可能有多个目录和文件，从根目录（"/"）往下形成一片森林。
+</P>
+<P>
+文件、目录等的信息在 ext3_inode 结构里（也是一种 inode，起这个名字，为了区别于 VFS 里定义的 inode），这个结构本身在磁盘上。ext3_inode 里的 i_block 记录了所有存放数据的 block：
+</P>
+
+<UL>
+<LI>对于普通文件，数据 block 里存放的就是真实的数据；
+<LI>对于目录，数据 block 里依次存放了当前目录下的所有文件、目录的名字和 inode 号（用 ext3_dir_entry_2 结构来表示）
+</UL>
+
+<P>
+所以不论是文件还是目录，它的真实内容（对于目录，就是目录下各子目录、文件的名字）在数据 block 里，它的信息（各种时间、大小 …）在 inode 里，名字则在所属目录对应的 inode 指向的数据 block 里（按 ext3_dir_entry_2 来读取），至于完整的路径，则散落在再上面的各级目录的 ext3_dir_entry_2 里。
+</P>
+
+<A NAME="toc14"></A>
+<H2>6.4. inode、block 的管理</H2>
+
+<P>
+出于性能的考虑，ext3 采取了一些策略来管理磁盘上的 inode、block。
+</P>
+
+<OL>
+<LI>创建 inode 时：
+    <UL>
+    <LI>如果是目录
+        <UL>
+        <LI>如果是根目录下的目录，则尽量分散在各个 block group 里
+        <LI>否则，应该尽量跟父目录在一个 group 里，如果这个 group 有空余的 inode
+        <LI>否则，再查找上上层目录所在的 group，看是否有空闲的 inode
+        </UL>
+    <LI>如果是文件
+        <UL>
+        <LI>从所属目录所在的 group 开始查找，是否有空闲的 inode，如果没有，则依次往后 1、1+2、1+2+4、… 个 group 查找
+        <LI>否则，依次从所有 group 里查找
+        </UL>
+    <LI>找到合适的 inode 以后，标记相应的位图、修改 super block 里的信息，等等。
+    <P></P>
+    </UL>
+<LI>删除 inode 时只要清空相应的标记、修改 super block 里的信息，等等。
+<P></P>
+<LI>分配 block 时：
+    <UL>
+    <LI>优先地考虑这个文件已有的 block 旁边的空闲 block
+    <LI>否则，在这个文件的 inode 所在的 group 里查找空闲的 block
+    <LI>否则，在其他 group 里查找空闲的 block
+    <LI>出于性能的考虑，每次分配都会额外地预留一些 block，比如申请 3 个 block 时，实际上是找 8 个连续空闲的 block，如果有的话，就先用 3 个，预留 5 个，这样下次再申请时可以直接使用了。
+    <P></P>
+    </UL>
+<LI>释放 block 时，需要从 inode-&gt;i_block 里找到所有的 block，并在 block bitmap 里去除标记。
+</OL>
+
+<A NAME="toc15"></A>
+<H2>6.5. 日志</H2>
+
+<P>
+日志用来确保文件系统以及文件系统操作的完整，即在分区访问非正常中断（掉电、内核有 BUG 等）并重新启动后，分区上的文件系统可以快速地恢复、以及必要的操作得以恢复执行。在原理上，文件系统里的日志，跟数据库类似。
+</P>
+
+<OL>
+<LI>日志的操作
+<P></P>
+    <UL>
+    <LI>mkfs.ext2 有一个选项 -j，表示在分区上创建带有日志的文件系统，-J 选项则是指定日志的一些属性，而不是使用工具默认的属性。
+
+<PRE>
+  mkfs.ext2 -j dev
+</PRE>
+
+    <P></P>
+    <LI>tune2fs 可以将一个 ext2 格式的分区快速地转换成 ext3 分区，这个过程中会创建日志文件。另外也可以进行反向地操作。比如：
+
+<PRE>
+  # 原本 dev 是 ext2 的分区
+  tune2fs -j dev                  # ext2 =&gt; ext3
+  tune2fs -O ^has_journal dev     # ext3 =&gt; ext2
+</PRE>
+
+    <P></P>
+    <LI>dumpe2fs 用来 dump 整个分区的基本信息，其中包括了这个分区是否有日志，如果有则显示日志文件对应的 inode 等信息。
+    <P></P>
+    <LI>debugfs 是针对 ext2/ext3 的调试工具。它有一个选项 logdump，专门用来调试日志。比如：
+
+<PRE>
+  debugfs: logdump -a /tmp/journal_summary.bak    # 即把当前时刻的日志的描述导出去
+</PRE>
+
+    <P></P>
+它还有一个选项，stat，可以把文件系统也完整地导出。比如：
+
+<PRE>
+  dumpe2fs dev                             # superblock 里会记录日志文件对应的 inode，一般是 8
+  debugfs: stat &lt;8&gt; /tmp/journal.bak       # 把日志内容导出到 journal.bak 里去
+</PRE>
+
+    <P></P>
+    </UL>
+<LI>日志的大小
+<P></P>
+日志文件至少有 1024 个 block、且不多于 102400 个 block。这样算下来，最小的日志为 1M（1024×1K），最大的则为 400M（102400×4K）。
+<P></P>
+可以指定日志的大小，比如
+
+<PRE>
+  tune2fs -J size=2M dev  # 设置日志文件的大小为 2M
+</PRE>
+
+否则，mkfs.ext2、tune2fs 等工具会自动地挑选一个合适的大小。
+<P></P>
+<LI>日志的模式
+<P></P>
+ext3 支持数据（data）、预定（ordered）和回写（writeback）这三种模式的日志。
+<P></P>
+    <OL>
+    <LI>data：将元数据和数据都写入日志。
+    <LI>ordered：先将数据写入磁盘，后将元数据写入日志。这是 ext3 系统的默认配置。
+    <LI>writeback：只有元数据被写入日志，数据则直接写入磁盘。
+    </OL>
+</OL>
+
+<P>
+从效率上来说，data 是最慢的，因为所有的元数据和数据都会有两次写入，但这保证了数据的安全；而 writeback 是最快的，不过没有其他两个来得安全。
+</P>
+<P>
+至于整个的写入过程，以 ordered 模式来举例。
+</P>
+
+<OL>
+<LI>如果崩溃发生在数据写入磁盘之时或者之后、元数据写入之前，则虽然数据已经在磁盘上了，但从文件系统来看，则没有变化，这时写入的数据也无效，而上层程序也不会拿到 “ 写入成功 ” 的返回值；
+<LI>如果崩溃发生在元数据写入之时，则这份元数据本身不是完整的，文件系统会忽略它，这时的结果跟上面类似；
+<LI>如果崩溃发生在元数据写入之后，在文件系统恢复时会根据这份完整的元数据地把相应的信息写入磁盘，以完成整个的写操作。
+<LI>如果上面里的恢复动作本身也失败了，这时元数据还在（因为还没完成恢复），所以等下一次机会来重复这个恢复的操作。
+</OL>
+
+<P>
+在文件系统 mount、umount 时会进行这样的操作。另外 kjournald 这个后台进程也会不间断地处理日志里的内容。
+</P>
+
+<A NAME="toc16"></A>
+<H2>6.6. e2fsprogs</H2>
+
+<P>
+ext2/ext3 文件系统的创建、Dump、修复、调试的工具。包括了 mkfs、e2fsck、dumpe2fs、tune2fs、debugfs 以及其他一些工具，比如恢复已经删除的文件等等。
+</P>
+<P>
+e2fsck 用来检查文件系统。它会检查 superblock 里文件系统的长度、inode 数目、空闲数据块统计以及空闲 inode 统计，组描述信息，等等。一般它都是在系统开机时自动地检查，有时，则会进入交互式的状态，需要用户指定各种参数来执行，比如 -p 参数表示不需要提示地自动修复、-n 表示罗列文件系统里的问题、而不进行修复、 -y 表示对所有的提示都是 yes、-f 表示强制地检查，等等。
+</P>
+<P>
+debugfs 是以交互式的方式来解析文件系统的工具。比如它可以罗列指定目录下的所有 entry、这些 entry 对应的 inode，解析指定 inode 里的内容、对应的所有的数据 block，完整地把文件 dump 出来，手动修复各种数据，等等。
+</P>
+<P>
+debugfs 好像没法 dump 指定 block 里的数据，所以只能先查询出指定 block 的号，结合这个分区的 block size，通过 dd 工具来 dump。
+</P>
+<P>
+另外，ls -i file、stat file 等也可以用来 dump 文件对应的 inode 号。
+</P>
+
+<A NAME="toc17"></A>
+<H1>7. xfs 文件系统</H1>
+
+<P>
+XFS 是 SGI 设计的 64 位日志文件系统，最初是在 SGI 自己的工作站上实现的，后来被移植到 Linux。
+</P>
+
+<A NAME="toc18"></A>
+<H2>7.1. 源代码位置</H2>
+
+<P>
+XFS 文件系统相关的代码分布在：
+</P>
+
+<PRE>
+  linux-2.6.9
+      +---/include/linux 目录下的 fs 相关的 *.h 文件
+      +---/fs
+      |     +---/xfs
+</PRE>
+
+<A NAME="toc19"></A>
+<H2>7.2. 数据结构</H2>
+
+<OL>
+<LI>AG
+<P></P>
+XFS 文件系统被分成若干个大小相等的 AG（分配组、Application Group）。每个 AG 可以被看成是一个独立的文件系统，它可以管理 1TB 的数据。每个 AG 包括了 ⑴ 一个 super block，用一描述这个 AG 的信息；⑵ 空闲空间的管理 ⑶ Inode 的管理。
+<P></P>
+<LI>block
+<P></P>
+文件系统的基本单位，在创建文件系统时指定。通常情况下都是 4096 字节，当然也可以选择其他的大小，只要满足 block_size ∈［sector_size, Min(64KB, page_size)］即可，其中，sector 的大小基本上都是 512 字节。
+<P></P>
+<LI>super block
+<P></P>
+每个 AG 都有自己的 super block，它在 AG 的最前面，是所在 AG 的元数据。其中第一个 AG 上的是 “ 主 super block”，它除了管理所在 AG 的元数据以外，还管理着所有 AG 的基本信息；第二个 AG 上的 super block 也起着类似的作用，在主 super block 被破坏时，可以利用它来修复整个文件系统。
+<P></P>
+<LI>AG free block info
+<P></P>
+用来管理所在 AG 的空闲块。XFS 使用两棵 B+ 树来管理这些块，一棵是根据空闲块的大小来管理，另外一棵则是根据空闲块的编号来管理。
+<P></P>
+<LI>AG inode B+ info
+<P></P>
+XFS 把 64 个 inode 作为一组，所有这些 inode 组被放在一棵 B+ 树上来管理。
+<P></P>
+<LI>AG internal free list
+<P></P>
+XFS 缓存了一些磁盘空间，用来存储本身所需要的数据结构。
+<P></P>
+<LI>inode
+<P></P>
+所有的文件、目录、链接都是以 inode 的形式存储在文件系统里。inode 由以下几部分组成：
+<P></P>
+</OL>
+
+<UL>
+<LI>di_core：这部分记录了类型、各种时间、大小等等基本信息；
+<LI>di_next_unlinked：当一个文件已经被删除、但还被引用时，对应的 inode 会被加到 agi_unlinked（定义在 AG inode B+ tree list 里）里，结合 di_next_unlinked 这个字段来形成一个链表。
+<LI>di_u：它的类型取决于 di_core.di_format，即对于文件、目录、链接等等有着不同的解释：
+    <UL>
+    <LI>文件：记录文件数据的存储位置
+    <LI>目录：记录目录下的所有子目录、文件的名字、inode 等
+    <LI>链接：记录链接的内容
+    </UL>
+<LI>di_a：记录了额外的信息。
+</UL>
+
+<A NAME="toc20"></A>
+<H2>7.3. 磁盘上的布局</H2>
+
+<P>
+文件系统被分成多个 AG，每个 AG 从前往后依次是：
+</P>
+
+<PRE>
+  +-------------------------+
+  | super bock              | AG 的元数据
+  +-------------------------+
+  | AG free block info      | 管理空闲块的 B+ 树的信息
+  +-------------------------+
+  | AG inode B+ info        | 管理 inode 的 B+ 树的信息
+  +-------------------------+
+  | AG internal free list   | 管理内部数据结构所需要的空间
+  +-------------------------+
+  | Root of inode B+        | 管理 inode 的 B+ 树的树根
+  +-------------------------+
+  | Root of free space B+   | 基于空闲块大小的 B+ 树的树根
+  | Root of free space B+   | 基于空闲块位置的 B+ 树的树根
+  +-------------------------+
+  | Free list               | 预留给内部数据结构的 4 个 block
+  +-------------------------+
+  | Inodes                  | 预留的 64 个 Inode，正好是一个单位
+  +-------------------------+
+  | metadata &amp; data blocks  | 数据区
+  +-------------------------+
+</PRE>
+
+<P>
+对于文件（包括目录、链接）：
+</P>
+
+<UL>
+<LI>它对应的 inode.di_core 里记录了基本信息；
+<LI>inode.di_u 里直接或间接地记录了数据；
+<LI>它的名字记录在所处目录的内容里；
+<LI>它的全路径则散落在再上次各级目录的内容里。
+</UL>
+
+<P>
+XFS 有三种方式来记录数据，具体使用时取决于文件的大小。下面列举了这三种模式，同时结合 xfs_db 工具来观察。
+</P>
+
+<OL>
+<LI>local：当文件比较小，inode.di_u 里直接记录了对应的数据。
+
+<PRE>
+  xfs_db&gt; inode 128
+  xfs_db&gt; p                               ; 打印 128 号 inode 的内容，128 是根目录的 inode
+  core.format = 1 (local)
+  u.sfdir2.list[0].name = "music"
+  u.sfdir2.list[0].inumber.i4 = 132
+  u.sfdir2.list[1].name = "doc"
+  u.sfdir2.list[1].inumber.i4 = 163
+  u.sfdir2.list[2].name = "readme"              ; 这是删减后的输出
+  u.sfdir2.list[2].inumber.i4 = 165             ; ⑴ core.format 显示的是 local 的方式
+  u.sfdir2.list[3].name = "linux_documentation" ; ⑵ 在 inode 内部列举了 music、doc、
+  u.sfdir2.list[3].inumber.i4 = 166             ;    linux_documentation 以及对应的 inode 号
+  
+  ;; 显然，根目录（“/”）下的所有子目录、文件的信息都是直接记录在 inode 里的。
+</PRE>
+
+<LI>extents：当文件比较大时，把数据记录在其他 block 上，inode.di_u 里记录了这些 block 的编号。
+
+<PRE>
+  xfs_db&gt; inode 163
+  xfs_db&gt; p                                ; 打印 doc（163）对应的 inode
+  core.format = 2 (extents)
+  u.bmx[0] = [startoff,startblock,blockcount,extentflag] 0:[0,1784,1,0]
+                                           ; 这是删减后的输出
+                                           ; ⑴ core.format 显示的是 extents 的方式
+                                           ; ⑵ 显示了 doc 目录下内容比较多，所在存储在
+                                           ; 1784 号 block
+  xfs_db&gt; fsblock 1784
+  xfs_db&gt; type dir2
+  xfs_db&gt; p                                ; 按 dir2 的格式打印 1784 号 block 的内容
+  bu[0].inumber = 163
+  bu[0].name = "."
+  bu[1].inumber = 128
+  bu[1].name = ".."
+  bu[2].inumber = 164                      ; 这是删减后的输出
+  bu[2].name = "doc.tar.bz2"               ; 显示了 doc 目录下有 ".", "..", "doc.tar.bz2" 等
+  bu[3].inumber = 54651                    ; 内容以及对应的 inode 号
+  bu[3].name = "adfs.txt"
+  
+  ;; 可能看到：
+  ;; ⑴ 目录 “doc” 下文件较多，这些数据存储在 1784 号 block 上；
+  ;; ⑵ “1784” 这个编号则记录在 inode 里。
+</PRE>
+
+<LI>btree：当文件更大时，使用 B+ 树来存储数据 block，而在 inode.di_u 里记录树的信息。
+
+<PRE>
+  xfs_db&gt; inode 166
+  xfs_db&gt; p                                ; 打印 linux_documentation（166）对应的 inode
+  core.format = 3 (btree)
+  u.bmbt.level = 1
+  u.bmbt.numrecs = 1                       ; 这里删减后的输出
+  u.bmbt.keys[1] = [startoff] 1:[0]        ; ⑴ core.format 显示的是 btree 的方式
+  u.bmbt.ptrs[1] = 1:2460                  ; ⑵ 树的信息在 2460 号 block 上
+  xfs_db&gt; fsblock 2460
+  xfs_db&gt; type bmapbtd
+  xfs_db&gt; p                                ; 按 bmapbtd 的格式打印 2460 号 block 的内容
+  recs[1-16] = [startoff,startblock,blockcount,extentflag]
+  1:[0,1768,1,0] 2:[1,1778,2,0]            ; 这是删减后的输出
+  3:[3,1820,1,0] 4:[4,2450,1,0]            ; 内容存储在 1768、1778 等 block 里
+  xfs_db&gt; fsblock 1768
+  xfs_db&gt; type dir2
+  xfs_db&gt; p                                ; 按 dir2 的格式打印 1768 号 block 的内容
+  du[0].inumber = 166
+  du[0].name = "."
+  du[1].inumber = 128
+  du[1].name = ".."
+  du[2].inumber = 133
+  du[2].name = "adfs.txt"                  ; 这是删减后的输出
+  du[3].inumber = 134                      ; 罗列了 ".", "..", "adfs.txt", "affs.txt" 等
+  du[3].name = "affs.txt"                  ; 内容
+  
+  ;; 可以看到：
+  ;; ⑴ “linux_documentation” 目录下的大量文件被记录在多个 block 里；
+  ;; ⑵ 这些 block 本身被记录在 B+ 树里。
+</PRE>
+
+<P></P>
+</OL>
+
+<UL>
+<LI>对于普通文件，数据 block 里存储的就是文件的内容。
+<LI>目录对应的数据 block 里存储的是目录下的所有子目录、文件、链接，等等，这在上面的例子里也可以看到。存储的格式一般是每个文件（目录、链接、…）的名字、名字长度、inode 号、偏移。
+<LI>软链接的数据 block 里存储的是目标文件的路径，可能是相对路径，也可能是全路径。
+</UL>
+
+<A NAME="toc21"></A>
+<H2>7.4. inode、block 的管理</H2>
+
+<P>
+当空闲的 inode 用完时，XFS 会申请 64 个 inode 作为一个 chunk，挂在管理 inode 的 B+ 树上：
+</P>
+
+<PRE>
+               +------+
+               | node |     +-------------+
+             / +------+    /| 64 个 inode |
+            /     |       / +-------------+
+  +------+ /   +--v---+  /  +-------------+
+  | root |---- | node | --- | 64 个 inode |
+  +------+ \   +------+  \  +-------------+
+            \     |       \
+             \ +--v---+    \+-------------+
+               | node |     | 64 个 inode |
+               +------+     +-------------+
+</PRE>
+
+<P>
+空闲的 block，会按照 block 区域的大小以及编号分别地挂在两棵 B+ 树上。
+</P>
+
+<A NAME="toc22"></A>
+<H2>7.5. 日志</H2>
+
+<P>
+<CODE>TODO</CODE>
+</P>
+
+<A NAME="toc23"></A>
+<H2>7.6. xfsprogs</H2>
+
+<P>
+XFS 文件系统的创建、Dump、修复、调试的工具。包括了 mkfs.xfs、xfs_check、xfsdump、xfsrestore、xfs_repair、xfs_db 以及其他一些工具。
+</P>
+<P>
+mkfs.xfs 用来创建一个 XFS 的文件系统，比如 "mkfs.xfs <U>device</U>"。当然它有好多参数，比如可以指定 block 的大小、sector 的大小、AG 的个数、section 的属性、日志，等等。
+</P>
+<P>
+xfs_check 是 XFS 文件系统检查的工具，被检查的分区最好是已经卸载，或者是以只读方式挂载的。
+</P>
+<P>
+xfsdump 是 XFS 文件系统的 Dump 工具，比如：
+</P>
+
+<PRE>
+  # xfsdump -c "inode 128" -c "p" device
+  
+  # 这里使用的命令、输出的结果跟 xfs_db 都一样。
+</PRE>
+
+<P>
+xfsrestore、xfs_repair 是 XFS 文件系统的修复工具。比如，它可以验证并修复 super block、检查每个 AG（inode、空闲块、空闲链表）以及几棵 B+ 树，等等。
+</P>
+<P>
+xfs_db 可以调试 XFS 文件系统。之前讨论 inode 与数据 block 之间的联系时，都是使用 xfs_db 来观察的。
+</P>
+
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://cctags.github.io/tag/linux.html">Linux</a>
+      <a href="https://cctags.github.io/tag/kernel.html">kernel</a>
+      <a href="https://cctags.github.io/tag/filesystem.html">filesystem</a>
+    </p>
+  </div>
+
+
+  <div class="neighbors">
+    <a class="btn float-right" href="https://cctags.github.io/posts/2009/09/17/load_kernel_module.html" title="Linux 内核模块加载过程">
+          Next Post
+ <i class="fa fa-angle-right"></i>
+    </a>
+  </div>
+
+  <div class="related-posts">
+    <h4>    You might enjoy
+</h4>
+    <ul class="related-posts">
+      <li><a href="https://cctags.github.io/posts/2009/09/17/load_kernel_module.html">Linux 内核模块加载过程</a></li>
+      <li><a href="https://cctags.github.io/posts/2019/03/31/zynq_usb_drive_issue.html">Zynq USB Drive Issue</a></li>
+      <li><a href="https://cctags.github.io/posts/2015/07/15/sysfs.html">Sysfs</a></li>
+      <li><a href="https://cctags.github.io/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html">Zynqmp Linux Freezes When Loaded via JTAG</a></li>
+      <li><a href="https://cctags.github.io/posts/2015/09/16/limit_cpu_usage.html">Limit CPU Usage</a></li>
+    </ul>
+  </div>
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'cctags';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>
+  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+</p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p><p>
+  <a rel="license"
+     href="http://creativecommons.org/licenses/by-sa/4.0/"
+     target="_blank">
+    <img alt="Creative Commons License"
+         title="Creative Commons License"
+         style="border-width:0"
+           src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
+         width="80"
+         height="15"/>
+  </a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Gang Up ",
+  "url" : "https://cctags.github.io",
+  "image": "",
+  "description": "Random notes from a random developer"
+}
+</script>
+
+<a href="https://github.com/cctags/cctags.github.io.git" class="github-corner" aria-label="View source on Github">
+    <svg width="80"
+         height="80"
+         viewBox="0 0 250 250"
+         style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;"
+         aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor"
+              style="transform-origin: 130px 106px;"
+              class="octo-arm">
+        </path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor"
+              class="octo-body">
+        </path>
+    </svg>
+</a>
+<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></body>
+</html>

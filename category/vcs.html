@@ -1,0 +1,427 @@
+
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="https://cctags.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gang Up Atom">
+
+
+
+
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#eff3f9">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#eff3f9">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Microsoft EDGE -->
+    <meta name="msapplication-TileColor" content="#eff3f9">
+
+    <meta name="author" content="cctags" />
+    <meta name="description" content="Random notes from a random developer" />
+<meta property="og:site_name" content="Gang Up"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="Gang Up"/>
+<meta property="og:description" content="Random notes from a random developer"/>
+<meta property="og:locale" content="zh_CN"/>
+<meta property="og:url" content="https://cctags.github.io"/>
+
+  <title>Gang Up &ndash;     Category VCS
+</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://cctags.github.io">
+        <img src="https://cctags.github.io/theme/img/profile.png" alt="Gang Up" title="Gang Up">
+      </a>
+      <h1><a href="https://cctags.github.io">Gang Up</a></h1>
+
+<p>Random notes from a random developer</p>
+      <nav>
+        <ul class="list">
+          <li><a href="https://cctags.github.io/pages/about.html#about">About</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cctags" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-envelope-o" href="https://github.com/cctags" target="_blank"><i class="fa fa-envelope-o"></i></a></li>
+        <li><a class="sc-rss" href="feeds/all.rss.xml" target="_blank"><i class="fa fa-rss"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="https://cctags.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+      <a href="/pages/about.html">About</a>
+      <a href="/feeds/all.rss.xml">Rss</a>
+
+      <a href="https://cctags.github.io/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+
+
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2016/03/28/using_rcs_keywords_in_perforce.html#using_rcs_keywords_in_perforce">Using RCS Keywords in Perforce</a></h2>
+    <p>
+          Posted on 2016-03-28 星期一 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/p4.html">p4</a>,              <a href="https://cctags.github.io/tag/svn.html">svn</a>
+    </p>
+  </header>
+  <div>
+      <p>使用 svn 时，有时会把版本管理系统的信息嵌入到代码里，比如版本号、最近修改时间，等等。在软件调试时，这会很有帮助。因为清晰的版本信息，可以避免很多不必要的版本不一致的问题。这里是 <a href="http://svnbook.red-bean.com/en/1.7/svn.advanced.props.special.keywords.html">Subversion Keyword Substitution</a> 的文档。</p>
+<p>最近开始使用 Perforce，所以也专门研究了一下是否有类似的功能。</p>
+<p>从文档来看，Perforce 提供了一些关键字，可以自动地展开和更新，比如：</p>
+<ul>
+<li>$Id$</li>
+<li>$Header$</li>
+<li>$Date$</li>
+<li>$DateTime$</li>
+<li>$Change$</li>
+<li>$File$</li>
+<li>$Revision$</li>
+<li>$Author$</li>
+</ul>
+<p>这个功能默认时并没有开启，需要修改文件本身的类型（"+k"），比如：</p>
+<div class="highlight"><pre><span></span><code>p4 edit -t +k main.c
+</code></pre></div>
+
+
+<p>以下是 Perforce 的官方文档，可以参考：</p>
+<ul>
+<li>Using RCS Keywords @ <a href="http://answers.perforce.com/articles/KB/3482">http …</a></li></ul>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2016/03/28/using_rcs_keywords_in_perforce.html#using_rcs_keywords_in_perforce">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html#merging_the_upstream_repository_into_the_fork">Merging the upstream repository into the fork</a></h2>
+    <p>
+          Posted on 2015-12-15 星期二 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/git.html">git</a>
+    </p>
+  </header>
+  <div>
+      <p>如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， <a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/">https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/</a>，关于对 <code>fork</code> 进行更新。</p>
+<p>记录一下，备忘。</p>
+<p>o 切换到 <code>master</code> 分支：</p>
+<div class="highlight"><pre><span></span><code>git checkout master
+</code></pre></div>
+
+
+<p>o 从 upstream repository 更新下来：</p>
+<div class="highlight"><pre><span></span><code>git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
+</code></pre></div>
+
+
+<p>o 更新远程 repository：</p>
+<div class="highlight"><pre><span></span><code>git push origin master
+</code></pre></div>
+
+
+<p>更新后，对于 bugfix 或者 new …</p>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html#merging_the_upstream_repository_into_the_fork">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html#git_p4_submit_error">Git-P4 Submit Error</a></h2>
+    <p>
+          Posted on 2015-09-30 星期三 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/git.html">git</a>,              <a href="https://cctags.github.io/tag/p4.html">p4</a>
+    </p>
+  </header>
+  <div>
+      <P>
+提交代码时遇到了这样的错误：
+</P>
+
+<PRE>
+  $ git p4 submit
+  Error: Cannot locate perforce checkout of //XXX/YYY/ZZZ/ in client view
+</PRE>
+
+<P>
+一下子还真没想明白是哪里不对。
+</P>
+<P>
+后来想明白了，需要重新登录一下 Perfoce：
+</P>
+
+<PRE>
+  $ p4 login
+  ...
+</PRE>
+
+<P>
+解决。
+</P>
+
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html#git_p4_submit_error">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html#using_git_p4">Using Git-P4</a></h2>
+    <p>
+          Posted on 2015-07-23 星期四 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/git.html">git</a>,              <a href="https://cctags.github.io/tag/p4.html">p4</a>
+    </p>
+  </header>
+  <div>
+      <P>
+平时一直使用 <A HREF="https://git-scm.com/">git</A>，习惯了各种离线操作和强大的分支功能，所以总觉得要比 <A HREF="http://www.perforce.com/">Perforce / p4</A> 好用太多。
+</P>
+<P>
+对于目前项目里用到的 p4 仓库，找到了一个 <A HREF="http://answers.perforce.com/articles/KB/2790">Git-P4</A> 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
+</P>
+<P>
+以下是一些关键操作，记录在这里备忘。
+</P>
+
+<OL>
+<LI>Create a directory for the client workspace root; for example:
+<P></P>
+
+<PRE>
+  $ mkdir gp4-area
+</PRE>
+
+<LI>Create a P4CONFIG file
+<P></P>
+
+<PRE>
+  $ cd gp4-area
+  $ vi p4config
+  $ ...
+</PRE>
+
+<P></P>
+<LI>Create the client workspace
+<P></P>
+
+<PRE>
+  $ p4 client …</pre></li></li></li></ol>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html#using_git_p4">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html#use_examdiff_in_clearcase">Use ExamDiff in ClearCase</a></h2>
+    <p>
+          Posted on 2011-03-15 星期二 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/clearcase.html">ClearCase</a>
+    </p>
+  </header>
+  <div>
+      <p>由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。</p>
+<ul>
+<li>写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；</li>
+<li>diffspawn.bat 的内容：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>@echo off
+&quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&quot; %5 %6
+</code></pre></div>
+
+
+<ul>
+<li>修改 <code>%ProgramFiles%\Rational\ClearCase\lib\mgrs\map</code> 配置文件：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>text_file_delta     compare  &lt;path&gt;\diffspawn.exe
+text_file_delta     xcompare &lt;path&gt;\diffspawn.exe …</code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html#use_examdiff_in_clearcase">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2010/12/28/update-svn-repo-format.html#update-svn-repo-format">git-svn 提示仓库格式错误</a></h2>
+    <p>
+          Posted on 2010-12-28 星期二 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/git.html">git</a>,              <a href="https://cctags.github.io/tag/svn.html">svn</a>
+    </p>
+  </header>
+  <div>
+      <p>问题：使用 git 操作一个 svn 仓库时，报错如下：</p>
+<div class="highlight"><pre><span></span><code>Expected FS format &#39;2&#39;; found format &#39;3&#39;
+</code></pre></div>
+
+
+<p>解决办法：</p>
+<ul>
+<li>在 <strong>v1.5</strong> 的软件环境下：<code>svnadmin dump /path/to/repo1 &gt; dump.db</code></li>
+<li>切换到 <strong>v1.4</strong> 的软件环境下：<code>svnadmin load /path/to/repo2 &lt; dump.db</code></li>
+<li>设置权限并开启服务：<code>svnserve -d [--foreground]</code></li>
+<li><code>git svn clone svn://&lt;ip&gt;/path/to/repo2</code></li>
+<li>OK …</li></ul>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2010/12/28/update-svn-repo-format.html#update-svn-repo-format">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2010/12/27/the-difference-between-svn-and-git.html#the-difference-between-svn-and-git">体验 svn 和 git 的使用差异</a></h2>
+    <p>
+          Posted on 2010-12-27 星期一 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/git.html">git</a>,              <a href="https://cctags.github.io/tag/svn.html">svn</a>
+    </p>
+  </header>
+  <div>
+      <p>很长时间以来，一直是用 svn。最近开始学习和使用 git。通过一段时间的使用，感受到它们有不小的差异。</p>
+<p><strong>svn</strong></p>
+<ul>
+<li>有全局唯一的版本号，可以嵌到代码里；</li>
+<li>可以下载部分模块、而不是全部；</li>
+<li>有服务器存放仓库；</li>
+</ul>
+<p><strong>git</strong></p>
+<ul>
+<li>除了少数几个操作以外，几乎都可以不依赖网络，离线操作；</li>
+<li>操作快速高效；</li>
+<li>只有根目录有一个 <code>.git/</code> 目录，没有多余的隐藏目录；</li>
+<li>可以撤销之前的操作；</li>
+<li>命令行的控制更加丰富；</li>
+<li>可以通过 <a href="https://git-scm.com/docs/git-svn">git-svn</a> 访问 svn 仓库；</li>
+</ul>
+<p>另外，还注意到：</p>
+<ul>
+<li>在目录结构上，git 更干净；在 svn 里，可以使用 export 导出干净的目录结构。</li>
+<li>git 每次都有唯一的 ID，结合 post-commit，也可以嵌到代码里。</li>
+<li>git 不会跟踪空目录，非要这样做，可以在空目录里放个空的 …</li></ul>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2010/12/27/the-difference-between-svn-and-git.html#the-difference-between-svn-and-git">    Continue reading
+</a>
+  </div>
+</article>
+
+  <div class="pagination">
+  </div>
+
+
+
+
+    <footer>
+<p>
+  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+</p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p><p>
+  <a rel="license"
+     href="http://creativecommons.org/licenses/by-sa/4.0/"
+     target="_blank">
+    <img alt="Creative Commons License"
+         title="Creative Commons License"
+         style="border-width:0"
+           src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
+         width="80"
+         height="15"/>
+  </a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Gang Up ",
+  "url" : "https://cctags.github.io",
+  "image": "",
+  "description": "Random notes from a random developer"
+}
+</script>
+
+<a href="https://github.com/cctags/cctags.github.io.git" class="github-corner" aria-label="View source on Github">
+    <svg width="80"
+         height="80"
+         viewBox="0 0 250 250"
+         style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;"
+         aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor"
+              style="transform-origin: 130px 106px;"
+              class="octo-arm">
+        </path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor"
+              class="octo-body">
+        </path>
+    </svg>
+</a>
+<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></body>
+</html>

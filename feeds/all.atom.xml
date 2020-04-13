@@ -1,0 +1,2349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/all.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2020-04-02T18:18:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>utmp records of tmux</title><link href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" rel="alternate"></link><published>2020-04-02T18:18:00+08:00</published><updated>2020-04-02T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</id><summary type="html">&lt;h2&gt;0x0&lt;/h2&gt;
+&lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。&lt;/p&gt;
+&lt;h2&gt;0x1&lt;/h2&gt;
+&lt;p&gt;感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 &lt;a href="https://github.com/tmux/tmux/issues/1260"&gt;utmp records are potentially dangerous&lt;/a&gt;，基本确认应该是对 utmp 信息的处理不一致。&lt;/p&gt;
+&lt;h2&gt;0x2&lt;/h2&gt;
+&lt;p&gt;查看并对比了 tmux 对应的依赖库：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ldd …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;h2&gt;0x0&lt;/h2&gt;
+&lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。&lt;/p&gt;
+&lt;h2&gt;0x1&lt;/h2&gt;
+&lt;p&gt;感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 &lt;a href="https://github.com/tmux/tmux/issues/1260"&gt;utmp records are potentially dangerous&lt;/a&gt;，基本确认应该是对 utmp 信息的处理不一致。&lt;/p&gt;
+&lt;h2&gt;0x2&lt;/h2&gt;
+&lt;p&gt;查看并对比了 tmux 对应的依赖库：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ldd /usr/bin/tmux
+        linux-vdso.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fff0437f000&lt;span class="o"&gt;)&lt;/span&gt;
+        libutil.so.1 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libutil.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca07370000&lt;span class="o"&gt;)&lt;/span&gt;
+        libutempter.so.0 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libutempter.so.0 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca0716d000&lt;span class="o"&gt;)&lt;/span&gt;
+        libtinfo.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libtinfo.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca0713f000&lt;span class="o"&gt;)&lt;/span&gt;
+        libevent-2.1.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libevent-2.1.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06eee000&lt;span class="o"&gt;)&lt;/span&gt;
+        libresolv.so.2 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libresolv.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06ed3000&lt;span class="o"&gt;)&lt;/span&gt;
+        libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06ce8000&lt;span class="o"&gt;)&lt;/span&gt;
+        libpthread.so.0 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libpthread.so.0 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06cc5000&lt;span class="o"&gt;)&lt;/span&gt;
+        /lib64/ld-linux-x86-64.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca07427000&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;观察到，在高版本的 Ubuntu 里，才出现了对 &lt;code&gt;libutempter.so.0&lt;/code&gt; 的依赖。&lt;/p&gt;
+&lt;p&gt;进一步查看并对比了不同版本的 Ubuntu 里对 tmux 的编译：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Xenial Xerus &lt;a href="https://launchpad.net/ubuntu/+source/tmux/2.1-3build1"&gt;tmux 2.1-3build1 source package in Ubuntu&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/tmux/2.1-3build1/tmux_2.1-3build1.debian.tar.xz&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Bionic Beaver &lt;a href="https://launchpad.net/ubuntu/+source/tmux/2.6-3"&gt;tmux 2.6-3 source package in Ubuntu&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/tmux/2.6-3/tmux_2.6-3.debian.tar.xz&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gd"&gt;--- 2.1/debian/rules    2015-10-19 02:05:15.000000000 +0800&lt;/span&gt;
+&lt;span class="gi"&gt;+++ 2.6-3/debian/rules  2017-12-31 00:43:41.000000000 +0800&lt;/span&gt;
+&lt;span class="gu"&gt;@@ -1,7 +1,10 @@&lt;/span&gt;
+ #!/usr/bin/make -f
+
+ export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+ export DEB_LDFLAGS_MAINT_APPEND=-Wl,--as-needed
+
+ %:
+        dh $@ --parallel --with autoreconf
+&lt;span class="gi"&gt;+&lt;/span&gt;
+&lt;span class="gi"&gt;+override_dh_auto_configure:&lt;/span&gt;
+&lt;span class="gi"&gt;+       dh_auto_configure -- --enable-utempter&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这就能看出问题了。原来，在高版本的 Ubuntu 里编译 tmux 时，打开了 &lt;code&gt;--enable-utempter&lt;/code&gt; 编译选项。&lt;/p&gt;
+&lt;h2&gt;0x3&lt;/h2&gt;
+&lt;p&gt;这下问题就清楚了。&lt;code&gt;--enable-utempter&lt;/code&gt; 这个编译选项的目的，是 tmux 在创建新的 shell 时，向系统更新一下 utempter。而这里的解决办法，就是下载 tmux &lt;a href="https://github.com/tmux/tmux.git"&gt;源码&lt;/a&gt;，关掉这个编译选项、编译并重新安装即可。&lt;/p&gt;</content><category term="Tools"></category><category term="tmux"></category><category term="ubuntu"></category></entry><entry><title>Difference between __str__ and __repr__ in Python</title><link href="https://cctags.github.io/posts/2019/09/04/python_difference_between_str_and_repr.html" rel="alternate"></link><published>2019-09-04T18:18:00+08:00</published><updated>2019-09-04T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2019-09-04:/posts/2019/09/04/python_difference_between_str_and_repr.html</id><summary type="html">&lt;p&gt;在 Python 里，__str__ 和 __repr__ 的功能类似，但又有区别，经常容易搞混。以下列举了它们在使用上的注意点。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;__repr__&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;__repr__ goal is to be unambiguous&lt;/li&gt;
+&lt;li&gt;__repr__ is for developers&lt;/li&gt;
+&lt;li&gt;__repr__ representation of python object usually eval will convert it back to that object&lt;/li&gt;
+&lt;li&gt;正式的字符串，多数情况下是一个有效的 python 表达式，用于 &lt;a href="https://docs.python.org/3.8/library/functions.html#repr"&gt;repr()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;__str__&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;__str__ goal is to be readable&lt;/li&gt;
+&lt;li&gt;__str__ is …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;在 Python 里，__str__ 和 __repr__ 的功能类似，但又有区别，经常容易搞混。以下列举了它们在使用上的注意点。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;__repr__&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;__repr__ goal is to be unambiguous&lt;/li&gt;
+&lt;li&gt;__repr__ is for developers&lt;/li&gt;
+&lt;li&gt;__repr__ representation of python object usually eval will convert it back to that object&lt;/li&gt;
+&lt;li&gt;正式的字符串，多数情况下是一个有效的 python 表达式，用于 &lt;a href="https://docs.python.org/3.8/library/functions.html#repr"&gt;repr()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;__str__&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;__str__ goal is to be readable&lt;/li&gt;
+&lt;li&gt;__str__ is for customers&lt;/li&gt;
+&lt;li&gt;__str__ is whatever you think is that object in text form&lt;/li&gt;
+&lt;li&gt;非正式的字符串，用于 &lt;a href="https://docs.python.org/3.8/library/functions.html#print"&gt;print()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;如果 __str__ 没有定义，__str__ = __repr__&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里有几个描述，可以参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://stackoverflow.com/a/2626364"&gt;https://stackoverflow.com/a/2626364&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://stackoverflow.com/a/1436756"&gt;https://stackoverflow.com/a/1436756&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.geeksforgeeks.org/str-vs-repr-in-python/"&gt;https://www.geeksforgeeks.org/str-vs-repr-in-python/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="Python"></category></entry><entry><title>使用 pthread 时遇到的资源不足的问题</title><link href="https://cctags.github.io/posts/2019/06/20/pthread_memory_leak_issue.html" rel="alternate"></link><published>2019-06-20T18:18:00+08:00</published><updated>2019-06-20T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2019-06-20:/posts/2019/06/20/pthread_memory_leak_issue.html</id><content type="html">&lt;p&gt;项目里遇到了一个 &lt;code&gt;pthread_create&lt;/code&gt; 调用失败、返回资源不足的问题。&lt;/p&gt;
+&lt;p&gt;走读了代码，发现代码里反复调用了 &lt;code&gt;pthread_create&lt;/code&gt; 创建了很多短任务；但主线程里并没有等待，而是任由其运行到退出。&lt;/p&gt;
+&lt;p&gt;查阅了 pthread 手册，对于新创建的 thread，它必须被 join 或者被 detach，这样才能避免 thread 相关的内部数据结构的泄漏。&lt;/p&gt;
+&lt;p&gt;针对项目实际情况，因为不需要 join，所以在调用 &lt;code&gt;pthread_create&lt;/code&gt; 创建线程之后，添加了 &lt;code&gt;pthread_detach&lt;/code&gt; 的调用，解决资源泄漏的问题。&lt;/p&gt;</content><category term="Programming"></category><category term="pthread"></category></entry><entry><title>Golang 里的 range 问题</title><link href="https://cctags.github.io/posts/2019/04/26/golang_range_gotcha.html" rel="alternate"></link><published>2019-04-26T18:18:00+08:00</published><updated>2019-04-26T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2019-04-26:/posts/2019/04/26/golang_range_gotcha.html</id><content type="html">&lt;p&gt;Golang 类似于 C/C++，同时又从其他语言（比如 Python）里借鉴了一些语法，比如 range。&lt;/p&gt;
+&lt;p&gt;在使用上，range 有一些特性，如果不注意的话，很容易引起误解。比如以下这段代码，会不会一直循环下去？&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;func&lt;/span&gt; &lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="k"&gt;range&lt;/span&gt; &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;以下是一些参考文章，里面提到的内容，对于深入理解 range 的实现及应用很有帮助：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://my.oschina.net/u/2612999/blog/908114"&gt;聊聊 Golang 中的 range 关键字&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://newt0n.github.io/2016/11/07/%E5%A6%82%E4%BD%95%E9%81%BF%E5%BC%80-Go-%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E9%99%B7%E9%98%B1/"&gt;如何避开 Go 中的各种陷阱&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://newt0n.github.io/2017/04/06/Go-Range-%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0/"&gt;Go Range 内部实现&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="golang"></category></entry><entry><title>Zynq USB Drive Issue</title><link href="https://cctags.github.io/posts/2019/03/31/zynq_usb_drive_issue.html" rel="alternate"></link><published>2019-03-31T18:18:00+08:00</published><updated>2019-03-31T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2019-03-31:/posts/2019/03/31/zynq_usb_drive_issue.html</id><summary type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;Zynq 开发板，操作系统有时无法识别到优盘。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;检查 Linux 里的 USB 驱动及配置。对比 Xilinx 的参考文档和示例，调试用的 kernel config、device tree 等都没有发现问题。&lt;/p&gt;
+&lt;p&gt;检查 uboot 里的相关配置。最后定位到是 &lt;code&gt;usb reset pin&lt;/code&gt; 没有配置。原来，Xilinx 的内核驱动会依赖并假定 uboot 已经配置了这个 reset pin。如果 uboot 没有配置，那么在运行时，pin 的状态不确定，会导致有时无法识别到优盘的现象。&lt;/p&gt;
+&lt;p&gt;找到问题并修改后，问题解决。&lt;/p&gt;
+&lt;h3&gt;※ 参考&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842272/Zynq+Linux+USB+Device+Driver"&gt;Zynq Linux USB Device Driver&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://forums.xilinx.com/t5/Embedded-Linux/Zynq-USB-phy-communication-issues/td-p/690653"&gt;Zynq …&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;</summary><content type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;Zynq 开发板，操作系统有时无法识别到优盘。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;检查 Linux 里的 USB 驱动及配置。对比 Xilinx 的参考文档和示例，调试用的 kernel config、device tree 等都没有发现问题。&lt;/p&gt;
+&lt;p&gt;检查 uboot 里的相关配置。最后定位到是 &lt;code&gt;usb reset pin&lt;/code&gt; 没有配置。原来，Xilinx 的内核驱动会依赖并假定 uboot 已经配置了这个 reset pin。如果 uboot 没有配置，那么在运行时，pin 的状态不确定，会导致有时无法识别到优盘的现象。&lt;/p&gt;
+&lt;p&gt;找到问题并修改后，问题解决。&lt;/p&gt;
+&lt;h3&gt;※ 参考&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842272/Zynq+Linux+USB+Device+Driver"&gt;Zynq Linux USB Device Driver&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://forums.xilinx.com/t5/Embedded-Linux/Zynq-USB-phy-communication-issues/td-p/690653"&gt;Zynq USB phy communication issues&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Programming"></category><category term="Linux"></category><category term="xilinx"></category><category term="kernel"></category></entry><entry><title>Using env in the Shebang of a Python Script</title><link href="https://cctags.github.io/posts/2018/12/12/using_env_in_the_shebang_of_a_python_script.html" rel="alternate"></link><published>2018-12-12T18:18:00+08:00</published><updated>2018-12-12T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2018-12-12:/posts/2018/12/12/using_env_in_the_shebang_of_a_python_script.html</id><summary type="html">&lt;p&gt;在 Linux 里，通常会在 script 的最开始，加上一行称为 &lt;a href="https://en.wikipedia.org/wiki/Shebang_(Unix)"&gt;sha-bang&lt;/a&gt; 的内容，用来指定运行当前 script 的解释器程序以及参数。&lt;/p&gt;
+&lt;p&gt;通常，Python 程序总以这样一行开始：&lt;code&gt;#!/usr/bin/python3&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;但事实上，很多地方都推荐使用 &lt;code&gt;env&lt;/code&gt; 这种更为通用的方式：&lt;code&gt;#!/usr/bin/env python3&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;除了 &lt;code&gt;env&lt;/code&gt; 本身的通用性之外，考虑到 Python 虚拟环境（比如 &lt;code&gt;virtualenv&lt;/code&gt;），这也确实是更加合理的方式：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Using &lt;code&gt;/usr/bin/env/&lt;/code&gt; in python serves one more purpose. As python supports virtual environments …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;在 Linux 里，通常会在 script 的最开始，加上一行称为 &lt;a href="https://en.wikipedia.org/wiki/Shebang_(Unix)"&gt;sha-bang&lt;/a&gt; 的内容，用来指定运行当前 script 的解释器程序以及参数。&lt;/p&gt;
+&lt;p&gt;通常，Python 程序总以这样一行开始：&lt;code&gt;#!/usr/bin/python3&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;但事实上，很多地方都推荐使用 &lt;code&gt;env&lt;/code&gt; 这种更为通用的方式：&lt;code&gt;#!/usr/bin/env python3&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;除了 &lt;code&gt;env&lt;/code&gt; 本身的通用性之外，考虑到 Python 虚拟环境（比如 &lt;code&gt;virtualenv&lt;/code&gt;），这也确实是更加合理的方式：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Using &lt;code&gt;/usr/bin/env/&lt;/code&gt; in python serves one more purpose. As python supports virtual environments, using &lt;code&gt;/usr/bin/env python&lt;/code&gt; will make sure that your scripts runs inside the virtual environment, if you are inside one. Whereas, &lt;code&gt;/usr/bin/python&lt;/code&gt; will run outside the virtual environment.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;参考链接：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0394/#recommendation"&gt;PEP 394 -- The "python" Command on Unix-Like Systems&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://stackoverflow.com/questions/2429511/why-do-people-write-the-usr-bin-env-python-shebang-on-the-first-line-of-a-pyt"&gt;https://stackoverflow.com/questions/2429511/why-do-people-write-the-usr-bin-env-python-shebang-on-the-first-line-of-a-pyt&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://askubuntu.com/questions/716280/why-do-some-python-scripts-begin-with-usr-bin-env-python/716281"&gt;https://askubuntu.com/questions/716280/why-do-some-python-scripts-begin-with-usr-bin-env-python/716281&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="Python"></category></entry><entry><title>Zynqmp Linux Freezes When Loaded via JTAG</title><link href="https://cctags.github.io/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html" rel="alternate"></link><published>2018-10-11T18:18:00+08:00</published><updated>2018-10-11T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2018-10-11:/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html</id><summary type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;连接 JTAG 调试 Xilinx 板子的时候，板子上的 Linux 系统有时会挂住，失去响应。&lt;/p&gt;
+&lt;p&gt;对于这个问题，这里是一些有用的链接：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Petalinux on Ultrascale+ freezes when loaded via XVC JTAG interface @ &lt;a href="https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-on-Ultrascale-freezes-when-loaded-via-XVC-JTAG/td-p/833985"&gt;https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-on-Ultrascale-freezes-when-loaded-via-XVC-JTAG/td-p/833985&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;zcu102 linux hung after jtag scan @ &lt;a href="https://forums.xilinx.com/t5/Evaluation-Boards/zcu102-linux-hung-after-jtag-scan/td-p/829604"&gt;https://forums.xilinx.com/t5/Evaluation-Boards/zcu102-linux-hung-after-jtag-scan/td-p/829604&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;总结下来，这个问题的原因，是因为 …&lt;/p&gt;</summary><content type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;连接 JTAG 调试 Xilinx 板子的时候，板子上的 Linux 系统有时会挂住，失去响应。&lt;/p&gt;
+&lt;p&gt;对于这个问题，这里是一些有用的链接：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Petalinux on Ultrascale+ freezes when loaded via XVC JTAG interface @ &lt;a href="https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-on-Ultrascale-freezes-when-loaded-via-XVC-JTAG/td-p/833985"&gt;https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-on-Ultrascale-freezes-when-loaded-via-XVC-JTAG/td-p/833985&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;zcu102 linux hung after jtag scan @ &lt;a href="https://forums.xilinx.com/t5/Evaluation-Boards/zcu102-linux-hung-after-jtag-scan/td-p/829604"&gt;https://forums.xilinx.com/t5/Evaluation-Boards/zcu102-linux-hung-after-jtag-scan/td-p/829604&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;总结下来，这个问题的原因，是因为 cpu idle 时，cpu 会被 Linux 关电，从而导致调试器无法工作。&lt;/p&gt;
+&lt;h2&gt;0x1 解决办法&lt;/h2&gt;
+&lt;p&gt;在 Linux 启动参数里，加上 &lt;code&gt;cpuidle.off=1&lt;/code&gt;，可以解决这个问题。&lt;/p&gt;
+&lt;p&gt;比如，在 u-boot 里这样配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;setenv bootargs &lt;span class="s1"&gt;&amp;#39;console=ttyPS0,115200n8 earlycon clk_ignore_unused cpuidle.off=1&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然后启动 Linux 即可。&lt;/p&gt;
+&lt;h2&gt;0x2 参考&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;AR# 69143&lt;/li&gt;
+&lt;li&gt;2017.x-2018.x Zynq UltraScale+ MPSoC: Connecting XSDB to Linux CPU idle&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.xilinx.com/support/answers/69143.html"&gt;https://www.xilinx.com/support/answers/69143.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="Linux"></category><category term="xilinx"></category><category term="kernel"></category><category term="jtag"></category></entry><entry><title>中文技术文档的写作规范</title><link href="https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html" rel="alternate"></link><published>2018-10-08T08:18:00+08:00</published><updated>2018-10-08T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2018-10-08:/posts/2018/10/08/chinse_document_style_guide.html</id><content type="html">&lt;p&gt;这里是一份开源的《中文技术文档的写作规范》， &lt;a href="https://github.com/ruanyf/document-style-guide"&gt;https://github.com/ruanyf/document-style-guide&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这份写作规范，对文档的标题、文本、段落、数值甚至标点符号，都给出了具体的建议。另外，它还附录了一些知名公司的写作规范。&lt;/p&gt;
+&lt;p&gt;目前的 Star 数大概有 6.2k，应该说是相当高的，说明已经得到了很多人的认可。&lt;/p&gt;
+&lt;p&gt;对于我们来说，每次写文档之前，都值得拿来读一读，作为学习和参考。&lt;/p&gt;</content><category term="misc"></category><category term="spec"></category></entry><entry><title>gettid() 编译问题</title><link href="https://cctags.github.io/posts/2018/09/17/gettid_build_issue.html" rel="alternate"></link><published>2018-09-17T08:18:00+08:00</published><updated>2018-09-17T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2018-09-17:/posts/2018/09/17/gettid_build_issue.html</id><content type="html">&lt;p&gt;代码里用到的 &lt;code&gt;gettid()&lt;/code&gt;，编译时有报错，说找不到对应的头文件。&lt;/p&gt;
+&lt;p&gt;根据 &lt;a href="http://man7.org/linux/man-pages/man2/gettid.2.html#NOTES"&gt;man gettid&lt;/a&gt; 里的说法，libc 并没有提供这个系统调用的包装：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;NOTES
+    Glibc does not provide a wrapper for this system call; call it using syscall(2).
+
+    ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;所以在实际使用时，需要添加以下声明：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;sys/syscall.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+
+&lt;span class="cp"&gt;#define gettid() syscall(SYS_gettid)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Programming"></category><category term="pthread"></category></entry><entry><title>.NET Framework 3.5 installation error</title><link href="https://cctags.github.io/posts/2018/02/02/net_framework_3_5_installation_error.html" rel="alternate"></link><published>2018-02-02T08:18:00+08:00</published><updated>2018-02-02T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2018-02-02:/posts/2018/02/02/net_framework_3_5_installation_error.html</id><summary type="html">&lt;p&gt;安装某软件时，它提示有对 .NET 3.5 的依赖，因为本地没有安装对应的版本。但 Windows 在自动安装 .NET 3.5 失败了，返回了错误号：0x800F081F。查看了微软文档，对这个错误号的解释是：&lt;a href="https://support.microsoft.com/en-us/help/2734782/net-framework-3-5-installation-error-0x800f0906-0x800f081f-0x800f0907"&gt;0x800F081F - CBS_E_SOURCE_MISSING&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The source files could not be found.&lt;/p&gt;
+&lt;p&gt;Use the "Source" option to specify the location of the files that are required to restore the feature. For more information on specifying …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;安装某软件时，它提示有对 .NET 3.5 的依赖，因为本地没有安装对应的版本。但 Windows 在自动安装 .NET 3.5 失败了，返回了错误号：0x800F081F。查看了微软文档，对这个错误号的解释是：&lt;a href="https://support.microsoft.com/en-us/help/2734782/net-framework-3-5-installation-error-0x800f0906-0x800f081f-0x800f0907"&gt;0x800F081F - CBS_E_SOURCE_MISSING&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The source files could not be found.&lt;/p&gt;
+&lt;p&gt;Use the "Source" option to specify the location of the files that are required to restore the feature. For more information on specifying a source location, see http://go.microsoft.com/fwlink/?LinkId=243077.&lt;/p&gt;
+&lt;p&gt;The DISM log file can be found at C:\Windows\Logs\DISM\dism.log&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;考虑到手头没有系统安装包，所以没法试验。&lt;/p&gt;
+&lt;p&gt;这里是找到的&lt;a href="http://blog.csdn.net/kr0920/article/details/70153935"&gt;另外一个安装方法&lt;/a&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;下载文件：&lt;a href="http://download.windowsupdate.com/d/msdownload/update/software/updt/2015/11/microsoft-windows-netfx3-ondemand-package_421a25bf409692045d1cbfab0d99f8def8d95d3f.cab"&gt;http://download.windowsupdate.com/d/msdownload/update/software/updt/2015/11/microsoft-windows-netfx3-ondemand-package_421a25bf409692045d1cbfab0d99f8def8d95d3f.cab&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;将文件复制到系统盘的 Windows 目录下&lt;/li&gt;
+&lt;li&gt;以管理员打开命令提示符，运行以下命令&lt;blockquote&gt;
+&lt;p&gt;dism /online /Enable-Feature /FeatureName:NetFx3 /Source:"%windir%" /LimitAccess&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;另外，从注册表的 &lt;code&gt;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP&lt;/code&gt; 这个路径下，可以查看本地已经安装的 .NET 版本。&lt;/p&gt;</content><category term="Tools"></category><category term="microsoft"></category><category term="window"></category><category term="dotnet"></category></entry><entry><title>Pelican 编译问题</title><link href="https://cctags.github.io/posts/2017/12/22/build_issue_of_pelican_without_markdown.html" rel="alternate"></link><published>2017-12-22T08:18:00+08:00</published><updated>2017-12-22T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2017-12-22:/posts/2017/12/22/build_issue_of_pelican_without_markdown.html</id><content type="html">&lt;p&gt;今天遇到了一个问题：重新编译 pelican 项目时，发现编译生成的 articles 数量要比正常的少很多，而且没有任何出错信息。&lt;/p&gt;
+&lt;p&gt;经过研究，找到了原因。前段时间更新了 Python 2.7 到最新版本，并且安装了第三方的库，当然包括了 pelican。但 markdown 并没有安装，这导致在编译时 markdown 文件时无法解析。&lt;/p&gt;
+&lt;p&gt;解决方案很简单，安装 markdown，然后重新编译即可。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;pip install markdown
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;之后又重新看了一遍 pelican 安装说明，明确了 &lt;a href="http://docs.getpelican.com/en/stable/install.html#optional-packages"&gt;markdown 只属于 optional packages&lt;/a&gt;，而不是必选的依赖项。&lt;/p&gt;</content><category term="Tools"></category><category term="Pelican"></category><category term="Python"></category></entry><entry><title>使用 Kill 发信号时误杀进程的问题</title><link href="https://cctags.github.io/posts/2017/10/01/issue_of_using_kill_to_send_signal.html" rel="alternate"></link><published>2017-10-01T08:18:00+08:00</published><updated>2017-10-01T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2017-10-01:/posts/2017/10/01/issue_of_using_kill_to_send_signal.html</id><summary type="html">&lt;p&gt;程序里会使用 Kill 发送 SIGTERM 信号，要求某进程组结束：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;kill&lt;/span&gt; -15 -&amp;lt;pgid&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;实际运行时发现一个问题，除了这个目标进程组之外，有时候其他一些进程也会被强行结束。但是，如果在 shell 里执行类似的命令，问题不会出现。&lt;/p&gt;
+&lt;p&gt;经过反复试验，定位到 Kill 有两个入口：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/bin/kill&lt;/code&gt;，这是个二进程程序，是 &lt;a href="https://gitlab.com/procps-ng/procps"&gt;procps&lt;/a&gt; 的一部分。在处理上述命令的时候，如果第二个参数是 &lt;code&gt;-1xy..&lt;/code&gt; 的形式，它会解析成 &lt;code&gt;-1&lt;/code&gt;，而 &lt;code&gt;-1&lt;/code&gt; 表示把信号发给所有的在操作权限范围内的进程。这就是某些用户进程被意外结束的原因。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;builtin 命令&lt;/code&gt;，是 &lt;a href="https://linux.die.net/man/1/bash"&gt;shell&lt;/a&gt; 的一部分。研究了 shell 里的 builtin kill 的实现代码，没有这个问题。这是 …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;程序里会使用 Kill 发送 SIGTERM 信号，要求某进程组结束：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;kill&lt;/span&gt; -15 -&amp;lt;pgid&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;实际运行时发现一个问题，除了这个目标进程组之外，有时候其他一些进程也会被强行结束。但是，如果在 shell 里执行类似的命令，问题不会出现。&lt;/p&gt;
+&lt;p&gt;经过反复试验，定位到 Kill 有两个入口：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/bin/kill&lt;/code&gt;，这是个二进程程序，是 &lt;a href="https://gitlab.com/procps-ng/procps"&gt;procps&lt;/a&gt; 的一部分。在处理上述命令的时候，如果第二个参数是 &lt;code&gt;-1xy..&lt;/code&gt; 的形式，它会解析成 &lt;code&gt;-1&lt;/code&gt;，而 &lt;code&gt;-1&lt;/code&gt; 表示把信号发给所有的在操作权限范围内的进程。这就是某些用户进程被意外结束的原因。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;builtin 命令&lt;/code&gt;，是 &lt;a href="https://linux.die.net/man/1/bash"&gt;shell&lt;/a&gt; 的一部分。研究了 shell 里的 builtin kill 的实现代码，没有这个问题。这是 shell 里无法重现的原因。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;定位到了问题，解决就容易了，加个 &lt;code&gt;--&lt;/code&gt; 告诉 getopt 即可：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;kill&lt;/span&gt; -15 -- -&amp;lt;pgid&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这里是 &lt;a href="http://www.gnu.org/software/libc/manual/html_node/Using-Getopt.html"&gt;getopt&lt;/a&gt; 的文档说明：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;getopt has three ways to deal with options that follow non-options argv elements. The special argument ‘--’ forces in all cases the end of option scanning.&lt;/p&gt;
+&lt;p&gt;...&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="Programming"></category><category term="procps"></category><category term="shell"></category><category term="Linux"></category></entry><entry><title>Using RCS Keywords in Perforce</title><link href="https://cctags.github.io/posts/2016/03/28/using_rcs_keywords_in_perforce.html" rel="alternate"></link><published>2016-03-28T13:01:00+08:00</published><updated>2016-03-28T13:01:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-03-28:/posts/2016/03/28/using_rcs_keywords_in_perforce.html</id><summary type="html">&lt;p&gt;使用 svn 时，有时会把版本管理系统的信息嵌入到代码里，比如版本号、最近修改时间，等等。在软件调试时，这会很有帮助。因为清晰的版本信息，可以避免很多不必要的版本不一致的问题。这里是 &lt;a href="http://svnbook.red-bean.com/en/1.7/svn.advanced.props.special.keywords.html"&gt;Subversion Keyword Substitution&lt;/a&gt; 的文档。&lt;/p&gt;
+&lt;p&gt;最近开始使用 Perforce，所以也专门研究了一下是否有类似的功能。&lt;/p&gt;
+&lt;p&gt;从文档来看，Perforce 提供了一些关键字，可以自动地展开和更新，比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$Id$&lt;/li&gt;
+&lt;li&gt;$Header$&lt;/li&gt;
+&lt;li&gt;$Date$&lt;/li&gt;
+&lt;li&gt;$DateTime$&lt;/li&gt;
+&lt;li&gt;$Change$&lt;/li&gt;
+&lt;li&gt;$File$&lt;/li&gt;
+&lt;li&gt;$Revision$&lt;/li&gt;
+&lt;li&gt;$Author$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个功能默认时并没有开启，需要修改文件本身的类型（"+k"），比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;p4 edit -t +k main.c
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;以下是 Perforce 的官方文档，可以参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Using RCS Keywords @ &lt;a href="http://answers.perforce.com/articles/KB/3482"&gt;http …&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;使用 svn 时，有时会把版本管理系统的信息嵌入到代码里，比如版本号、最近修改时间，等等。在软件调试时，这会很有帮助。因为清晰的版本信息，可以避免很多不必要的版本不一致的问题。这里是 &lt;a href="http://svnbook.red-bean.com/en/1.7/svn.advanced.props.special.keywords.html"&gt;Subversion Keyword Substitution&lt;/a&gt; 的文档。&lt;/p&gt;
+&lt;p&gt;最近开始使用 Perforce，所以也专门研究了一下是否有类似的功能。&lt;/p&gt;
+&lt;p&gt;从文档来看，Perforce 提供了一些关键字，可以自动地展开和更新，比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$Id$&lt;/li&gt;
+&lt;li&gt;$Header$&lt;/li&gt;
+&lt;li&gt;$Date$&lt;/li&gt;
+&lt;li&gt;$DateTime$&lt;/li&gt;
+&lt;li&gt;$Change$&lt;/li&gt;
+&lt;li&gt;$File$&lt;/li&gt;
+&lt;li&gt;$Revision$&lt;/li&gt;
+&lt;li&gt;$Author$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个功能默认时并没有开启，需要修改文件本身的类型（"+k"），比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;p4 edit -t +k main.c
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;以下是 Perforce 的官方文档，可以参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Using RCS Keywords @ &lt;a href="http://answers.perforce.com/articles/KB/3482"&gt;http://answers.perforce.com/articles/KB/3482&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;File Types @ &lt;a href="https://www.perforce.com/perforce/doc.current/manuals/cmdref/file.types.html"&gt;https://www.perforce.com/perforce/doc.current/manuals/cmdref/file.types.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="VCS"></category><category term="p4"></category><category term="svn"></category></entry><entry><title>混用不同版本的 libc 造成程序崩溃</title><link href="https://cctags.github.io/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html" rel="alternate"></link><published>2016-03-25T16:28:00+08:00</published><updated>2016-03-25T16:28:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-03-25:/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html</id><summary type="html">&lt;p&gt;程序发生崩溃，调试器提示崩溃发生在 libc 的 free() 函数里面：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Debug&lt;/span&gt; &lt;span class="n"&gt;Assertion&lt;/span&gt; &lt;span class="nl"&gt;Failed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;_CrtIsValidHeapPointer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pUserData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;初步判断，可能是堆（Heap）被写坏了。&lt;/p&gt;
+&lt;p&gt;于是修改代码，在程序初始化的地方，调用了 &lt;code&gt;_CrtSetDbgFlag&lt;/code&gt; 来设置一些调试的开关，希望调试器能够捕获到堆被写坏的操作。以下是这个 API 的原型，更多信息可以参考文档 &lt;a href="https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx"&gt;https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx&lt;/a&gt;。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;_CrtSetDbgFlag&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+   &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;newFlag&lt;/span&gt;
+&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="nl"&gt;Flags&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_ALLOC_MEM_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_CHECK_ALWAYS_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_CHECK_CRT_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_DELAY_FREE_MEM_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;程序发生崩溃，调试器提示崩溃发生在 libc 的 free() 函数里面：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Debug&lt;/span&gt; &lt;span class="n"&gt;Assertion&lt;/span&gt; &lt;span class="nl"&gt;Failed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;_CrtIsValidHeapPointer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pUserData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;初步判断，可能是堆（Heap）被写坏了。&lt;/p&gt;
+&lt;p&gt;于是修改代码，在程序初始化的地方，调用了 &lt;code&gt;_CrtSetDbgFlag&lt;/code&gt; 来设置一些调试的开关，希望调试器能够捕获到堆被写坏的操作。以下是这个 API 的原型，更多信息可以参考文档 &lt;a href="https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx"&gt;https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx&lt;/a&gt;。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;_CrtSetDbgFlag&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+   &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;newFlag&lt;/span&gt;
+&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="nl"&gt;Flags&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_ALLOC_MEM_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_CHECK_ALWAYS_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_CHECK_CRT_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_DELAY_FREE_MEM_DF&lt;/span&gt;
+  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_LEAK_CHECK_DF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然而，调试下来并没有看到堆被写坏的操作。&lt;/p&gt;
+&lt;p&gt;继续调试，终于发现了问题。程序运行时会依赖动态库 A 和 B，其中 A 引用了 &lt;strong&gt;release&lt;/strong&gt; 编译的 libc，B 引用了 &lt;strong&gt;debug&lt;/strong&gt; 编译的 libc。在 A 里 malloc() 出来的内存，传递到 B 里使用 free() 来释放的时候，B 依赖的 libc 肯定无法处理，所以出错了。&lt;/p&gt;
+&lt;p&gt;确实蛮凌乱的。。&lt;/p&gt;
+&lt;p&gt;定位了原因，修改就很简单了，在这几个模块的编译及链接属性里，选择相同的 libc 即可。（&lt;a href="https://msdn.microsoft.com/en-us/library/2kzt1wy3%28v=vs.110%29.aspx"&gt;这里&lt;/a&gt;有 libc 编译选项的说明。）&lt;/p&gt;</content><category term="Programming"></category><category term="linker"></category></entry><entry><title>Highlight All Occurrences of Selected Word</title><link href="https://cctags.github.io/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html" rel="alternate"></link><published>2016-02-26T16:55:00+08:00</published><updated>2016-02-26T16:55:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-02-26:/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html</id><content type="html">&lt;p&gt;在选中某个单词（比如变量、函数、自定义类型，等等）时，如果能把屏幕上所有出现这个单词的地方，都高亮显示出来，对于程序开发来说，是非常方便和直观的。&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://visualstudio.microsoft.com/"&gt;Visual Studio&lt;/a&gt; 插件库里有好多插件都实现了这个功能，这个&lt;a href="http://stackoverflow.com/questions/9435642/how-to-get-visual-studio-2010-to-highlight-instances-of-a-variable"&gt;贴子&lt;/a&gt;里说得很详细了。&lt;/p&gt;
+&lt;p&gt;经过比较，最后下载并安装了 &lt;code&gt;Productivity Power Tools 2012&lt;/code&gt; @ &lt;a href="https://visualstudiogallery.msdn.microsoft.com/3a96a4dc-ba9c-4589-92c5-640e07332afd"&gt;https://visualstudiogallery.msdn.microsoft.com/3a96a4dc-ba9c-4589-92c5-640e07332afd&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;这个插件是微软发布的，功能十分强大，并且 Free。&lt;/p&gt;</content><category term="Tools"></category><category term="VisualStudio"></category></entry><entry><title>Remove Trailing Whitespace in Visual Studio</title><link href="https://cctags.github.io/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html" rel="alternate"></link><published>2016-02-24T12:25:00+08:00</published><updated>2016-02-24T12:25:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-02-24:/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html</id><content type="html">&lt;p&gt;编程习惯里通常会建议删除行尾的空格。在 Visual Studio 里，可以通过 &lt;code&gt;Ctrl+K, Ctrl+\&lt;/code&gt; 的按键操作来实现。&lt;/p&gt;
+&lt;p&gt;不过每次通过手动的方式，未免有些麻烦，最好还是在保存文件时自动完成。网上找了一下，有个&lt;a href="http://stackoverflow.com/questions/12122846/how-to-trim-trailing-whitespace-in-visual-studio-2012"&gt;讨论贴子&lt;/a&gt;里推荐了 &lt;code&gt;Trailing Whitespace Visualizer&lt;/code&gt;，这是个 Visual Studio 的免费插件，可以实现这个功能。&lt;/p&gt;
+&lt;p&gt;这里是插件的地址：&lt;a href="https://visualstudiogallery.msdn.microsoft.com/a204e29b-1778-4dae-affd-209bea658a59"&gt;https://visualstudiogallery.msdn.microsoft.com/a204e29b-1778-4dae-affd-209bea658a59&lt;/a&gt;。下载后点击安装并重启 Visual Studio 即可。&lt;/p&gt;</content><category term="Tools"></category><category term="VisualStudio"></category></entry><entry><title>What is ULP?</title><link href="https://cctags.github.io/posts/2016/01/28/what_is_ulp.html" rel="alternate"></link><published>2016-01-28T16:44:00+08:00</published><updated>2016-01-28T16:44:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-01-28:/posts/2016/01/28/what_is_ulp.html</id><summary type="html">&lt;p&gt;The maximum relative error is defined as ulp (units in the last place).&lt;/p&gt;
+&lt;p&gt;The ULP is defined as follows:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;If x is a real number that lies between two finite consecutive
+floating-point numbers a and b, without being equal to one of them,
+then ulp(x) = |b - a|, otherwise ulp …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;The maximum relative error is defined as ulp (units in the last place).&lt;/p&gt;
+&lt;p&gt;The ULP is defined as follows:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;If x is a real number that lies between two finite consecutive
+floating-point numbers a and b, without being equal to one of them,
+then ulp(x) = |b - a|, otherwise ulp(x) is the distance between the
+two non-equal finite floating-point numbers nearest x. Moreover,
+ulp(NaN) is NaN.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;OpenCL spec @ &lt;a href="https://www.khronos.org/registry/cl/specs/opencl-1.2.pdf#page=319"&gt;https://www.khronos.org/registry/cl/specs/opencl-1.2.pdf#page=319&lt;/a&gt;&lt;/p&gt;</content><category term="Programming"></category><category term="OpenCL"></category></entry><entry><title>Find the file by inode number</title><link href="https://cctags.github.io/posts/2016/01/22/find_the_file_by_inode_number.html" rel="alternate"></link><published>2016-01-22T12:27:00+08:00</published><updated>2016-01-22T12:27:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-01-22:/posts/2016/01/22/find_the_file_by_inode_number.html</id><content type="html">&lt;P&gt;
+在命令行下会遇到一些文件名里包含有中文、符号或者某些奇怪字符的文件，如果命令的自动补全不完整，键盘操作起来还是有些麻烦的。这时候，可以考虑利用 inode 来定位这样的文件：
+&lt;/P&gt;
+&lt;P&gt;
+1. 使用 &lt;CODE&gt;ls&lt;/CODE&gt; 显示其对应的 inode 号：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  ls -i
+&lt;/PRE&gt;
+
+&lt;P&gt;
+2. 使用 &lt;CODE&gt;find&lt;/CODE&gt; 显示其文件名：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  find . -inum &amp;lt;inode-number&amp;gt;
+&lt;/PRE&gt;
+
+&lt;P&gt;
+好吧，拿到文件名了。
+&lt;/P&gt;
+</content><category term="Tools"></category><category term="shell"></category></entry><entry><title>Set Event Callback in OpenCL</title><link href="https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html" rel="alternate"></link><published>2015-12-30T10:10:00+08:00</published><updated>2015-12-30T10:10:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-12-30:/posts/2015/12/30/cl_set_event_callback_in_ocl.html</id><summary type="html">&lt;p&gt;这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下是原型：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;clSetEventCallback&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="n"&gt;cl_event&lt;/span&gt; &lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;command_exec_callback_type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;CL_CALLBACK&lt;/span&gt;  &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pfn_event_notify&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cl_event&lt;/span&gt; &lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                           &lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;event_command_exec_status&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                           &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;user_data&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;user_data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其中 &lt;code&gt;command_exec_callback_type&lt;/code&gt; 参数在不同版本里有 &lt;strong&gt;差异&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clSetEventCallback.html"&gt;OpenCL 1.1&lt;/a&gt;: The command execution callback value for which a callback can be registered is …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下是原型：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;clSetEventCallback&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="n"&gt;cl_event&lt;/span&gt; &lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;command_exec_callback_type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;CL_CALLBACK&lt;/span&gt;  &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pfn_event_notify&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cl_event&lt;/span&gt; &lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                           &lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;event_command_exec_status&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                           &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;user_data&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;user_data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其中 &lt;code&gt;command_exec_callback_type&lt;/code&gt; 参数在不同版本里有 &lt;strong&gt;差异&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clSetEventCallback.html"&gt;OpenCL 1.1&lt;/a&gt;: The command execution callback value for which a callback can be registered is &lt;strong&gt;CL_COMPLETE&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/clSetEventCallback.html"&gt;OpenCL 1.2&lt;/a&gt; and later: The command execution callback value for which a callback can be registered is &lt;strong&gt;CL_SUBMITTED&lt;/strong&gt;, &lt;strong&gt;CL_RUNNING&lt;/strong&gt;, or &lt;strong&gt;CL_COMPLETE&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个需要注意。&lt;/p&gt;</content><category term="Programming"></category><category term="OpenCL"></category></entry><entry><title>iPhone Photo Library "Ghost" Space</title><link href="https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html" rel="alternate"></link><published>2015-12-25T09:17:00+08:00</published><updated>2015-12-25T09:17:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-12-25:/posts/2015/12/25/iphone_photo_library_ghost_space.html</id><content type="html">&lt;p&gt;最近 iPhone 手机遇到个问题：照片拍了很多了，想清理一下，结果发现即使是删掉了绝大部分照片，照片图库仍然占用了大量的系统存储空间。尝试了好几次，都无法解决。&lt;/p&gt;
+&lt;p&gt;后来发现，这其实是 iPhone 的一个 Bug。网上已经有了一个临时的解决办法，请参考这个官方论坛里的帖子：&lt;a href="https://discussions.apple.com/thread/6560594?tstart=0"&gt;https://discussions.apple.com/thread/6560594?tstart=0&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;以下是解决步骤：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;把手机系统时间改回很久以前；&lt;/li&gt;
+&lt;li&gt;切换到照片图库，在 “ 最近删除 ” 里面，会看到很多照片；&lt;/li&gt;
+&lt;li&gt;删除这些照片；&lt;/li&gt;
+&lt;li&gt;切换到系统设置里，查看系统存储空间变化；&lt;/li&gt;
+&lt;li&gt;恢复系统时间；&lt;/li&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个 Bug 很奇怪，这个解决办法更奇怪。&lt;/p&gt;</content><category term="Tools"></category><category term="iOS"></category></entry><entry><title>Merging the upstream repository into the fork</title><link href="https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html" rel="alternate"></link><published>2015-12-15T12:45:00+08:00</published><updated>2015-12-15T12:45:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-12-15:/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html</id><summary type="html">&lt;p&gt;如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， &lt;a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/"&gt;https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/&lt;/a&gt;，关于对 &lt;code&gt;fork&lt;/code&gt; 进行更新。&lt;/p&gt;
+&lt;p&gt;记录一下，备忘。&lt;/p&gt;
+&lt;p&gt;o 切换到 &lt;code&gt;master&lt;/code&gt; 分支：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git checkout master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 从 upstream repository 更新下来：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 更新远程 repository：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git push origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;更新后，对于 bugfix 或者 new …&lt;/p&gt;</summary><content type="html">&lt;p&gt;如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， &lt;a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/"&gt;https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/&lt;/a&gt;，关于对 &lt;code&gt;fork&lt;/code&gt; 进行更新。&lt;/p&gt;
+&lt;p&gt;记录一下，备忘。&lt;/p&gt;
+&lt;p&gt;o 切换到 &lt;code&gt;master&lt;/code&gt; 分支：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git checkout master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 从 upstream repository 更新下来：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 更新远程 repository：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git push origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;更新后，对于 bugfix 或者 new feature 的开发，单独创建个分支出来即可。&lt;/p&gt;</content><category term="VCS"></category><category term="git"></category></entry><entry><title>Dial Toll Free Numbers in Skype</title><link href="https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html" rel="alternate"></link><published>2015-12-08T08:49:00+08:00</published><updated>2015-12-08T08:49:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-12-08:/posts/2015/12/08/dial_toll_free_numbers_in_skype.html</id><content type="html">&lt;p&gt;电话会议，一般是用电话拨进去参加的会议，其中有些号码是免费的，有些则是付费的。&lt;/p&gt;
+&lt;p&gt;当然，如果 Dial-In Number 里包括了以下这些：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;USA: +1 800, +1 866, +1 877, +1 888&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;那也可以用 Skype 直接打过去。这里有使用说明：&lt;a href="https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series"&gt;https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series&lt;/a&gt;。 即使没有 Skype Credit，也可以使用。&lt;/p&gt;</content><category term="Tools"></category><category term="Skype"></category></entry><entry><title>Global and Local Work Size in OpenCL</title><link href="https://cctags.github.io/posts/2015/11/17/global_and_local_work_size.html" rel="alternate"></link><published>2015-11-17T16:53:00+08:00</published><updated>2015-11-17T16:53:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-11-17:/posts/2015/11/17/global_and_local_work_size.html</id><summary type="html">&lt;p&gt;The work-items in a given work-group execute concurrently on the processing elements of a single compute unit. This is a critical point in understanding the concurrency in OpenCL. ... OpenCL only assures that the workitems within a work-group execute concurrently (and share processor resources on the device).&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;global work offset&lt;/strong&gt;: what …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;The work-items in a given work-group execute concurrently on the processing elements of a single compute unit. This is a critical point in understanding the concurrency in OpenCL. ... OpenCL only assures that the workitems within a work-group execute concurrently (and share processor resources on the device).&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;global work offset&lt;/strong&gt;: what this parameter does is to alter the values that are returned by get_global_id() in the kernel.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;global work size&lt;/strong&gt;: the total number of work-items that can execute this kernel in parallel.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;local work size&lt;/strong&gt;: the number of work-items to be grouped together in a workgroup.&lt;ul&gt;
+&lt;li&gt;The total number of work-items in a work-group is computed as local_work_size[0] *... * local_work_size[work_dim - 1].&lt;/li&gt;
+&lt;li&gt;The total number of work-items in the work-group must be less than or equal to the CL_DEVICE_MAX_WORK_GROUP_SIZE value specified in table of OpenCL Device Queries for clGetDeviceInfo and&lt;/li&gt;
+&lt;li&gt;the number of work-items specified in local_work_size[0],... local_work_size[work_dim - 1] must be less than or equal to the corresponding values specified by CL_DEVICE_MAX_WORK_ITEM_SIZES[0],.... CL_DEVICE_MAX_WORK_ITEM_SIZES[work_dim - 1].&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;References:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;clEnqueueNDRangeKernel @ &lt;a href="https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/clEnqueueNDRangeKernel.html"&gt;https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/clEnqueueNDRangeKernel.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Using OpenCL's Global Work Offset @ &lt;a href="http://www.iterationzero.co.uk/?p=44"&gt;http://www.iterationzero.co.uk/?p=44&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://stackoverflow.com/questions/3957125/questions-about-global-and-local-work-size"&gt;http://stackoverflow.com/questions/3957125/questions-about-global-and-local-work-size&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="OpenCL"></category></entry><entry><title>Change the Background Color in PDF Reader</title><link href="https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html" rel="alternate"></link><published>2015-10-28T14:32:00+08:00</published><updated>2015-10-28T14:32:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-10-28:/posts/2015/10/28/change_the_background_color_in_pdf_reader.html</id><content type="html">&lt;p&gt;以 Adobe Reader 为例，从主菜单选择：编辑 ∕ 首选项 ∕ 辅助工具 ∕ 自定义颜色 ∕ 页面背景 ∕ 其它颜色，比如色调 45、饱和度 35、亮度 165。&lt;/p&gt;
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2"&gt;http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast"&gt;http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Tools"></category><category term="PDF"></category></entry><entry><title>Git-P4 Submit Error</title><link href="https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html" rel="alternate"></link><published>2015-09-30T14:23:00+08:00</published><updated>2015-09-30T14:23:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-09-30:/posts/2015/09/30/git_p4_submit_error.html</id><content type="html">&lt;P&gt;
+提交代码时遇到了这样的错误：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ git p4 submit
+  Error: Cannot locate perforce checkout of //XXX/YYY/ZZZ/ in client view
+&lt;/PRE&gt;
+
+&lt;P&gt;
+一下子还真没想明白是哪里不对。
+&lt;/P&gt;
+&lt;P&gt;
+后来想明白了，需要重新登录一下 Perfoce：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ p4 login
+  ...
+&lt;/PRE&gt;
+
+&lt;P&gt;
+解决。
+&lt;/P&gt;
+</content><category term="VCS"></category><category term="git"></category><category term="p4"></category></entry><entry><title>Setup Comments with Disqus in Pelican</title><link href="https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html" rel="alternate"></link><published>2015-09-18T09:33:00+08:00</published><updated>2015-09-18T09:33:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-09-18:/posts/2015/09/18/setup_comments_with_disqus.html</id><content type="html">&lt;p&gt;&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt; 是一个外挂的评论系统，对于像 GitHub Pages 这种静态网页来说，非常实用。&lt;/p&gt;
+&lt;p&gt;找到一个文档 &lt;a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html"&gt;http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html&lt;/a&gt;，把&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt;的使用步骤写得很清楚了。&lt;/p&gt;
+&lt;p&gt;以下是主要的配置说明，记录在这里，备忘。&lt;/p&gt;
+&lt;p&gt;注册 Disqus 账号：通过链接：http://&amp;lt;YOUR_DOMAINE&gt;.disqus.com/admin/settings，进行设置。&lt;/p&gt;
+&lt;p&gt;配置 Pelican：在 &lt;code&gt;pelicanconfig.py&lt;/code&gt; 文件里，添加如下配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;DISQUS_SITENAME = &amp;quot;&amp;lt;YOUR_DOMAINE&amp;gt;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Tools"></category><category term="Pelican"></category><category term="Disqus"></category></entry><entry><title>Limit CPU Usage</title><link href="https://cctags.github.io/posts/2015/09/16/limit_cpu_usage.html" rel="alternate"></link><published>2015-09-16T17:01:00+08:00</published><updated>2015-09-16T17:01:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-09-16:/posts/2015/09/16/limit_cpu_usage.html</id><summary type="html">&lt;p&gt;这里有一些网页，描述了如何限制 CPU 的使用：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Restricting process CPU usage using nice, cpulimit, and cgroups &lt;a href="http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups"&gt;http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;CPU Usage Limiter for Linux &lt;a href="http://cpulimit.sourceforge.net/"&gt;http://cpulimit.sourceforge.net/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/opsengine/cpulimit"&gt;https://github.com/opsengine/cpulimit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Two great signals: SIGSTOP and SIGCONT &lt;a href="https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/"&gt;https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;概括地讲 …&lt;/p&gt;</summary><content type="html">&lt;p&gt;这里有一些网页，描述了如何限制 CPU 的使用：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Restricting process CPU usage using nice, cpulimit, and cgroups &lt;a href="http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups"&gt;http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;CPU Usage Limiter for Linux &lt;a href="http://cpulimit.sourceforge.net/"&gt;http://cpulimit.sourceforge.net/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/opsengine/cpulimit"&gt;https://github.com/opsengine/cpulimit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Two great signals: SIGSTOP and SIGCONT &lt;a href="https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/"&gt;https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;概括地讲：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;nice&lt;/strong&gt;: 利用调整 nice 值来影响进程调度，使得其他进程可以抢占到更多的 CPU 资源；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;cpulimit&lt;/strong&gt;: 利用 SIGSTOP 和 SIGCONT 信号，使目标进程让出 { 指定比例 } 的 CPU 资源；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;cgroups&lt;/strong&gt;: 完全隔离。&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="Linux"></category></entry><entry><title>What is the Linux CPU Load</title><link href="https://cctags.github.io/posts/2015/09/15/the_linux_cpu_load.html" rel="alternate"></link><published>2015-09-15T09:15:00+08:00</published><updated>2015-09-15T09:15:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-09-15:/posts/2015/09/15/the_linux_cpu_load.html</id><summary type="html">&lt;p&gt;The &lt;strong&gt;load average&lt;/strong&gt; represents the &lt;strong&gt;average&lt;/strong&gt; system load over a period of time. It conventionally appears in the form of three numbers which represent the system load during the last one-, five-, and fifteen-minute periods. &lt;a href="https://en.wikipedia.org/wiki/Load_(computing)"&gt;https://en.wikipedia.org/wiki/Load_(computing)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;按照网上看到的一种很形象的说法，假设我们的系统是单 CPU 单内核的，把它比喻成是一条单向马路，把任务比作汽车。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当车不多的时候，load …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;The &lt;strong&gt;load average&lt;/strong&gt; represents the &lt;strong&gt;average&lt;/strong&gt; system load over a period of time. It conventionally appears in the form of three numbers which represent the system load during the last one-, five-, and fifteen-minute periods. &lt;a href="https://en.wikipedia.org/wiki/Load_(computing)"&gt;https://en.wikipedia.org/wiki/Load_(computing)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;按照网上看到的一种很形象的说法，假设我们的系统是单 CPU 单内核的，把它比喻成是一条单向马路，把任务比作汽车。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当车不多的时候，load &amp;lt;1；&lt;/li&gt;
+&lt;li&gt;当车占满整个马路的时候， load=1；&lt;/li&gt;
+&lt;li&gt;当马路都站满了，而且马路外还堆满了汽车的时候，load&amp;gt;1&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;搜索了几篇文字说明，已经很清楚了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Understanding Linux CPU Load - when should you be worried? &lt;a href="http://blog.scoutapp.com/articles/2009/07/31/understanding-load-averages"&gt;http://blog.scoutapp.com/articles/2009/07/31/understanding-load-averages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;理解 Linux 的处理器负载均值（翻译） &lt;a href="http://www.gracecode.com/posts/2973.html"&gt;http://www.gracecode.com/posts/2973.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;理解 Linux 系统中的 load average（图文版）&lt;a href="http://heipark.iteye.com/blog/1340384"&gt;http://heipark.iteye.com/blog/1340384&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="Linux"></category></entry><entry><title>Using Git-P4</title><link href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html" rel="alternate"></link><published>2015-07-23T15:09:00+08:00</published><updated>2015-07-23T15:09:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-07-23:/posts/2015/07/23/using_git_p4.html</id><summary type="html">&lt;P&gt;
+平时一直使用 &lt;A HREF="https://git-scm.com/"&gt;git&lt;/A&gt;，习惯了各种离线操作和强大的分支功能，所以总觉得要比 &lt;A HREF="http://www.perforce.com/"&gt;Perforce / p4&lt;/A&gt; 好用太多。
+&lt;/P&gt;
+&lt;P&gt;
+对于目前项目里用到的 p4 仓库，找到了一个 &lt;A HREF="http://answers.perforce.com/articles/KB/2790"&gt;Git-P4&lt;/A&gt; 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
+&lt;/P&gt;
+&lt;P&gt;
+以下是一些关键操作，记录在这里备忘。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;Create a directory for the client workspace root; for example:
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ mkdir gp4-area
+&lt;/PRE&gt;
+
+&lt;LI&gt;Create a P4CONFIG file
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ cd gp4-area
+  $ vi p4config
+  $ ...
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Create the client workspace
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ p4 client …&lt;/pre&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</summary><content type="html">&lt;P&gt;
+平时一直使用 &lt;A HREF="https://git-scm.com/"&gt;git&lt;/A&gt;，习惯了各种离线操作和强大的分支功能，所以总觉得要比 &lt;A HREF="http://www.perforce.com/"&gt;Perforce / p4&lt;/A&gt; 好用太多。
+&lt;/P&gt;
+&lt;P&gt;
+对于目前项目里用到的 p4 仓库，找到了一个 &lt;A HREF="http://answers.perforce.com/articles/KB/2790"&gt;Git-P4&lt;/A&gt; 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
+&lt;/P&gt;
+&lt;P&gt;
+以下是一些关键操作，记录在这里备忘。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;Create a directory for the client workspace root; for example:
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ mkdir gp4-area
+&lt;/PRE&gt;
+
+&lt;LI&gt;Create a P4CONFIG file
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ cd gp4-area
+  $ vi p4config
+  $ ...
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Create the client workspace
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ p4 client
+  $ ...
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Create a directory for the .git repository
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ cd ..
+  $ mkdir git-area
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Import history
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ export P4CONFIG=/path/to/.../p4config
+  $ git p4 clone //depot/path@all
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Git-p4 workflow follows this pattern:
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  Edit files
+  Submit edits to Git
+  ...repeat...
+  git p4 rebase
+  git p4 submit
+&lt;/PRE&gt;
+
+&lt;/OL&gt;
+
+</content><category term="VCS"></category><category term="git"></category><category term="p4"></category></entry><entry><title>Sysfs</title><link href="https://cctags.github.io/posts/2015/07/15/sysfs.html" rel="alternate"></link><published>2015-07-15T12:02:00+08:00</published><updated>2015-07-15T12:02:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-07-15:/posts/2015/07/15/sysfs.html</id><summary type="html">&lt;p&gt;在 linux 里，&lt;a href="https://en.wikipedia.org/wiki/Sysfs"&gt;sysfs&lt;/a&gt; 和 &lt;a href="https://en.wikipedia.org/wiki/Procfs"&gt;procfs&lt;/a&gt; 都是没有存储介质的虚拟文件系统，用于内核与用户态的交互。以下是摘自《Professional Linux Kernel Architecture》的一段话，对两者在概念上的区别进行了描述。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Sysfs is one particularly important example of another virtual filesystem that serves a similar purpose to procfs on the one hand, but is rather different on the other hand. Sysfs is, per convention, always mounted …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;在 linux 里，&lt;a href="https://en.wikipedia.org/wiki/Sysfs"&gt;sysfs&lt;/a&gt; 和 &lt;a href="https://en.wikipedia.org/wiki/Procfs"&gt;procfs&lt;/a&gt; 都是没有存储介质的虚拟文件系统，用于内核与用户态的交互。以下是摘自《Professional Linux Kernel Architecture》的一段话，对两者在概念上的区别进行了描述。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Sysfs is one particularly important example of another virtual filesystem that serves a similar purpose to procfs on the one hand, but is rather different on the other hand. Sysfs is, per convention, always mounted at /sys, but there is nothing that would prevent including it in other places. It was designed to export information from the kernel into userland at a highly structured level. In contrast to procfs, it was not designed for direct human use because the information is deeply and hierarchically nested. Additionally, the files do not always contain information in ASCII text form, but may well use unreadable binary strings. The filesystem is, however, very useful for tools that want to gather detailed information about the hardware present in a system and the topological connection between the devices.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;简单来说就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Sysfs"&gt;sysfs&lt;/a&gt; 提供的是结构化的复杂信息，需要工具进行解析和处理；&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Procfs"&gt;procfs&lt;/a&gt; 提供的是直观可读的信息，用户可以直接查看。&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="Linux"></category><category term="filesystem"></category></entry><entry><title>More Use of Pelican</title><link href="https://cctags.github.io/posts/2015/07/10/linuxtoy_uses_pelican.html" rel="alternate"></link><published>2015-07-10T09:46:00+08:00</published><updated>2015-07-10T09:46:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-07-10:/posts/2015/07/10/linuxtoy_uses_pelican.html</id><content type="html">&lt;p&gt;经常会去 &lt;a href="https://linuxtoy.org/"&gt;LinuxTOY&lt;/a&gt;, 看看有哪些新的 Linux 相关的信息。&lt;/p&gt;
+&lt;p&gt;好吧，最近它也已经 &lt;a href="https://linuxtoy.org/archives/moving-to-pelican.html"&gt;从 WordPress 迁移到 Pelican&lt;/a&gt;，现在访问速度快了不是一点点。&lt;/p&gt;</content><category term="Tools"></category><category term="Pelican"></category></entry><entry><title>Upgrade to Pelican 3.6</title><link href="https://cctags.github.io/posts/2015/06/18/upgrade_to_pelican_3_6.html" rel="alternate"></link><published>2015-06-18T11:12:00+08:00</published><updated>2015-06-18T11:12:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-06-18:/posts/2015/06/18/upgrade_to_pelican_3_6.html</id><content type="html">&lt;p&gt;&lt;a href="http://blog.getpelican.com/pelican-3.6-released.html"&gt;Pelican 3.6&lt;/a&gt; 发布了。&lt;/p&gt;
+&lt;p&gt;可以使用万能的 &lt;code&gt;easy_install&lt;/code&gt; 来更新：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ easy_install --upgrade pelican
+Searching for pelican
+Reading http://pypi.python.org/simple/pelican/
+Best match: pelican 3.6.0
+Processing pelican-3.6.0-py2.7.egg
+...
+
+$ pelican --version
+3.6.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;浏览了这个版本的变化，其中较大的一个变化是在默认情况下不再缓存编译内容，从而可以规避下次编译时的潜在冲突。当然也可以按照&lt;a href="http://docs.getpelican.com/en/latest/settings.html#reading-only-modified-content"&gt;这里的文档&lt;/a&gt;，重新打开这个功能。&lt;/p&gt;</content><category term="Tools"></category><category term="Pelican"></category></entry><entry><title>Use subprocess.Popen class in Python</title><link href="https://cctags.github.io/posts/2015/06/10/subprocess_popen_use.html" rel="alternate"></link><published>2015-06-10T09:07:00+08:00</published><updated>2015-06-10T09:07:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-06-10:/posts/2015/06/10/subprocess_popen_use.html</id><summary type="html">&lt;p&gt;&lt;a href="https://docs.python.org/2/library/subprocess.html#popen-constructor"&gt;subprocess.Popen&lt;/a&gt; 是 Python 标准库提供的一个类，用于进程的创建、管理以及数据交互。在实现上，它尽可能地屏蔽了操作系统之间相关语义的差异，提供了统一的使用接口。&lt;/p&gt;
+&lt;p&gt;其原型是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;bufsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;executable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;stdin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stdout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;preexec_fn&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;close_fds&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cwd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;universal_newlines&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;startupinfo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;creationflags&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;对于 args 参数，使用时遇到了这样的问题：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;r&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ls …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://docs.python.org/2/library/subprocess.html#popen-constructor"&gt;subprocess.Popen&lt;/a&gt; 是 Python 标准库提供的一个类，用于进程的创建、管理以及数据交互。在实现上，它尽可能地屏蔽了操作系统之间相关语义的差异，提供了统一的使用接口。&lt;/p&gt;
+&lt;p&gt;其原型是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;bufsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;executable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;stdin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stdout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;preexec_fn&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;close_fds&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cwd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;universal_newlines&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                       &lt;span class="n"&gt;startupinfo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;creationflags&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;对于 args 参数，使用时遇到了这样的问题：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;r&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ls --help&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;运行时提示这样的错误信息：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Traceback (most recent call last):
+  File &amp;quot;./test.py&amp;quot;, line 12, in &amp;lt;module&amp;gt;
+    main()
+  File &amp;quot;./test.py&amp;quot;, line 8, in main
+    p = subprocess.Popen(r&amp;quot;ls --help&amp;quot;)
+  File &amp;quot;/usr/lib/python2.7/subprocess.py&amp;quot;, line 679, in __init__
+    errread, errwrite)
+  File &amp;quot;/usr/lib/python2.7/subprocess.py&amp;quot;, line 1249, in _execute_child
+    raise child_exception
+OSError: [Errno 2] No such file or directory
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;关于 args，&lt;a href="https://docs.python.org/2/library/subprocess.html#popen-constructor"&gt;subprocess.Popen&lt;/a&gt; 的文档里有这样的描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;On Unix, if args is a string, the string is interpreted as the name or path of the program to execute. However, this can only be done if not passing arguments to the program.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以这样修改后可以正常运行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="sa"&gt;r&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ls&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sa"&gt;r&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;--help&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;另外，需要特别注意 &lt;strong&gt;shell&lt;/strong&gt; 这个参数，默认为 False。如果为 True 的话：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Unix: 相当于 args 前面添加了 &lt;code&gt;"/bin/sh" "-c"&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Windows: 相当于添加 &lt;code&gt;"cmd.exe /c"&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Programming"></category><category term="Python"></category></entry><entry><title>Use txt2tags in Pelican</title><link href="https://cctags.github.io/posts/2015/06/07/use_txt2tags_in_pelican.html" rel="alternate"></link><published>2015-06-07T07:53:00+08:00</published><updated>2015-06-07T07:53:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-06-07:/posts/2015/06/07/use_txt2tags_in_pelican.html</id><summary type="html">
+&lt;H1&gt;1. txt2tags&lt;/H1&gt;
+
+&lt;P&gt;
+&lt;A HREF="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/A&gt; 是 &lt;A HREF="http://blog.getpelican.com/"&gt;Pelican&lt;/A&gt; 默认支持的标记语言。其语法简洁，功能实用，多数情况下，可以满足实际的使用需求。
+&lt;/P&gt;
+&lt;P&gt;
+&lt;A HREF="http://txt2tags.org"&gt;txt2tags&lt;/A&gt; 是一个类似的项目：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  Txt2tags is a text formatting and conversion tool.
+&lt;/PRE&gt;
+
+&lt;P&gt;
+相比于 Markdown：
+&lt;/P&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;txt2tags 包括了以下这些有用的功能：
+    &lt;UL&gt;
+    &lt;LI&gt;可以指定生成目录，比如 &lt;CODE&gt;%!options: -n --toc&lt;/CODE&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/TitleNumberedTitle.html"&gt;Numbered Title&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/Table.html"&gt;Table&lt;/A&gt;
+    &lt;LI&gt;Macros
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/UL&gt;
+&lt;LI&gt;当然也有一些不足：
+    &lt;UL&gt;
+    &lt;LI&gt;Verbatim line 没有语法高亮
+    &lt;/UL&gt;
+&lt;/UL&gt;
+
+&lt;P&gt;
+更多功能，请参考&lt;A HREF="http://txt2tags.org/userguide/"&gt;用户手册&lt;/A&gt;。
+&lt;/P&gt;
+&lt;P&gt;
+总的来说，txt2tags 的这些功能，可以使得内容更加清晰，有条理。
+&lt;/P&gt;
+
+&lt;H1&gt;2. txt2tags reader plugin&lt;/H1&gt;
+
+&lt;P&gt;
+浏览了 …&lt;/p&gt;</summary><content type="html">
+&lt;H1&gt;1. txt2tags&lt;/H1&gt;
+
+&lt;P&gt;
+&lt;A HREF="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/A&gt; 是 &lt;A HREF="http://blog.getpelican.com/"&gt;Pelican&lt;/A&gt; 默认支持的标记语言。其语法简洁，功能实用，多数情况下，可以满足实际的使用需求。
+&lt;/P&gt;
+&lt;P&gt;
+&lt;A HREF="http://txt2tags.org"&gt;txt2tags&lt;/A&gt; 是一个类似的项目：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  Txt2tags is a text formatting and conversion tool.
+&lt;/PRE&gt;
+
+&lt;P&gt;
+相比于 Markdown：
+&lt;/P&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;txt2tags 包括了以下这些有用的功能：
+    &lt;UL&gt;
+    &lt;LI&gt;可以指定生成目录，比如 &lt;CODE&gt;%!options: -n --toc&lt;/CODE&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/TitleNumberedTitle.html"&gt;Numbered Title&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/Table.html"&gt;Table&lt;/A&gt;
+    &lt;LI&gt;Macros
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/UL&gt;
+&lt;LI&gt;当然也有一些不足：
+    &lt;UL&gt;
+    &lt;LI&gt;Verbatim line 没有语法高亮
+    &lt;/UL&gt;
+&lt;/UL&gt;
+
+&lt;P&gt;
+更多功能，请参考&lt;A HREF="http://txt2tags.org/userguide/"&gt;用户手册&lt;/A&gt;。
+&lt;/P&gt;
+&lt;P&gt;
+总的来说，txt2tags 的这些功能，可以使得内容更加清晰，有条理。
+&lt;/P&gt;
+
+&lt;H1&gt;2. txt2tags reader plugin&lt;/H1&gt;
+
+&lt;P&gt;
+浏览了 &lt;A HREF="https://github.com/getpelican/pelican-plugins"&gt;pelican-plugins&lt;/A&gt; 官方插件库，发现它并没有 txt2tags 的插件。
+&lt;/P&gt;
+&lt;P&gt;
+还好是开源软件，缺什么，动手写一个就是了。参考了 &lt;A HREF="https://github.com/dames57/multimarkdown_reader"&gt;multimarkdown_reader&lt;/A&gt; 的代码，写了个 txt2tags_reader。
+&lt;/P&gt;
+&lt;P&gt;
+然后发了个 &lt;A HREF="https://github.com/getpelican/pelican-plugins/pull/510"&gt;pull request&lt;/A&gt;，没想到很快就被合并进去，成为了 &lt;A HREF="https://github.com/getpelican/pelican-plugins"&gt;pelican-plugins&lt;/A&gt; 官方插件库的&lt;A HREF="https://github.com/getpelican/pelican-plugins/tree/master/txt2tags_reader"&gt;一部分&lt;/A&gt;。
+&lt;/P&gt;
+
+&lt;H2&gt;2.1. How to use&lt;/H2&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;更新 pelican-plugins
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Config file
+&lt;P&gt;&lt;/P&gt;
+&lt;PRE&gt;
+  PLUGINS = ["txt2tags_reader"]
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Content file
+&lt;P&gt;&lt;/P&gt;
+使用 txt2tags 语法来编辑内容，并将内容文件的扩展名设置为 &lt;CODE&gt;t2t&lt;/CODE&gt;，或者 &lt;CODE&gt;txt2tags&lt;/CODE&gt;即可。
+&lt;/OL&gt;
+
+&lt;H2&gt;2.2. Known Issues&lt;/H2&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;目录里是相对路径的定位方式，如果一篇内容被部分地包含在另一个页面里，此时点击目录里的链接，就有问题了。
+&lt;/OL&gt;
+
+</content><category term="Tools"></category><category term="Pelican"></category><category term="txt2tags"></category></entry><entry><title>Pelican 使用记录</title><link href="https://cctags.github.io/posts/2015/06/02/use_pelican.html" rel="alternate"></link><published>2015-06-02T09:52:00+08:00</published><updated>2015-06-02T09:52:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-06-02:/posts/2015/06/02/use_pelican.html</id><summary type="html">&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+  &lt;OL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc1"&gt;Why Here?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc2"&gt;Why Pelican?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc3"&gt;Use Pelican&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc4"&gt;3.1. Install&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc5"&gt;3.2. Kickstart your site&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc6"&gt;3.3. Config file&lt;/A&gt;
+      &lt;UL&gt;
+      &lt;LI&gt;&lt;A HREF="#toc7"&gt;3.3.1. Theme&lt;/A&gt;
+      &lt;LI&gt;&lt;A HREF="#toc8"&gt;3.3.2. Plugin&lt;/A&gt;
+      &lt;/UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc9"&gt;3.4. Add a note&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc10"&gt;3.5. Compile&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc11"&gt;Publish&lt;/A&gt;
+  &lt;/OL&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+&lt;A NAME="toc1"&gt;&lt;/A&gt;
+&lt;H1&gt;1. Why Here?&lt;/H1&gt;
+
+&lt;P&gt;
+之前博客搭在 &lt;A HREF="http://hi.baidu.com/"&gt;Baidu Hi&lt;/A&gt; 上面，前后也用了好长时间了。直到最近，Baidu Hi 要下线了。。
+&lt;/P&gt;
+&lt;P&gt;
+所以把原有的内容整理了一下，准备放到 &lt;A HREF="https://pages.github.com/"&gt;GitHub …&lt;/a&gt;&lt;/p&gt;</summary><content type="html">&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+  &lt;OL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc1"&gt;Why Here?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc2"&gt;Why Pelican?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc3"&gt;Use Pelican&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc4"&gt;3.1. Install&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc5"&gt;3.2. Kickstart your site&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc6"&gt;3.3. Config file&lt;/A&gt;
+      &lt;UL&gt;
+      &lt;LI&gt;&lt;A HREF="#toc7"&gt;3.3.1. Theme&lt;/A&gt;
+      &lt;LI&gt;&lt;A HREF="#toc8"&gt;3.3.2. Plugin&lt;/A&gt;
+      &lt;/UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc9"&gt;3.4. Add a note&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc10"&gt;3.5. Compile&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc11"&gt;Publish&lt;/A&gt;
+  &lt;/OL&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+&lt;A NAME="toc1"&gt;&lt;/A&gt;
+&lt;H1&gt;1. Why Here?&lt;/H1&gt;
+
+&lt;P&gt;
+之前博客搭在 &lt;A HREF="http://hi.baidu.com/"&gt;Baidu Hi&lt;/A&gt; 上面，前后也用了好长时间了。直到最近，Baidu Hi 要下线了。。
+&lt;/P&gt;
+&lt;P&gt;
+所以把原有的内容整理了一下，准备放到 &lt;A HREF="https://pages.github.com/"&gt;GitHub Pages&lt;/A&gt; 上面。
+&lt;/P&gt;
+
+&lt;A NAME="toc2"&gt;&lt;/A&gt;
+&lt;H1&gt;2. Why Pelican?&lt;/H1&gt;
+
+&lt;P&gt;
+经过比较，决定选择基于 &lt;A HREF="http://blog.getpelican.com/"&gt;Pelican&lt;/A&gt; 生成静态页面的方式。
+&lt;/P&gt;
+&lt;P&gt;
+目前的使用里，基本只关心内容；至于页面格式，可以使用工具来完成。Pelican 就是这样的工具：
+&lt;/P&gt;
+&lt;P&gt;
+&lt;CODE&gt;Pelican is a static site generator, written in Python, that requires no database or server-side logic.&lt;/CODE&gt;
+&lt;/P&gt;
+&lt;P&gt;
+这是 Pelican 项目的 one-sentence 介绍。详细的文档地址是 &lt;A HREF="http://docs.getpelican.com/en/latest/"&gt;http://docs.getpelican.com/en/latest/&lt;/A&gt;。
+&lt;/P&gt;
+&lt;P&gt;
+除了本身是用 Python 开发的，Pelican 使用过程中的一些配置文件也是用 Python 来完成，这点非常实用。
+&lt;/P&gt;
+
+&lt;A NAME="toc3"&gt;&lt;/A&gt;
+&lt;H1&gt;3. Use Pelican&lt;/H1&gt;
+
+&lt;A NAME="toc4"&gt;&lt;/A&gt;
+&lt;H2&gt;3.1. Install&lt;/H2&gt;
+
+&lt;P&gt;
+使用万能的 &lt;CODE&gt;easy_install&lt;/CODE&gt; 安装即可：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  easy_install pelican
+  easy_install Markdown
+&lt;/PRE&gt;
+
+&lt;A NAME="toc5"&gt;&lt;/A&gt;
+&lt;H2&gt;3.2. Kickstart your site&lt;/H2&gt;
+
+&lt;PRE&gt;
+  pelican-quickstart
+&lt;/PRE&gt;
+
+&lt;P&gt;
+这是一个向导程序，跟着提示逐步地填写，即可生成一份配置文件 &lt;CODE&gt;pelicanconf.py&lt;/CODE&gt;。配置文件也可以手动修改，逐步完善。
+&lt;/P&gt;
+
+&lt;A NAME="toc6"&gt;&lt;/A&gt;
+&lt;H2&gt;3.3. Config file&lt;/H2&gt;
+
+&lt;P&gt;
+基本的配置文件 &lt;CODE&gt;pelicanconf.py&lt;/CODE&gt; 已经可以满足使用，以下只是一些小的修改：
+&lt;/P&gt;
+
+&lt;A NAME="toc7"&gt;&lt;/A&gt;
+&lt;H3&gt;3.3.1. Theme&lt;/H3&gt;
+
+&lt;PRE&gt;
+  # https://github.com/cctags/pelican-octopress-theme
+  THEME = HOME + r"/src/reference/pelican-octopress-theme"
+  DISPLAY_CATEGORIES_ON_MENU = True
+  MENUITEMS_AFTER = (('Archive', '/archives.html'),
+                    )
+&lt;/PRE&gt;
+
+&lt;A NAME="toc8"&gt;&lt;/A&gt;
+&lt;H3&gt;3.3.2. Plugin&lt;/H3&gt;
+
+&lt;PRE&gt;
+  PLUGIN_PATHS = ["plugins", HOME + r"/src/reference"]
+  
+  PLUGINS = ["cjk-auto-spacing"]  #https://github.com/yuex/cjk-auto-spacing
+&lt;/PRE&gt;
+
+&lt;A NAME="toc9"&gt;&lt;/A&gt;
+&lt;H2&gt;3.4. Add a note&lt;/H2&gt;
+
+&lt;P&gt;
+使用 &lt;CODE&gt;YYYYmmdd.xxx&lt;/CODE&gt; 的格式来命名内容文件是比较直观的，且符合 Pelican 的文件排序约定。
+&lt;/P&gt;
+&lt;P&gt;
+内容文件需要放置在 content 目录下。对于特殊的内容文件，则是 content/pages 目录下。
+&lt;/P&gt;
+&lt;P&gt;
+内容文件本身是文本的，可以使用版本管理。
+&lt;/P&gt;
+
+&lt;A NAME="toc10"&gt;&lt;/A&gt;
+&lt;H2&gt;3.5. Compile&lt;/H2&gt;
+
+&lt;P&gt;
+使用 &lt;CODE&gt;pelican&lt;/CODE&gt; 命令编译。
+&lt;/P&gt;
+
+&lt;A NAME="toc11"&gt;&lt;/A&gt;
+&lt;H1&gt;4. Publish&lt;/H1&gt;
+
+&lt;P&gt;
+把生成的静态页面提交到 GitHub Pages 即可。
+&lt;/P&gt;
+</content><category term="Tools"></category><category term="Pelican"></category><category term="Python"></category></entry><entry><title>GCC Linker Order</title><link href="https://cctags.github.io/posts/2015/05/29/gcc_linker_order.html" rel="alternate"></link><published>2015-05-29T13:35:00+08:00</published><updated>2015-05-29T13:35:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-05-29:/posts/2015/05/29/gcc_linker_order.html</id><content type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;在程序开发过程中遇到了这样的问题：&lt;/p&gt;
+&lt;p&gt;程序比较大，因而拆分成了若干个静态库：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;编译：OK!&lt;/li&gt;
+&lt;li&gt;链接：把静态库链接到可执行文件时，出现了 “… undefined reference to …” 的错误提示。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;逐个地检查这些静态库文件：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;nm -C xxxS.a &lt;span class="p"&gt;|&lt;/span&gt; grep &amp;lt;symbol&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;检查结果显示，错误提示里找不到的 symbol 其实已经包含在了某个静态库里面。&lt;/p&gt;
+&lt;h3&gt;※ 解决&lt;/h3&gt;
+&lt;p&gt;参考 &lt;a href="http://stackoverflow.com/questions/45135/linker-order-gcc"&gt;http://stackoverflow.com/questions/45135/linker-order-gcc&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;调整 Makefile 里的静态库文件的顺序，链接 OK!&lt;/p&gt;</content><category term="Programming"></category><category term="Linker"></category></entry><entry><title>同名全局变量造成的冲突</title><link href="https://cctags.github.io/posts/2014/12/12/global_variable_name_conflict.html" rel="alternate"></link><published>2014-12-12T06:00:00+08:00</published><updated>2014-12-12T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2014-12-12:/posts/2014/12/12/global_variable_name_conflict.html</id><summary type="html">&lt;h3&gt;0x0 问题&lt;/h3&gt;
+&lt;p&gt;程序运行时崩溃。&lt;/p&gt;
+&lt;h3&gt;0x1 调试&lt;/h3&gt;
+&lt;p&gt;经过调试发现，程序本身、和它所依赖的动态库里，有同名的全局变量，Loader 表示很凌乱。。&lt;/p&gt;
+&lt;h3&gt;0x2 解决&lt;/h3&gt;
+&lt;p&gt;默认链接生成动态库时，所有符号都会导出。对于这里的情况，只需要把导出符号定义清楚，就可以避免运行时的冲突。&lt;/p&gt;
+&lt;h4&gt;Linux&lt;/h4&gt;
+&lt;p&gt;使用 &lt;code&gt;LD Version Scripts&lt;/code&gt;（&lt;a href="https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_node/ld_25.html"&gt;链接 1&lt;/a&gt;, &lt;a href="https://www.gnu.org/software/gnulib/manual/html_node/LD-Version-Scripts.html"&gt;链接 2&lt;/a&gt;），在编译和链接生成动态库时，指定哪些是全局导出的符号，哪些是局部符号，比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nl"&gt;global&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;func_a&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="n"&gt;func_b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="nl"&gt;local&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然后在链接时添加类似于 &lt;code&gt;LFLAGS += -Wl,--version-script=xxx.map&lt;/code&gt; 的参数。&lt;/p&gt;
+&lt;h4&gt;Windows&lt;/h4&gt;
+&lt;p&gt;对于 Windows 环境，可以定义类似功能的 def 文件，比如 …&lt;/p&gt;</summary><content type="html">&lt;h3&gt;0x0 问题&lt;/h3&gt;
+&lt;p&gt;程序运行时崩溃。&lt;/p&gt;
+&lt;h3&gt;0x1 调试&lt;/h3&gt;
+&lt;p&gt;经过调试发现，程序本身、和它所依赖的动态库里，有同名的全局变量，Loader 表示很凌乱。。&lt;/p&gt;
+&lt;h3&gt;0x2 解决&lt;/h3&gt;
+&lt;p&gt;默认链接生成动态库时，所有符号都会导出。对于这里的情况，只需要把导出符号定义清楚，就可以避免运行时的冲突。&lt;/p&gt;
+&lt;h4&gt;Linux&lt;/h4&gt;
+&lt;p&gt;使用 &lt;code&gt;LD Version Scripts&lt;/code&gt;（&lt;a href="https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_node/ld_25.html"&gt;链接 1&lt;/a&gt;, &lt;a href="https://www.gnu.org/software/gnulib/manual/html_node/LD-Version-Scripts.html"&gt;链接 2&lt;/a&gt;），在编译和链接生成动态库时，指定哪些是全局导出的符号，哪些是局部符号，比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nl"&gt;global&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;func_a&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="n"&gt;func_b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="nl"&gt;local&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然后在链接时添加类似于 &lt;code&gt;LFLAGS += -Wl,--version-script=xxx.map&lt;/code&gt; 的参数。&lt;/p&gt;
+&lt;h4&gt;Windows&lt;/h4&gt;
+&lt;p&gt;对于 Windows 环境，可以定义类似功能的 def 文件，比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;LIBRARY&lt;/span&gt; &lt;span class="n"&gt;xxx&lt;/span&gt;
+
+&lt;span class="n"&gt;EXPORTS&lt;/span&gt;
+    &lt;span class="n"&gt;func_a&lt;/span&gt;
+    &lt;span class="n"&gt;func_b&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然后在链接时添加类似于 &lt;code&gt;ModuleDefinitionFile="xxx.def"&lt;/code&gt; 的参数。&lt;/p&gt;
+&lt;h3&gt;0x3 查看导出符号&lt;/h3&gt;
+&lt;p&gt;使用 &lt;a href="http://man7.org/linux/man-pages/man1/nm.1p.html"&gt;nm 工具&lt;/a&gt; 查看：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;# nm -C &amp;lt;module-name&amp;gt; | grep &amp;lt;name&amp;gt;
+&amp;lt;addr&amp;gt; D &amp;lt;name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;使用 version script 并重新编译后：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;# nm -C &amp;lt;module-name&amp;gt; | grep &amp;lt;name&amp;gt;
+&amp;lt;addr&amp;gt; d &amp;lt;name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其中的区别，是从 &lt;code&gt;D&lt;/code&gt; 变成了 &lt;code&gt;d&lt;/code&gt;。根据手册里的解释：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;1. D: The symbol is in the initialized data section.
+2. If lowercase, the symbol is local; if uppercase, the symbol is global (external).
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Programming"></category><category term="Linker"></category><category term="Loader"></category></entry><entry><title>redefinition of typedef error</title><link href="https://cctags.github.io/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html" rel="alternate"></link><published>2014-10-30T06:00:00+08:00</published><updated>2014-10-30T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2014-10-30:/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html</id><content type="html">&lt;p&gt;又是一个坑。。啥也别说了。。&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6"&gt;http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6&lt;/a&gt;&lt;/p&gt;</content><category term="Programming"></category></entry><entry><title>gcc reverse_iterator comparison operators missing?</title><link href="https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html" rel="alternate"></link><published>2014-10-22T06:00:00+08:00</published><updated>2014-10-22T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2014-10-22:/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html</id><content type="html">&lt;p&gt;I get a compile error of the iterator when porting an application which is based on the C++ standard library. Someone get the same issue before, and there is already an answer at &lt;a href="http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing"&gt;http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing&lt;/a&gt;.&lt;/p&gt;</content><category term="Programming"></category></entry><entry><title>栈溢出的调试及解决办法</title><link href="https://cctags.github.io/posts/2014/10/17/debug_the_stack_overflow.html" rel="alternate"></link><published>2014-10-17T06:00:00+08:00</published><updated>2014-10-17T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2014-10-17:/posts/2014/10/17/debug_the_stack_overflow.html</id><content type="html">&lt;h3&gt;※ 问题：&lt;/h3&gt;
+&lt;p&gt;栈上消耗的内存太多，导致溢出，程序崩溃。&lt;/p&gt;
+&lt;h3&gt;※ 程序崩溃的过程是怎样的？&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;1. CPU 执行代码时，反复地压栈；
+2. 访问栈上内存时缺页， CPU 抛异常，操作系统内核接管；
+3. 操作系统内核计算出异常地址已经低于栈的低地址，所以拒绝补页，同时抛出软件异常；
+4. 程序崩溃，调试器接管，或者提示错误并退出。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;※ 如何知道栈的大小？&lt;/h3&gt;
+&lt;p&gt;一个简单的办法是，程序崩溃后，在调试器里，对比函数调用栈最高和最低处的栈指针即可。&lt;/p&gt;
+&lt;h3&gt;※ 如何调整栈的大小？&lt;/h3&gt;
+&lt;p&gt;设置全局配置、修改可执行文件内部属性、创建线程前指定栈大小等等。比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;1. 主线程： ldrel -S 10M -L &amp;lt;program&amp;gt;   /* 10M + Lazy */
+2. 子线程： pthread_attr_setstacksize() + pthread_attr_setstacklazy()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Programming"></category></entry><entry><title>如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键</title><link href="https://cctags.github.io/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html" rel="alternate"></link><published>2012-08-07T06:00:00+08:00</published><updated>2012-08-07T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2012-08-07:/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html</id><content type="html">&lt;p&gt;使用 vim 的时候，经常会用到 Ctrl-Fn 及 Shift-Fn 这样的组合键，无奈 PuTTY 不支持。&lt;/p&gt;
+&lt;p&gt;从网上找到的解决办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://www.newsmth.net/nForum/#!article/PHP/88598"&gt;http://www.newsmth.net/nForum/#!article/PHP/88598&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.newsmth.net/nForum/#!article/LinuxApp/859371"&gt;http://www.newsmth.net/nForum/#!article/LinuxApp/859371&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html"&gt;http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;出于安全，小心使用。&lt;/p&gt;</content><category term="Tools"></category><category term="PuTTY"></category><category term="ssh"></category></entry><entry><title>以前的一个帖子</title><link href="https://cctags.github.io/posts/2012/04/16/baidu_and_google.html" rel="alternate"></link><published>2012-04-16T06:00:00+08:00</published><updated>2012-04-16T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2012-04-16:/posts/2012/04/16/baidu_and_google.html</id><content type="html">&lt;p&gt;&lt;a href="http://topic.csdn.net/t/20040616/15/3097196.html"&gt;这是&lt;/a&gt; 很久以前的一个夏天，在 csdn 论坛里的帖子，讨论一段不太优雅的 Python 代码。&lt;/p&gt;
+&lt;p&gt;很久以后，我在 Baidu 里找了好久，不过这个帖子后来找不到了，挺可惜的。&lt;/p&gt;
+&lt;p&gt;然后 Google 了一下，很快就找到了 -__-!&lt;/p&gt;</content><category term="misc"></category><category term="Python"></category></entry><entry><title>三思而行</title><link href="https://cctags.github.io/posts/2012/04/15/information.html" rel="alternate"></link><published>2012-04-15T06:00:00+08:00</published><updated>2012-04-15T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2012-04-15:/posts/2012/04/15/information.html</id><summary type="html">&lt;p&gt;今天在 python-chinese 的邮件列表里看到一段话：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;All of the messages you send to these mailing lists will be archived. If you include sensitive information in your message it will be viewable by anyone. That includes email addresses, phone numbers, addresses, etc.  Site policy is to not edit the archives except, possibly to remove …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;今天在 python-chinese 的邮件列表里看到一段话：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;All of the messages you send to these mailing lists will be archived. If you include sensitive information in your message it will be viewable by anyone. That includes email addresses, phone numbers, addresses, etc.  Site policy is to not edit the archives except, possibly to remove viruses. This means that your information will be viewable by posterity, so be careful.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;网络是个好东西，有什么问题，尽力去找，几乎总能找到答案的，因为似乎总是有人已经问过类似的问题了。所以不要随意地发问，尽量地自己解决。这是对自己负责，同时也是对别人负责。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;从搜索到的结果来看，这段话也被写在以下邮件列表里：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.huihoo.com/systemtap/sourceware.org/lists.html"&gt;https://docs.huihoo.com/systemtap/sourceware.org/lists.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.cygwin.com/lists.html"&gt;https://www.cygwin.com/lists.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category></entry><entry><title>chrome 导入 portable firefox 收藏夹</title><link href="https://cctags.github.io/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html" rel="alternate"></link><published>2011-09-05T06:00:00+08:00</published><updated>2011-09-05T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-09-05:/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html</id><content type="html">&lt;p&gt;之前用的是 portable firefox，现在慢慢地转到 chrome 了。
+在导入收藏夹时遇到了问题。chrome 不知道 portable firefox 收藏夹的位置，折腾了好一会儿，找到个办法：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;将 firefox 的收藏夹导出为 bookmarks.html；&lt;/li&gt;
+&lt;li&gt;将 bookmarks.html 导入 IE；&lt;/li&gt;
+&lt;li&gt;在 chrome 里，导入 IE Favorites；&lt;/li&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Tools"></category><category term="Chrome"></category><category term="Firefox"></category></entry><entry><title>Automatically cc/bcc the mail messages</title><link href="https://cctags.github.io/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html" rel="alternate"></link><published>2011-07-25T06:00:00+08:00</published><updated>2011-07-25T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-07-25:/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html</id><summary type="html">&lt;p&gt;用了很长时间的 Thunderbird，随着收件箱里的邮件越来越多，形成了以下的使用习惯：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;按邮件的属性分成多个类别（文件夹）；&lt;/li&gt;
+&lt;li&gt;更改设置，在发送一封邮件的同时，将其 bcc 给自己；&lt;/li&gt;
+&lt;li&gt;在一个分类下，按索引（会话）方式罗列邮件；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这样，邮箱里显示的是一个个的索引（会话），而不再是单独的邮件。其实用性不用多说，好多人也是这样用的。&lt;/p&gt;
+&lt;p&gt;由于工作原因，目前使用的是 Outlook。在 Outlook 里，1 和 3 基本上不是问题，但 2 却无法直接搞定。&lt;/p&gt;
+&lt;p&gt;还好有网络，花了点时间，找到了一些免费的解决方案：&lt;a href="http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html"&gt;http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html&lt;/a&gt;，&lt;a href="http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw"&gt;http://www.slipstick.com/mail1/always_bcc …&lt;/a&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;用了很长时间的 Thunderbird，随着收件箱里的邮件越来越多，形成了以下的使用习惯：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;按邮件的属性分成多个类别（文件夹）；&lt;/li&gt;
+&lt;li&gt;更改设置，在发送一封邮件的同时，将其 bcc 给自己；&lt;/li&gt;
+&lt;li&gt;在一个分类下，按索引（会话）方式罗列邮件；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这样，邮箱里显示的是一个个的索引（会话），而不再是单独的邮件。其实用性不用多说，好多人也是这样用的。&lt;/p&gt;
+&lt;p&gt;由于工作原因，目前使用的是 Outlook。在 Outlook 里，1 和 3 基本上不是问题，但 2 却无法直接搞定。&lt;/p&gt;
+&lt;p&gt;还好有网络，花了点时间，找到了一些免费的解决方案：&lt;a href="http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html"&gt;http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html&lt;/a&gt;，&lt;a href="http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw"&gt;http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw&lt;/a&gt;。当然，需要调整一下安全设置。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Sub&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Application_ItemSend&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ByVal&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Item&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Cancel&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Boolean&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Recipient&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;strMsg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Integer&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;strBcc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;On&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Error&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Resume&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Next&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;strBcc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;user@domain.com&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;Set&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Item&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Recipients&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strBcc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;olBCC&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ow"&gt;Not&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Resolve&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Then&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="n"&gt;strMsg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;Could not resolve the Bcc recipient. &amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                 &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;Do you want still to send the message?&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;MsgBox&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strMsg&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbYesNo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbDefaultButton1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;Could Not Resolve Bcc Recipient&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbNo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Then&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;&lt;span class="n"&gt;Cancel&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;True&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="k"&gt;End&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;End&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;Set&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Nothing&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;End&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Sub&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Tools"></category><category term="Outlook"></category></entry><entry><title>虚拟机里的时间走慢的问题</title><link href="https://cctags.github.io/posts/2011/07/13/os_time_not_correct_in_vm.html" rel="alternate"></link><published>2011-07-13T06:00:00+08:00</published><updated>2011-07-13T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-07-13:/posts/2011/07/13/os_time_not_correct_in_vm.html</id><content type="html">&lt;p&gt;使用过程中碰到了这个问题，很麻烦。&lt;/p&gt;
+&lt;p&gt;参考了现成的解决方法，基本上可以通过安装 VMwareTools 工具解决。&lt;/p&gt;</content><category term="Tools"></category><category term="VM"></category></entry><entry><title>How to undo "clear offline items"</title><link href="https://cctags.github.io/posts/2011/07/08/how_to_undo_clear_offline_items.html" rel="alternate"></link><published>2011-07-08T06:00:00+08:00</published><updated>2011-07-08T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-07-08:/posts/2011/07/08/how_to_undo_clear_offline_items.html</id><content type="html">&lt;p&gt;在 Outlook 里浏览邮件分类目录时，点了 “clear offline items” 按钮，这下邮件全没了。。那叫一个紧张呀。&lt;/p&gt;
+&lt;p&gt;赶紧搜索一下，找到了几个：&lt;a href="http://www.pcreview.co.uk/forums/do-undo-clear-offline-items-and-regain-my-calendar-t2961229.html"&gt;how do i undo "clear offline items"&lt;/a&gt;，&lt;a href="http://www.office-outlook.com/outlook-forum/index.php/m/511008/"&gt;how do i recoover "clear offline items"&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;按着罗列的方法，邮件终于回来了。有惊无险。&lt;/p&gt;</content><category term="Tools"></category><category term="Outlook"></category></entry><entry><title>使用 pthread tls destructor 时遇到的问题</title><link href="https://cctags.github.io/posts/2011/07/06/pthread_tls_destructor_issue.html" rel="alternate"></link><published>2011-07-06T06:00:00+08:00</published><updated>2011-07-06T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-07-06:/posts/2011/07/06/pthread_tls_destructor_issue.html</id><summary type="html">&lt;p&gt;使用 pthread 线程时，可以通过 pthread_key_create() 这个 API，给新创建的线程添加一个回调函数，在线程退出时会被系统调用到，通常用于线程相关资源的清理，等等。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;pthread_key_create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="n"&gt;pthread_key_t&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;destructor&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;特别要注意的是，在 destructor 被回调时，其参数肯定不为空，但此时 &lt;strong&gt;对应的 tls 已经被清空！&lt;/strong&gt; 所以，如果 destructor 里有依赖 tls 的，其运行结果肯定跟预期的不一样。&lt;/p&gt;
+&lt;p&gt;写代码的时候没注意，出了问题也没有头绪，仔细看了 &lt;a href="https://linux.die.net/man/3/pthread_key_create"&gt;pthread_key_create 的文档&lt;/a&gt; 才清楚：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;An optional destructor function may be associated with each key …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;使用 pthread 线程时，可以通过 pthread_key_create() 这个 API，给新创建的线程添加一个回调函数，在线程退出时会被系统调用到，通常用于线程相关资源的清理，等等。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;pthread_key_create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="n"&gt;pthread_key_t&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;destructor&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;特别要注意的是，在 destructor 被回调时，其参数肯定不为空，但此时 &lt;strong&gt;对应的 tls 已经被清空！&lt;/strong&gt; 所以，如果 destructor 里有依赖 tls 的，其运行结果肯定跟预期的不一样。&lt;/p&gt;
+&lt;p&gt;写代码的时候没注意，出了问题也没有头绪，仔细看了 &lt;a href="https://linux.die.net/man/3/pthread_key_create"&gt;pthread_key_create 的文档&lt;/a&gt; 才清楚：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;An optional destructor function may be associated with each key value. At thread exit, if a key value has a non-NULL destructor pointer, and the thread has a non-NULL value associated with that key, the value of the key is set to NULL, and then the function pointed to is called with the previously associated value as its sole argument. The order of destructor calls is unspecified if more than one destructor exists for a thread when it exits.&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="Programming"></category><category term="pthread"></category></entry><entry><title>UltraEdit 函数列表错位的问题</title><link href="https://cctags.github.io/posts/2011/06/09/the_function_list_issue_in_ultraedit.html" rel="alternate"></link><published>2011-06-09T06:00:00+08:00</published><updated>2011-06-09T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-06-09:/posts/2011/06/09/the_function_list_issue_in_ultraedit.html</id><summary type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;在 UltraEdit 里遇到一个问题：通过函数列表跳转到函数实现的时候，会出现定位不准、有错位的情况。&lt;/p&gt;
+&lt;h2&gt;0x1 解决方法&lt;/h2&gt;
+&lt;p&gt;问题的解决方法，请参考以下链接：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html"&gt;http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078"&gt;http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里把解决方法记录一下，备忘：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;As workaround you can modify the first function string in c_cplusplus.uew from
+
+/Function String = &amp;quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;在 UltraEdit 里遇到一个问题：通过函数列表跳转到函数实现的时候，会出现定位不准、有错位的情况。&lt;/p&gt;
+&lt;h2&gt;0x1 解决方法&lt;/h2&gt;
+&lt;p&gt;问题的解决方法，请参考以下链接：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html"&gt;http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078"&gt;http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里把解决方法记录一下，备忘：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;As workaround you can modify the first function string in c_cplusplus.uew from
+
+/Function String = &amp;quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t]++([^p*&amp;amp;:, ^t^[^]a-zA-Z_0-9./()!&amp;lt;&amp;gt;]++)[~;]&amp;quot;
+
+to
+
+/Function String = &amp;quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t]++([ ^t]++$&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;0x2 另一个问题&lt;/h2&gt;
+&lt;p&gt;这时，遇到了另一个问题，由于是工作机器，对于 c_cplusplus.uew 所在的 C: 盘分区，没有写权限！&lt;/p&gt;
+&lt;p&gt;这时，可以把 UltraEdit 的 wordfiles 目录拷贝到其他分区的某个位置，比如 D:\a\b\wordfiles，同时修改 Advanced/Configuration/Editor Display/Syntax Highlighting 下的配置，重启即可。&lt;/p&gt;</content><category term="Tools"></category><category term="UltraEdit"></category></entry><entry><title>Use ExamDiff in ClearCase</title><link href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html" rel="alternate"></link><published>2011-03-15T06:00:00+08:00</published><updated>2011-03-15T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-03-15:/posts/2011/03/15/use_examdiff_in_clearcase.html</id><summary type="html">&lt;p&gt;由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；&lt;/li&gt;
+&lt;li&gt;diffspawn.bat 的内容：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;@echo off
+&amp;quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&amp;quot; %5 %6
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;修改 &lt;code&gt;%ProgramFiles%\Rational\ClearCase\lib\mgrs\map&lt;/code&gt; 配置文件：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;text_file_delta     compare  &amp;lt;path&amp;gt;\diffspawn.exe
+text_file_delta     xcompare &amp;lt;path&amp;gt;\diffspawn.exe …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；&lt;/li&gt;
+&lt;li&gt;diffspawn.bat 的内容：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;@echo off
+&amp;quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&amp;quot; %5 %6
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;修改 &lt;code&gt;%ProgramFiles%\Rational\ClearCase\lib\mgrs\map&lt;/code&gt; 配置文件：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;text_file_delta     compare  &amp;lt;path&amp;gt;\diffspawn.exe
+text_file_delta     xcompare &amp;lt;path&amp;gt;\diffspawn.exe
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ul&gt;</content><category term="VCS"></category><category term="ClearCase"></category></entry><entry><title>wxPython 里的 wx.ID_YES 与 wx.YES 不是一回事</title><link href="https://cctags.github.io/posts/2011/02/11/wx_id_yes_not_yes.html" rel="alternate"></link><published>2011-02-11T06:00:00+08:00</published><updated>2011-02-11T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-02-11:/posts/2011/02/11/wx_id_yes_not_yes.html</id><content type="html">&lt;p&gt;基于 wxPython 写了一个小程序，看到了以下两个不一样的 YES：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;wx.MessageDialog() 返回的是 &lt;a href="https://wxpython.org/Phoenix/docs/html/wx.MessageDialog.html#wx.MessageDialog.ShowModal"&gt;wx.ID_YES, ...&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;wx.MessageBox() 返回的是 &lt;a href="https://wxpython.org/Phoenix/docs/html/wx.functions.html#wx.MessageBox"&gt;wx.YES, ...&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用的时候要注意。&lt;/p&gt;</content><category term="Programming"></category><category term="Python"></category><category term="wxPython"></category></entry><entry><title>终端与远程之间的文件传递</title><link href="https://cctags.github.io/posts/2011/01/11/file-transfer.html" rel="alternate"></link><published>2011-01-11T06:00:00+08:00</published><updated>2011-01-11T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-01-11:/posts/2011/01/11/file-transfer.html</id><summary type="html">&lt;p&gt;经常需要在终端和远程服务器之间进行文件传递，以下是几种常用的方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ssh（文件比较大时，会比较慢）&lt;ul&gt;
+&lt;li&gt;rz/sz &lt;a href="https://linux.die.net/man/1/sz"&gt;https://linux.die.net/man/1/sz&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;rsync &lt;a href="https://linux.die.net/man/1/rsync"&gt;https://linux.die.net/man/1/rsync&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;pscp &lt;a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html"&gt;https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;WinSCP&lt;/li&gt;
+&lt;li&gt;Xshell，可以直接拖拽，连 rz/sz 都省了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;sftp&lt;/li&gt;
+&lt;li&gt;ftp，速度快；需要考虑文件的访问权限；&lt;/li&gt;
+&lt;li&gt;python 小工具：&lt;ul&gt;
+&lt;li&gt;下载文件，&lt;code&gt;python -m SimpleHTTPServer …&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;经常需要在终端和远程服务器之间进行文件传递，以下是几种常用的方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ssh（文件比较大时，会比较慢）&lt;ul&gt;
+&lt;li&gt;rz/sz &lt;a href="https://linux.die.net/man/1/sz"&gt;https://linux.die.net/man/1/sz&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;rsync &lt;a href="https://linux.die.net/man/1/rsync"&gt;https://linux.die.net/man/1/rsync&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;pscp &lt;a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html"&gt;https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;WinSCP&lt;/li&gt;
+&lt;li&gt;Xshell，可以直接拖拽，连 rz/sz 都省了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;sftp&lt;/li&gt;
+&lt;li&gt;ftp，速度快；需要考虑文件的访问权限；&lt;/li&gt;
+&lt;li&gt;python 小工具：&lt;ul&gt;
+&lt;li&gt;下载文件，&lt;code&gt;python -m SimpleHTTPServer &amp;lt;port&amp;gt;&lt;/code&gt;，以及 &lt;code&gt;wget http://&amp;lt;ip&amp;gt;:port/xxx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;上传文件，可以使用 SimpleHTTPServerWithUpload.py&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://gist.github.com/UniIsland/3346170"&gt;https://gist.github.com/UniIsland/3346170&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://linuxtoy.org/archives/simple-http-server-with-upload.html"&gt;https://linuxtoy.org/archives/simple-http-server-with-upload.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Tools"></category><category term="linux"></category><category term="ssh"></category><category term="Python"></category></entry><entry><title>git-svn 提示仓库格式错误</title><link href="https://cctags.github.io/posts/2010/12/28/update-svn-repo-format.html" rel="alternate"></link><published>2010-12-28T06:00:00+08:00</published><updated>2010-12-28T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2010-12-28:/posts/2010/12/28/update-svn-repo-format.html</id><summary type="html">&lt;p&gt;问题：使用 git 操作一个 svn 仓库时，报错如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Expected FS format &amp;#39;2&amp;#39;; found format &amp;#39;3&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;解决办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 &lt;strong&gt;v1.5&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin dump /path/to/repo1 &amp;gt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;切换到 &lt;strong&gt;v1.4&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin load /path/to/repo2 &amp;lt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;设置权限并开启服务：&lt;code&gt;svnserve -d [--foreground]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git svn clone svn://&amp;lt;ip&amp;gt;/path/to/repo2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;OK …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;问题：使用 git 操作一个 svn 仓库时，报错如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Expected FS format &amp;#39;2&amp;#39;; found format &amp;#39;3&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;解决办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 &lt;strong&gt;v1.5&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin dump /path/to/repo1 &amp;gt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;切换到 &lt;strong&gt;v1.4&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin load /path/to/repo2 &amp;lt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;设置权限并开启服务：&lt;code&gt;svnserve -d [--foreground]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git svn clone svn://&amp;lt;ip&amp;gt;/path/to/repo2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;OK&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;可能有更简单的办法，先这样快速解决一下。&lt;/p&gt;</content><category term="VCS"></category><category term="git"></category><category term="svn"></category></entry><entry><title>体验 svn 和 git 的使用差异</title><link href="https://cctags.github.io/posts/2010/12/27/the-difference-between-svn-and-git.html" rel="alternate"></link><published>2010-12-27T06:00:00+08:00</published><updated>2010-12-27T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2010-12-27:/posts/2010/12/27/the-difference-between-svn-and-git.html</id><summary type="html">&lt;p&gt;很长时间以来，一直是用 svn。最近开始学习和使用 git。通过一段时间的使用，感受到它们有不小的差异。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;svn&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有全局唯一的版本号，可以嵌到代码里；&lt;/li&gt;
+&lt;li&gt;可以下载部分模块、而不是全部；&lt;/li&gt;
+&lt;li&gt;有服务器存放仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;git&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;除了少数几个操作以外，几乎都可以不依赖网络，离线操作；&lt;/li&gt;
+&lt;li&gt;操作快速高效；&lt;/li&gt;
+&lt;li&gt;只有根目录有一个 &lt;code&gt;.git/&lt;/code&gt; 目录，没有多余的隐藏目录；&lt;/li&gt;
+&lt;li&gt;可以撤销之前的操作；&lt;/li&gt;
+&lt;li&gt;命令行的控制更加丰富；&lt;/li&gt;
+&lt;li&gt;可以通过 &lt;a href="https://git-scm.com/docs/git-svn"&gt;git-svn&lt;/a&gt; 访问 svn 仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外，还注意到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在目录结构上，git 更干净；在 svn 里，可以使用 export 导出干净的目录结构。&lt;/li&gt;
+&lt;li&gt;git 每次都有唯一的 ID，结合 post-commit，也可以嵌到代码里。&lt;/li&gt;
+&lt;li&gt;git 不会跟踪空目录，非要这样做，可以在空目录里放个空的 …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;很长时间以来，一直是用 svn。最近开始学习和使用 git。通过一段时间的使用，感受到它们有不小的差异。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;svn&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有全局唯一的版本号，可以嵌到代码里；&lt;/li&gt;
+&lt;li&gt;可以下载部分模块、而不是全部；&lt;/li&gt;
+&lt;li&gt;有服务器存放仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;git&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;除了少数几个操作以外，几乎都可以不依赖网络，离线操作；&lt;/li&gt;
+&lt;li&gt;操作快速高效；&lt;/li&gt;
+&lt;li&gt;只有根目录有一个 &lt;code&gt;.git/&lt;/code&gt; 目录，没有多余的隐藏目录；&lt;/li&gt;
+&lt;li&gt;可以撤销之前的操作；&lt;/li&gt;
+&lt;li&gt;命令行的控制更加丰富；&lt;/li&gt;
+&lt;li&gt;可以通过 &lt;a href="https://git-scm.com/docs/git-svn"&gt;git-svn&lt;/a&gt; 访问 svn 仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外，还注意到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在目录结构上，git 更干净；在 svn 里，可以使用 export 导出干净的目录结构。&lt;/li&gt;
+&lt;li&gt;git 每次都有唯一的 ID，结合 post-commit，也可以嵌到代码里。&lt;/li&gt;
+&lt;li&gt;git 不会跟踪空目录，非要这样做，可以在空目录里放个空的 .gitignore，就好了。&lt;/li&gt;
+&lt;li&gt;gitk 不知道时区的？&lt;/li&gt;
+&lt;/ul&gt;</content><category term="VCS"></category><category term="git"></category><category term="svn"></category></entry><entry><title>临时对象引起的内存泄漏</title><link href="https://cctags.github.io/posts/2010/12/13/temporary_object_memory_leak.html" rel="alternate"></link><published>2010-12-13T06:00:00+08:00</published><updated>2010-12-13T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2010-12-13:/posts/2010/12/13/temporary_object_memory_leak.html</id><summary type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;程序退出时，VC 开发环境提示有多处内存泄漏。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;经过数次尝试之后，找到了重现的方法，以及问题出现的操作路径。&lt;/p&gt;
+&lt;p&gt;于是，使用 &lt;code&gt;_CrtSetBreakAlloc()&lt;/code&gt; 来进一步地分析。这是一个 Win32 API，它的用处是在堆上第 { 指定 } 次内存分配时，产生一次异常，调试程序从而可以接管整个程序，直接定位到是哪里的内存分配。这个 API 的调用位置，通常是在程序初始化的时候。&lt;/p&gt;
+&lt;p&gt;添加调试代码、编译、运行，调试器很顺利地捕获到了这个断点，停留在了&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetArgs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;ArgsWrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;info&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;Do&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这段代码里，先构造一个 ArgsWrapper 的 C++ 对象，然后它又作为参数，传递给 SetArgs 函数。后续地，会调用 Do …&lt;/p&gt;</summary><content type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;程序退出时，VC 开发环境提示有多处内存泄漏。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;经过数次尝试之后，找到了重现的方法，以及问题出现的操作路径。&lt;/p&gt;
+&lt;p&gt;于是，使用 &lt;code&gt;_CrtSetBreakAlloc()&lt;/code&gt; 来进一步地分析。这是一个 Win32 API，它的用处是在堆上第 { 指定 } 次内存分配时，产生一次异常，调试程序从而可以接管整个程序，直接定位到是哪里的内存分配。这个 API 的调用位置，通常是在程序初始化的时候。&lt;/p&gt;
+&lt;p&gt;添加调试代码、编译、运行，调试器很顺利地捕获到了这个断点，停留在了&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetArgs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;ArgsWrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;info&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;Do&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这段代码里，先构造一个 ArgsWrapper 的 C++ 对象，然后它又作为参数，传递给 SetArgs 函数。后续地，会调用 Do 函数来执行。&lt;/p&gt;
+&lt;p&gt;ArgsWrapper 是一个 C++ 的类，它内部里有多个子类对象，都会有堆内存的申请操作，在这些子类对象的析构函数里会进行释放。既然调试器提示了，就说明这些析构函数可能没有调用到，更进一步地，作为父类的 ArgsWrapper 的析构函数没有调用到。&lt;/p&gt;
+&lt;p&gt;在 ArgsWrapper 的构造函数及析构函数里添加了打印，再次运行后，发现构造函数和析构函数都有调用到，但在 obj.SetArgs 调用时即已经完成。这说明，析构在接口方法使用前已经被调用，之后调用的接口方法里申请到的内存，已经没有了释放的时机。看来是由于没有控制好这个临时 C++ 对象的生命周期，从而引起了内存泄漏的问题。&lt;/p&gt;
+&lt;p&gt;那另外一个问题是，为什么析构以后这个对象还是可以访问呢。这个问题应该是这样的，上述代码里定义了一个临时变量，它本身的位置在当前函数的调用栈上，这片内存会在这个函数调用结束后才会被释放，所以在此期间，虽然已经被构了，但内存还是有效的，可以正常操作，除了一点，那就是它的析构函数不会被再次调用。&lt;/p&gt;
+&lt;h3&gt;※ 解决&lt;/h3&gt;
+&lt;p&gt;找到了问题的原因，同时也定位了问题代码的位置，修改就容易了。将上述代码拆分成两句，即先定义一个变量，然后将变量传递给后续函数使用：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;ArgsWrapper&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;info&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetArgs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;Do&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这样就可以避免临时对象生命周期短的问题了。&lt;/p&gt;</content><category term="Programming"></category><category term="memory leak"></category></entry><entry><title>资源泄漏导致程序无法响应</title><link href="https://cctags.github.io/posts/2010/09/08/server_unavailable.html" rel="alternate"></link><published>2010-09-08T06:00:00+08:00</published><updated>2010-09-08T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2010-09-08:/posts/2010/09/08/server_unavailable.html</id><summary type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;程序提交测试后，发现了一个问题，某些情况下，在运行了几十个小时、甚至更长时间之后，服务端会失去响应，从而导致客户端无法连接上来。这个问题不容易重现，同时重新运行服务端后即可恢复正常。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;这个问题出现过数次，但一直没有总结出固定重现的方法，且每次出现也都是长时间的运行之后，因此没有明确的解决思路。&lt;/p&gt;
+&lt;p&gt;由于没有固定重现方法，所以只能等待。在这期间，仔细分析了客户端与服务端之间连接和通信的实现代码，并无可疑之处，而且这段代码很长时间里没有修改过，所以粗略感觉下来问题不在这里。&lt;/p&gt;
+&lt;p&gt;终于等到了问题的重现！&lt;/p&gt;
+&lt;p&gt;经过仔细观察，问题出现后的现象是这样的：客户端去连接服务端，会提示连接失败；观察服务端，系统日志里出现了很多打印，其中比较值得关注的是 socket 监听失败。&lt;/p&gt;
+&lt;p&gt;服务端在开发过程中实现了日志的功能，这对问题的分析起了很大的帮助。分析日志，发现里面有很多的打开文件的错误记录，分析下来那就是打开了很多文件，以至于无法打开更多的文件，从而导致 socket 监听失败，引起客户端无法连接上来。&lt;/p&gt;
+&lt;p&gt;进入了 &lt;code&gt;/proc/&amp;lt;server pid&amp;gt;/fd/&lt;/code&gt; 这个目录，ls 了一下 …&lt;/p&gt;</summary><content type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;程序提交测试后，发现了一个问题，某些情况下，在运行了几十个小时、甚至更长时间之后，服务端会失去响应，从而导致客户端无法连接上来。这个问题不容易重现，同时重新运行服务端后即可恢复正常。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;这个问题出现过数次，但一直没有总结出固定重现的方法，且每次出现也都是长时间的运行之后，因此没有明确的解决思路。&lt;/p&gt;
+&lt;p&gt;由于没有固定重现方法，所以只能等待。在这期间，仔细分析了客户端与服务端之间连接和通信的实现代码，并无可疑之处，而且这段代码很长时间里没有修改过，所以粗略感觉下来问题不在这里。&lt;/p&gt;
+&lt;p&gt;终于等到了问题的重现！&lt;/p&gt;
+&lt;p&gt;经过仔细观察，问题出现后的现象是这样的：客户端去连接服务端，会提示连接失败；观察服务端，系统日志里出现了很多打印，其中比较值得关注的是 socket 监听失败。&lt;/p&gt;
+&lt;p&gt;服务端在开发过程中实现了日志的功能，这对问题的分析起了很大的帮助。分析日志，发现里面有很多的打开文件的错误记录，分析下来那就是打开了很多文件，以至于无法打开更多的文件，从而导致 socket 监听失败，引起客户端无法连接上来。&lt;/p&gt;
+&lt;p&gt;进入了 &lt;code&gt;/proc/&amp;lt;server pid&amp;gt;/fd/&lt;/code&gt; 这个目录，ls 了一下，结果有大量的输出，其中几乎所有的文件已经删除，但有好多文件句柄没有释放。使用 &lt;code&gt;ls -1 | wc -l&lt;/code&gt; 统计了一下，目前已经打开了 1024 个文件，这已经是每个进程打开文件的默认上限了（这可以从 &lt;code&gt;ulimit -a&lt;/code&gt; 看出来）。虽然几乎所有的文件已经删除，但从未释放的文件句柄，还可以看出这些文件的所在路径。&lt;/p&gt;
+&lt;p&gt;结合业务程序的实现代码分析，原因就清楚了，有一个模块的实现里会经常性地产生临时文件，操作完成后会删除这个临时文件，但问题是没有关闭文件句柄。在该模块运行一定次数后，未释放的文件句柄越来越多，直到达到默认的上限，从而导致了这个问题。&lt;/p&gt;
+&lt;h3&gt;※ 解决&lt;/h3&gt;
+&lt;p&gt;补上关闭文件句柄的操作即可。&lt;/p&gt;</content><category term="Programming"></category><category term="memory leak"></category></entry><entry><title>FTP 上传文件被阻塞的问题</title><link href="https://cctags.github.io/posts/2010/03/13/ftp_upload_block.html" rel="alternate"></link><published>2010-03-13T06:00:00+08:00</published><updated>2010-03-13T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2010-03-13:/posts/2010/03/13/ftp_upload_block.html</id><summary type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;程序里有一个功能是通过 FTP 上传升级包来完成系统的升级。&lt;/p&gt;
+&lt;p&gt;使用过程中发现，某些情况下，在某个文件升级时，进度条界面会显示正在上传，但这个过程一直在进行，不会结束。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;FTP 上传的过程：升级包上传的过程实现里依次包括了使用操作系统的 “ 文件选择对话框 ” 来选择需要上传的文件、建立一个 FTP 连接、上传文件、断开 FTP 连接等。由于上传过程不是在 “ 瞬间 ” 能完成的，所以放在后台进行，前台使用一个进度条来更新状态。代码的实现很简单，开发过程中自测了多次，没有出现过问题。&lt;/p&gt;
+&lt;p&gt;是不是 FTP 服务端的问题？简单地验证了一下，结果正常。&lt;/p&gt;
+&lt;p&gt;是不是客户端程序里 FTP 组件的使用、连接等等出了问题呢？按上述步骤重新操作了一下，抓包工具里没有出现 FTP 相关的包。就是说 FTP 连接还没有开始。&lt;/p&gt;
+&lt;p&gt;尝试选择其他的文件上传，结果正常。&lt;/p&gt;
+&lt;p&gt;在经过这些操作以后 …&lt;/p&gt;</summary><content type="html">&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;程序里有一个功能是通过 FTP 上传升级包来完成系统的升级。&lt;/p&gt;
+&lt;p&gt;使用过程中发现，某些情况下，在某个文件升级时，进度条界面会显示正在上传，但这个过程一直在进行，不会结束。&lt;/p&gt;
+&lt;h3&gt;※ 调试&lt;/h3&gt;
+&lt;p&gt;FTP 上传的过程：升级包上传的过程实现里依次包括了使用操作系统的 “ 文件选择对话框 ” 来选择需要上传的文件、建立一个 FTP 连接、上传文件、断开 FTP 连接等。由于上传过程不是在 “ 瞬间 ” 能完成的，所以放在后台进行，前台使用一个进度条来更新状态。代码的实现很简单，开发过程中自测了多次，没有出现过问题。&lt;/p&gt;
+&lt;p&gt;是不是 FTP 服务端的问题？简单地验证了一下，结果正常。&lt;/p&gt;
+&lt;p&gt;是不是客户端程序里 FTP 组件的使用、连接等等出了问题呢？按上述步骤重新操作了一下，抓包工具里没有出现 FTP 相关的包。就是说 FTP 连接还没有开始。&lt;/p&gt;
+&lt;p&gt;尝试选择其他的文件上传，结果正常。&lt;/p&gt;
+&lt;p&gt;在经过这些操作以后，分析下来，问题集中在这个需要上传的文件。&lt;/p&gt;
+&lt;p&gt;会不会是这个文件有什么特殊的属性？是否被锁住？……&lt;/p&gt;
+&lt;p&gt;经过调试发现，这个文件正在被其他程序使用！&lt;/p&gt;
+&lt;p&gt;这下问题就清楚了，这个文件已经被其他程序以独占方式打开，等到这里准备上传时，打开文件这个操作被阻塞了，后续操作无法运行，只能一直等待下去。&lt;/p&gt;
+&lt;h3&gt;※ 解决&lt;/h3&gt;
+&lt;p&gt;在文件上传之前，先判断一下它是否被其他程序以独占方式打开，避免后续操作被阻塞。&lt;/p&gt;</content><category term="Programming"></category><category term="FTP"></category></entry><entry><title>Linux 内核模块加载过程</title><link href="https://cctags.github.io/posts/2009/09/17/load_kernel_module.html" rel="alternate"></link><published>2009-09-17T06:00:00+08:00</published><updated>2009-09-17T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2009-09-17:/posts/2009/09/17/load_kernel_module.html</id><summary type="html">
+&lt;H2&gt;0x0&lt;/H2&gt;
+
+&lt;P&gt;
+项目开发过程中，尝试加载一个内核模块时出错，查看系统日志，有以下错误信息：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  iscsi_sfnet: disagrees about version of symbol struct_module
+&lt;/PRE&gt;
+
+&lt;P&gt;
+经过调试发现，是因为这个内核模块与当前 Linux kernel 版本不一致，所以无法加载。更新版本后问题解决。
+&lt;/P&gt;
+
+&lt;H2&gt;0x1&lt;/H2&gt;
+
+&lt;P&gt;
+以下内容是在问题解决后对于内核模块加载过程的一些学习记录。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;使用 insmod 或者 modprobe 加载内核模块（需要 root 权限），比如：
+
+&lt;PRE&gt;
+  insmod hello.ko，    或者
+  modprobe hello      （需要通过 depmod 更新模块的依赖关系）
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;用户工具通过 &lt;CODE&gt;sys_init_module()&lt;/CODE&gt; 这个系统调用陷入内核，来完成将模块加载到内核里去的动作
+&lt;P&gt;&lt;/P&gt;
+    &lt;OL&gt;
+    &lt;LI&gt;首先，会对这个模块进行各种检查，以确保对它的加载不会影响内核的运行，包括
+    &lt;P&gt;&lt;/P&gt;
+        &lt;OL&gt;
+        &lt;LI&gt;确认文件的大小，比如最大不能超过 6MB …&lt;/li&gt;&lt;/ol&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</summary><content type="html">
+&lt;H2&gt;0x0&lt;/H2&gt;
+
+&lt;P&gt;
+项目开发过程中，尝试加载一个内核模块时出错，查看系统日志，有以下错误信息：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  iscsi_sfnet: disagrees about version of symbol struct_module
+&lt;/PRE&gt;
+
+&lt;P&gt;
+经过调试发现，是因为这个内核模块与当前 Linux kernel 版本不一致，所以无法加载。更新版本后问题解决。
+&lt;/P&gt;
+
+&lt;H2&gt;0x1&lt;/H2&gt;
+
+&lt;P&gt;
+以下内容是在问题解决后对于内核模块加载过程的一些学习记录。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;使用 insmod 或者 modprobe 加载内核模块（需要 root 权限），比如：
+
+&lt;PRE&gt;
+  insmod hello.ko，    或者
+  modprobe hello      （需要通过 depmod 更新模块的依赖关系）
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;用户工具通过 &lt;CODE&gt;sys_init_module()&lt;/CODE&gt; 这个系统调用陷入内核，来完成将模块加载到内核里去的动作
+&lt;P&gt;&lt;/P&gt;
+    &lt;OL&gt;
+    &lt;LI&gt;首先，会对这个模块进行各种检查，以确保对它的加载不会影响内核的运行，包括
+    &lt;P&gt;&lt;/P&gt;
+        &lt;OL&gt;
+        &lt;LI&gt;确认文件的大小，比如最大不能超过 6MB、最小不能小于 ELF 头（大概几十个字节，与 CPU 位数有关）
+        &lt;LI&gt;Application Binary Interface (ABI) 一致性检查
+        &lt;LI&gt;vermagic 检查
+        &lt;LI&gt;确认是否为 rel 类型的文件，而不是 exe、so 或者其他
+        &lt;LI&gt;确认是否与当前运行的硬件类型匹配，比如 i386、arm 等等
+        &lt;LI&gt;确认 ELF 文件结构是否完整，比如 ELFMAG 是否匹配、等等
+        &lt;P&gt;&lt;/P&gt;
+        &lt;/OL&gt;
+    &lt;LI&gt;检查通过后开始加载，此处不关心这个过程，从略 …
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/OL&gt;
+&lt;LI&gt;浏览了 sys_init_module() 的实现，上述错误的原因是 ABI 一致性检查未通过
+&lt;P&gt;&lt;/P&gt;
+    &lt;OL&gt;
+    &lt;LI&gt;通常内核模块里有一个名为 __versions 的段，它的内容很简单，是编译模块时所用内核导出的部分符号以及其对应的 CRC 校验值
+
+&lt;PRE&gt;
+  13579bdf    struct_module
+  2468ace0    printk
+&lt;/PRE&gt;
+
+    &lt;P&gt;&lt;/P&gt;
+    &lt;LI&gt;这个校验值是在一个特定的内核版本里计算出来的，用于区别不同版本的内核
+    &lt;P&gt;&lt;/P&gt;
+        &lt;OL&gt;
+        &lt;LI&gt;安装内核源码包（*.rpm，从 kernel-*.spec 里可以看到由 Module.kabi 生成了 Module.symvers）或者内核编译后会在源码目录下生成 Module.symvers 文件，里面记录了所有导出符号及 CRC 校验值
+        &lt;LI&gt;编译内核模块时会将对应源码目录下的 struct_module、printk 或者其他一些导出符号及其 CRC 校验值链接到内核模块的 __versions 段里去
+        &lt;LI&gt;加载内核模块时，内核会将其与运行内核里的相应字段作比较，以此来保证 ABI 一致
+        &lt;P&gt;&lt;/P&gt;
+        &lt;/OL&gt;
+    &lt;LI&gt;modprobe 有一个选项，&lt;CODE&gt;--force-modversion&lt;/CODE&gt;，告诉内核忽略可能出现的 ABI 不一致，当然这样做很危险，可能发生内核崩溃
+    &lt;P&gt;&lt;/P&gt;
+    &lt;LI&gt;使用 objdump 查看 __versions 这个段里的内容，格式简单、可读，比如：
+
+&lt;PRE&gt;
+  $ objdump -s ext3.ko
+  Contents of section __versions:
+   0000 b2294749 00000000 73747275 63745f6d  .)GI....struct_m
+   0010 6f64756c 65000000 00000000 00000000  odule...........
+   0020 00000000 00000000 00000000 00000000  ................
+   0030 00000000 00000000 00000000 00000000  ................
+&lt;/PRE&gt;
+
+    &lt;P&gt;&lt;/P&gt;
+    &lt;LI&gt;对比需要加载的内核模块和内核中任一可加载的内核模块的差异，也可以从系统日志里查看加载失败的原因
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/OL&gt;
+&lt;LI&gt;vermagic 检查
+&lt;P&gt;&lt;/P&gt;
+    &lt;OL&gt;
+    &lt;LI&gt;加载内核模块时，也会检查 vermagic，它是一个可读的、用于表示内核版本的字符串
+    &lt;P&gt;&lt;/P&gt;
+        &lt;OL&gt;
+        &lt;LI&gt;内核源码里有一个宏 VERMAGIC_STRING 里，表示了这份内核头文件的版本，比如 2.6.18-el5 SMP mod_unload gcc-4.1，其含义非常直观
+        &lt;LI&gt;内核模块里的 .modinfo 段，其中 vermagic 字段里记录了编译模块时所用内核源码的版本和编译器的信息；可以通过 &lt;CODE&gt;objdump -s&lt;/CODE&gt; 的方式获取，也可以直接使用 modinfo 工具来查看，比如：
+
+&lt;PRE&gt;
+  $ modinfo ext3.ko
+  filename:       ext3.ko
+  license:        GPL
+  description:  Second Extended Filesystem with journaling extensions
+  author:         Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others
+  srcversion:     C06AB23BDA1C57EFB6501CF
+  depends:        jbd
+  vermagic:       2.6.18-el5 SMP mod_unload gcc-4.1
+&lt;/PRE&gt;
+
+        &lt;P&gt;&lt;/P&gt;
+        &lt;LI&gt;加载内核模块时，内核会将其与自己的版本作比较，保证内核版本的匹配
+        &lt;P&gt;&lt;/P&gt;
+        &lt;/OL&gt;
+    &lt;LI&gt;modprobe 有一个选项，&lt;CODE&gt;--force-vermagic&lt;/CODE&gt;，告诉内核忽略 vermagic 的不一致，当然这样做很危险
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/OL&gt;
+&lt;LI&gt;加载内核模块时有许多 ELF 格式的完整性检查，以此来过滤掉格式错误的文件、被 Hack 过的文件、等等
+&lt;/OL&gt;
+
+</content><category term="Programming"></category><category term="Linux"></category><category term="kernel"></category></entry><entry><title>文件系统学习笔记</title><link href="https://cctags.github.io/posts/2009/02/27/filesystem_review.html" rel="alternate"></link><published>2009-02-27T06:00:00+08:00</published><updated>2009-02-27T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2009-02-27:/posts/2009/02/27/filesystem_review.html</id><summary type="html">&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+  &lt;OL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc1"&gt;环境搭建&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc2"&gt;1.1. 宿主机的安装&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc3"&gt;1.2. 虚拟机的安装&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc4"&gt;编译内核&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc5"&gt;文件系统相关工具的使用&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc6"&gt;文件系统的层次&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc7"&gt;VFS&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc8"&gt;5.1. 内存里的结构&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc9"&gt;5.2. 操作&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc10"&gt;ext3 文件系统&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc11"&gt;6.1. 源代码位置&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc12"&gt;6.2. 数据结构&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc13"&gt;6.3. 磁盘上的布局&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc14"&gt;6.4. inode、block 的管理&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc15"&gt;6.5. 日志&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc16"&gt;6.6. e2fsprogs&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc17"&gt;xfs 文件系统&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc18"&gt;7.1. 源代码位置&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc19"&gt;7.2. 数据结构&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc20"&gt;7.3. 磁盘上的布局 …&lt;/a&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</summary><content type="html">&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+  &lt;OL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc1"&gt;环境搭建&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc2"&gt;1.1. 宿主机的安装&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc3"&gt;1.2. 虚拟机的安装&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc4"&gt;编译内核&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc5"&gt;文件系统相关工具的使用&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc6"&gt;文件系统的层次&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc7"&gt;VFS&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc8"&gt;5.1. 内存里的结构&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc9"&gt;5.2. 操作&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc10"&gt;ext3 文件系统&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc11"&gt;6.1. 源代码位置&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc12"&gt;6.2. 数据结构&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc13"&gt;6.3. 磁盘上的布局&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc14"&gt;6.4. inode、block 的管理&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc15"&gt;6.5. 日志&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc16"&gt;6.6. e2fsprogs&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc17"&gt;xfs 文件系统&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc18"&gt;7.1. 源代码位置&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc19"&gt;7.2. 数据结构&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc20"&gt;7.3. 磁盘上的布局&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc21"&gt;7.4. inode、block 的管理&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc22"&gt;7.5. 日志&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc23"&gt;7.6. xfsprogs&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;/OL&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+&lt;P&gt;
+以下主要包括了宿主机（Windows XP）和虚拟机（CentOS）开发环境的搭建、Linux 文件系统相关工具的使用、文件系统的结构、ext3、xfs 文件系统的学习。
+&lt;/P&gt;
+
+&lt;A NAME="toc1"&gt;&lt;/A&gt;
+&lt;H1&gt;1. 环境搭建&lt;/H1&gt;
+
+&lt;A NAME="toc2"&gt;&lt;/A&gt;
+&lt;H2&gt;1.1. 宿主机的安装&lt;/H2&gt;
+
+&lt;P&gt;
+以 Windows XP 作为宿主机，以下是一些需要安装的软件，用于虚拟机的搭建，以及登录、访问虚拟机的工具。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;安装 VMware Workstation。
+&lt;LI&gt;安装 PuTTY，作为远程登录虚拟机的工具。
+&lt;LI&gt;安装 WinSCP，它是实现了 SCP（Secure Copy Protocol）协议的 Windows 软件，用于宿主机访问虚拟机的文件系统。
+&lt;/OL&gt;
+
+&lt;A NAME="toc3"&gt;&lt;/A&gt;
+&lt;H2&gt;1.2. 虚拟机的安装&lt;/H2&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;运行 VMware Workstation，创建一个新的虚拟机，指定 &lt;CODE&gt;CentOS-4.5-i386-binDVD.iso&lt;/CODE&gt; 为安装源。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;选择 NAT（VMnet8） 作为虚拟机的网络模式，这样的好处是宿主机与虚拟机以同一个 IP 对外访问，另外宿主机与虚拟机可以相互访问。
+&lt;P&gt;&lt;/P&gt;
+    &lt;OL&gt;
+    &lt;LI&gt;虚拟机访问局域网里的资源，比如：
+&lt;PRE&gt;
+  mount -o username=xx%yy &amp;lt;path_on_net&amp;gt; /mnt/t
+&lt;/PRE&gt;
+
+    &lt;LI&gt;宿主机通过 WinSCP 访问虚拟机的文件系统；
+    &lt;LI&gt;安装 VMware tools 以后，可以指定宿主机的一个目录，虚拟机可以自动地挂载这个目录并访问。
+    &lt;/OL&gt;
+&lt;/OL&gt;
+
+&lt;A NAME="toc4"&gt;&lt;/A&gt;
+&lt;H1&gt;2. 编译内核&lt;/H1&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;下载源码，这里使用的是 2.6.9-78.25.EL 的版本：
+&lt;PRE&gt;
+  // 宿主机和虚拟机都在局域网里，所以都可以进行下载
+  // 下载需要设置代理
+  wget --proxy=on -e "http_proxy=&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;" --proxy-user=xx --proxy-passwd=yy
+  http://people.redhat.com/vgoyal/rhel4/SRPMS.kernel/kernel-2.6.9-78.25.EL.src.rpm
+&lt;/PRE&gt;
+
+&lt;LI&gt;安装源码
+&lt;PRE&gt;
+  rpm -ivh kernel-2.6.9-78.25.EL.src.rpm
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;编译
+&lt;PRE&gt;
+  cd /usr/src/redhat/SPECS
+  rpmbuild -bp --target i686 kernel-2.6.spec
+  cd /usr/src/redhat/BUILD/..
+  make xx_config  // 实验中使用的是 oldconfig
+  make
+  make modules_install
+  make install
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;编译出来的内核已经在 /boot 目录下了，启动的时候可以在 grub 里选择。如果 grub 里没有，需要配置 menu.lst。
+&lt;/OL&gt;
+
+&lt;A NAME="toc5"&gt;&lt;/A&gt;
+&lt;H1&gt;3. 文件系统相关工具的使用&lt;/H1&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;为虚拟机增加一块磁盘
+&lt;P&gt;&lt;/P&gt;
+为虚拟机增加一块磁盘（比如，1G 的 IDE 硬盘）。虚拟机启动后，可以使用 &lt;CODE&gt;fdisk -l&lt;/CODE&gt; 来看到这块磁盘（当然这时它处于未分区状态）。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;分区
+&lt;P&gt;&lt;/P&gt;
+比如这块新的磁盘是 /dev/hda，使用 &lt;CODE&gt;fdisk /dev/hda&lt;/CODE&gt; 来进行分区。分区可以有主分区和扩展分区，扩展分区里可以包括若干个逻辑分区。这里把这块 1G 的磁盘分成了大小为 768M 和 256M 的两个分区，分别为 /dev/hda1 和 /dev/hda2。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;创建文件系统
+&lt;P&gt;&lt;/P&gt;
+mkfs 工具用来创建各种格式的文件系统。
+&lt;P&gt;&lt;/P&gt;
+最简单的，使用 &lt;CODE&gt;mkfs.ext3 /dev/hda1&lt;/CODE&gt; 命令，就可以把这个分区格式成 ext3 的文件系统。也可以指定 ext3 相关的参数，比如 block 的大小、日志类型等等。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;挂载到系统
+&lt;P&gt;&lt;/P&gt;
+mount 是用来挂载磁盘的工具，比如：
+&lt;PRE&gt;
+  mkdir /mnt/dev_hda1
+  mount -t ext3 /dev/hda1 /mnt/dev_hda1
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+就把刚才已经创建了文件系统的分区挂载进来了。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;显示磁盘的相关信息
+&lt;P&gt;&lt;/P&gt;
+df 工具可以显示磁盘的相关信息。比如 &lt;CODE&gt;df -T -h&lt;/CODE&gt;：
+&lt;PRE&gt;
+  Filesystem    Type    容量  已用 可用 已用 % 挂载点
+  /dev/sda1     ext2    7.9G  4.4G  3.1G  59% /
+  none         tmpfs    125M     0  125M   0% /dev/shm
+  /dev/sda2     ext2    1.5G  316M  1.1G  22% /home
+  /dev/hda1     ext3    745M   17M  690M   3% /mnt/dev_hda1
+  /dev/hda2     ext3    260M   11M  236M   5% /mnt/dev_hda2
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+最后两行是新添加进来那块 IDE 硬盘上的两个分区。
+&lt;/OL&gt;
+
+&lt;A NAME="toc6"&gt;&lt;/A&gt;
+&lt;H1&gt;4. 文件系统的层次&lt;/H1&gt;
+
+&lt;P&gt;
+文件系统从上到下被划分成了 VFS 层、具体的文件系统（例如 ext3）、Page Cache 层、Generic Block Layer、IO 调度、块设备驱动以及物理块设备等多个层次。
+&lt;/P&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;VFS： 屏蔽了下层的具体文件系统操作的差异，为上层提供统一的文件系统接口。
+&lt;LI&gt;具体的文件系统层：各个文件系统的实现。
+&lt;LI&gt;Page Cache：把内存作为磁盘的一个缓存，以此来提高磁盘访问的性能。
+&lt;LI&gt;Generic Block Layer：接收上层发出的磁盘请求，向下层发出 IO 请求。
+&lt;LI&gt;IO 调度层：处理各个请求，进行优先次序的安排。
+&lt;LI&gt;块设备驱动以及物理块设备：针对具体的物理设备。
+&lt;/UL&gt;
+
+&lt;A NAME="toc7"&gt;&lt;/A&gt;
+&lt;H1&gt;5. VFS&lt;/H1&gt;
+
+&lt;P&gt;
+Linux 支持多种文件系统，VFS 的作用就是向上提供统一的文件系统接口、而屏蔽下层不同的实现。
+&lt;/P&gt;
+
+&lt;A NAME="toc8"&gt;&lt;/A&gt;
+&lt;H2&gt;5.1. 内存里的结构&lt;/H2&gt;
+
+&lt;P&gt;
+VFS 定义了表示路径和文件的两个结构：dentry 以及 inode。实际使用时会在内存里形成一个树形结构，比如：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  d +-- d ----------&amp;gt; inode
+    |
+    +-- d +-- d  -------------&amp;gt; inode
+    |     +-- d
+    |     +-- d +-- ...
+    ...         +-- ..
+                +-- d ---------&amp;gt; inode
+&lt;/PRE&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;dentry 里有 d_parent 以及 d_subdirs 来形成这样一个树形的结构；d_name / d_iname 来记录名字；d_inode 来指向真正的 inode。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;inode 记录了文件的各种属性。在 ext3 的实现里，额外定义了一个 ext3_inode_info，把 inode 作为一个成员包了起来。根据这个结构里的几个指针，可以找到文件的完整内容。
+&lt;/OL&gt;
+
+&lt;A NAME="toc9"&gt;&lt;/A&gt;
+&lt;H2&gt;5.2. 操作&lt;/H2&gt;
+
+&lt;P&gt;
+VFS 定义了各种操作，包括 file_operations、inode_operations、address_space_operations、super_operations 等结构，这些结构里面是一些函数指针，具体的文件系统（比如 ext3）就会实现这些函数、把这些函数挂在指定的结构里、并把这个结构告诉 VFS。比如：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  /* ① file_operations 结构的定义 */
+  struct file_operations {
+      /* 定义了一个函数指针，表示 sync 的操作 */
+      int (*fsync)(struct file *, struct dentry *, int datasync);
+  
+      /* 其他的操作，忽略 */
+  };
+  
+  /* ② 声明 ext3 文件系统里这个类型的变量 */
+  struct file_operations ext3_file_operations = {
+      /* 把 ext3_sync_file 这个函数挂上去 */
+      .fsync = ext3_sync_file,
+  
+      /* 其他的操作，忽略 */
+  };
+  
+  /* ③ ext3_sync_file 的实现，这里按 ext3 的设计原理来实现这个函数 */
+&lt;/PRE&gt;
+
+&lt;P&gt;
+这样，在发起文件系统调用时，通过 VFS，会间接地调用到具体文件系统的实现上来。这个做法跟其他操作系统平台里定义一些通用的接口（比如 IAbsoluteIO、IBasicFile）、文件系统按自己的设计原理来实现这些接口是一样的（包括表现形式、内存结构、运行时的栈的使用）。上层的调用都只关心接口、而不关心实现，从而屏蔽文件系统之间的差异。
+&lt;/P&gt;
+
+&lt;A NAME="toc10"&gt;&lt;/A&gt;
+&lt;H1&gt;6. ext3 文件系统&lt;/H1&gt;
+
+&lt;A NAME="toc11"&gt;&lt;/A&gt;
+&lt;H2&gt;6.1. 源代码位置&lt;/H2&gt;
+
+&lt;P&gt;
+内核的源代码被安装到了 /usr/src/redhat/BUILD/kernel-2.6.9/linux-2.6.9 目录下。
+&lt;/P&gt;
+&lt;P&gt;
+而文件系统相关的代码分布在：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  linux-2.6.9
+      +---/include/linux 目录下的 fs 相关的 *.h 文件
+      +---/fs
+      |     +---/ext2
+      |     +---/ext3
+      |     +---/ 其他文件系统
+&lt;/PRE&gt;
+
+&lt;A NAME="toc12"&gt;&lt;/A&gt;
+&lt;H2&gt;6.2. 数据结构&lt;/H2&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;block
+&lt;P&gt;&lt;/P&gt;
+一个 ext3 的分区按指定的大小划分成多个 block，block 的大小一般为 (2^n×1024) 字节。mkfs.ext3 有个参数 -b，就是用于指定这个分区的 block 大小。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;block group
+&lt;P&gt;&lt;/P&gt;
+一个分区上的 block 数量较多，所以又平均地分成若干个 block group，这应该是根据局部性原理设计的。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;group descriptor
+&lt;P&gt;&lt;/P&gt;
+每个  block group 都有一个 group descriptor，里面需要记录这个 group 名下的所有 block 的位置、各自使用情况，等等。一个分区有多少个 block group，就有多少个 group descriptor，这些 group descriptor 被连续地安排在分区的开头部分，跟在 super block 后面。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;super block
+&lt;P&gt;&lt;/P&gt;
+super block 用于记录分区的详细信息，包括 block 大小、空闲情况、访问时间、签名、日志相关信息，等等。这个数据结构被保存在分区的第 1025 字节开始的地方，一共 1024 个字节。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;data block bitmap
+&lt;P&gt;&lt;/P&gt;
+位图表，用于记录当前 group 里的 block 的空闲情况。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;inode bitmap
+&lt;P&gt;&lt;/P&gt;
+位图表，用于记录当前 group 里的 inode 的空闲情况。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;ext3_dir_entry_2
+&lt;P&gt;&lt;/P&gt;
+记录了文件（目录）的名字。每个目录 inode 的数据 block 里，会依次排列了多个这样的结构，记录了这个目录下的所有目录、文件的名字以及对应的 inode。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;inode
+&lt;P&gt;&lt;/P&gt;
+inode 定义了文件、目录的信息，包括访问、大小、各种时间、数据占用了多少 block，等等。
+&lt;P&gt;&lt;/P&gt;
+inode 的结构里定义了一个数组 __le32 i_block[15]，这个数组里记录了存储数据的 block 的位置。
+&lt;PRE&gt;
+  这个数组被分成了四部分：
+  ① i_block[0] ～ i_block[11] 直接指向了数据 block：
+  ② i_block[12] 指向了一个 block，它里面全是指针，指向了数据 block；
+  ③ i_block[13] 指向了一个 block，它里面的指针指向的所有 block 里存储的也全是指针，指向了数据 block；
+  ④ i_block[14] 则比 i_block[13] 还要多出一层指针。
+&lt;/PRE&gt;
+
+&lt;/OL&gt;
+
+&lt;A NAME="toc13"&gt;&lt;/A&gt;
+&lt;H2&gt;6.3. 磁盘上的布局&lt;/H2&gt;
+
+&lt;P&gt;
+一个分区被分成了多个 block，第 1 个是 boot block，跟文件系统没有关系，剩下的会等分成多个 group。每个 group 里从前往后依次包括了 super block、grub descriptor、data block bitmap、inode bitmap、inode table 以及 data block。其中 super block、group descriptor 只有 group 0 里的那份才是有效的，其他 group 里相应的字段只是用于备份、文件系统恢复时才有用。
+&lt;/P&gt;
+&lt;P&gt;
+一个目录下可能有多个目录和文件，从根目录（"/"）往下形成一片森林。
+&lt;/P&gt;
+&lt;P&gt;
+文件、目录等的信息在 ext3_inode 结构里（也是一种 inode，起这个名字，为了区别于 VFS 里定义的 inode），这个结构本身在磁盘上。ext3_inode 里的 i_block 记录了所有存放数据的 block：
+&lt;/P&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;对于普通文件，数据 block 里存放的就是真实的数据；
+&lt;LI&gt;对于目录，数据 block 里依次存放了当前目录下的所有文件、目录的名字和 inode 号（用 ext3_dir_entry_2 结构来表示）
+&lt;/UL&gt;
+
+&lt;P&gt;
+所以不论是文件还是目录，它的真实内容（对于目录，就是目录下各子目录、文件的名字）在数据 block 里，它的信息（各种时间、大小 …）在 inode 里，名字则在所属目录对应的 inode 指向的数据 block 里（按 ext3_dir_entry_2 来读取），至于完整的路径，则散落在再上面的各级目录的 ext3_dir_entry_2 里。
+&lt;/P&gt;
+
+&lt;A NAME="toc14"&gt;&lt;/A&gt;
+&lt;H2&gt;6.4. inode、block 的管理&lt;/H2&gt;
+
+&lt;P&gt;
+出于性能的考虑，ext3 采取了一些策略来管理磁盘上的 inode、block。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;创建 inode 时：
+    &lt;UL&gt;
+    &lt;LI&gt;如果是目录
+        &lt;UL&gt;
+        &lt;LI&gt;如果是根目录下的目录，则尽量分散在各个 block group 里
+        &lt;LI&gt;否则，应该尽量跟父目录在一个 group 里，如果这个 group 有空余的 inode
+        &lt;LI&gt;否则，再查找上上层目录所在的 group，看是否有空闲的 inode
+        &lt;/UL&gt;
+    &lt;LI&gt;如果是文件
+        &lt;UL&gt;
+        &lt;LI&gt;从所属目录所在的 group 开始查找，是否有空闲的 inode，如果没有，则依次往后 1、1+2、1+2+4、… 个 group 查找
+        &lt;LI&gt;否则，依次从所有 group 里查找
+        &lt;/UL&gt;
+    &lt;LI&gt;找到合适的 inode 以后，标记相应的位图、修改 super block 里的信息，等等。
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/UL&gt;
+&lt;LI&gt;删除 inode 时只要清空相应的标记、修改 super block 里的信息，等等。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;分配 block 时：
+    &lt;UL&gt;
+    &lt;LI&gt;优先地考虑这个文件已有的 block 旁边的空闲 block
+    &lt;LI&gt;否则，在这个文件的 inode 所在的 group 里查找空闲的 block
+    &lt;LI&gt;否则，在其他 group 里查找空闲的 block
+    &lt;LI&gt;出于性能的考虑，每次分配都会额外地预留一些 block，比如申请 3 个 block 时，实际上是找 8 个连续空闲的 block，如果有的话，就先用 3 个，预留 5 个，这样下次再申请时可以直接使用了。
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/UL&gt;
+&lt;LI&gt;释放 block 时，需要从 inode-&amp;gt;i_block 里找到所有的 block，并在 block bitmap 里去除标记。
+&lt;/OL&gt;
+
+&lt;A NAME="toc15"&gt;&lt;/A&gt;
+&lt;H2&gt;6.5. 日志&lt;/H2&gt;
+
+&lt;P&gt;
+日志用来确保文件系统以及文件系统操作的完整，即在分区访问非正常中断（掉电、内核有 BUG 等）并重新启动后，分区上的文件系统可以快速地恢复、以及必要的操作得以恢复执行。在原理上，文件系统里的日志，跟数据库类似。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;日志的操作
+&lt;P&gt;&lt;/P&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;mkfs.ext2 有一个选项 -j，表示在分区上创建带有日志的文件系统，-J 选项则是指定日志的一些属性，而不是使用工具默认的属性。
+
+&lt;PRE&gt;
+  mkfs.ext2 -j dev
+&lt;/PRE&gt;
+
+    &lt;P&gt;&lt;/P&gt;
+    &lt;LI&gt;tune2fs 可以将一个 ext2 格式的分区快速地转换成 ext3 分区，这个过程中会创建日志文件。另外也可以进行反向地操作。比如：
+
+&lt;PRE&gt;
+  # 原本 dev 是 ext2 的分区
+  tune2fs -j dev                  # ext2 =&amp;gt; ext3
+  tune2fs -O ^has_journal dev     # ext3 =&amp;gt; ext2
+&lt;/PRE&gt;
+
+    &lt;P&gt;&lt;/P&gt;
+    &lt;LI&gt;dumpe2fs 用来 dump 整个分区的基本信息，其中包括了这个分区是否有日志，如果有则显示日志文件对应的 inode 等信息。
+    &lt;P&gt;&lt;/P&gt;
+    &lt;LI&gt;debugfs 是针对 ext2/ext3 的调试工具。它有一个选项 logdump，专门用来调试日志。比如：
+
+&lt;PRE&gt;
+  debugfs: logdump -a /tmp/journal_summary.bak    # 即把当前时刻的日志的描述导出去
+&lt;/PRE&gt;
+
+    &lt;P&gt;&lt;/P&gt;
+它还有一个选项，stat，可以把文件系统也完整地导出。比如：
+
+&lt;PRE&gt;
+  dumpe2fs dev                             # superblock 里会记录日志文件对应的 inode，一般是 8
+  debugfs: stat &amp;lt;8&amp;gt; /tmp/journal.bak       # 把日志内容导出到 journal.bak 里去
+&lt;/PRE&gt;
+
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/UL&gt;
+&lt;LI&gt;日志的大小
+&lt;P&gt;&lt;/P&gt;
+日志文件至少有 1024 个 block、且不多于 102400 个 block。这样算下来，最小的日志为 1M（1024×1K），最大的则为 400M（102400×4K）。
+&lt;P&gt;&lt;/P&gt;
+可以指定日志的大小，比如
+
+&lt;PRE&gt;
+  tune2fs -J size=2M dev  # 设置日志文件的大小为 2M
+&lt;/PRE&gt;
+
+否则，mkfs.ext2、tune2fs 等工具会自动地挑选一个合适的大小。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;日志的模式
+&lt;P&gt;&lt;/P&gt;
+ext3 支持数据（data）、预定（ordered）和回写（writeback）这三种模式的日志。
+&lt;P&gt;&lt;/P&gt;
+    &lt;OL&gt;
+    &lt;LI&gt;data：将元数据和数据都写入日志。
+    &lt;LI&gt;ordered：先将数据写入磁盘，后将元数据写入日志。这是 ext3 系统的默认配置。
+    &lt;LI&gt;writeback：只有元数据被写入日志，数据则直接写入磁盘。
+    &lt;/OL&gt;
+&lt;/OL&gt;
+
+&lt;P&gt;
+从效率上来说，data 是最慢的，因为所有的元数据和数据都会有两次写入，但这保证了数据的安全；而 writeback 是最快的，不过没有其他两个来得安全。
+&lt;/P&gt;
+&lt;P&gt;
+至于整个的写入过程，以 ordered 模式来举例。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;如果崩溃发生在数据写入磁盘之时或者之后、元数据写入之前，则虽然数据已经在磁盘上了，但从文件系统来看，则没有变化，这时写入的数据也无效，而上层程序也不会拿到 “ 写入成功 ” 的返回值；
+&lt;LI&gt;如果崩溃发生在元数据写入之时，则这份元数据本身不是完整的，文件系统会忽略它，这时的结果跟上面类似；
+&lt;LI&gt;如果崩溃发生在元数据写入之后，在文件系统恢复时会根据这份完整的元数据地把相应的信息写入磁盘，以完成整个的写操作。
+&lt;LI&gt;如果上面里的恢复动作本身也失败了，这时元数据还在（因为还没完成恢复），所以等下一次机会来重复这个恢复的操作。
+&lt;/OL&gt;
+
+&lt;P&gt;
+在文件系统 mount、umount 时会进行这样的操作。另外 kjournald 这个后台进程也会不间断地处理日志里的内容。
+&lt;/P&gt;
+
+&lt;A NAME="toc16"&gt;&lt;/A&gt;
+&lt;H2&gt;6.6. e2fsprogs&lt;/H2&gt;
+
+&lt;P&gt;
+ext2/ext3 文件系统的创建、Dump、修复、调试的工具。包括了 mkfs、e2fsck、dumpe2fs、tune2fs、debugfs 以及其他一些工具，比如恢复已经删除的文件等等。
+&lt;/P&gt;
+&lt;P&gt;
+e2fsck 用来检查文件系统。它会检查 superblock 里文件系统的长度、inode 数目、空闲数据块统计以及空闲 inode 统计，组描述信息，等等。一般它都是在系统开机时自动地检查，有时，则会进入交互式的状态，需要用户指定各种参数来执行，比如 -p 参数表示不需要提示地自动修复、-n 表示罗列文件系统里的问题、而不进行修复、 -y 表示对所有的提示都是 yes、-f 表示强制地检查，等等。
+&lt;/P&gt;
+&lt;P&gt;
+debugfs 是以交互式的方式来解析文件系统的工具。比如它可以罗列指定目录下的所有 entry、这些 entry 对应的 inode，解析指定 inode 里的内容、对应的所有的数据 block，完整地把文件 dump 出来，手动修复各种数据，等等。
+&lt;/P&gt;
+&lt;P&gt;
+debugfs 好像没法 dump 指定 block 里的数据，所以只能先查询出指定 block 的号，结合这个分区的 block size，通过 dd 工具来 dump。
+&lt;/P&gt;
+&lt;P&gt;
+另外，ls -i file、stat file 等也可以用来 dump 文件对应的 inode 号。
+&lt;/P&gt;
+
+&lt;A NAME="toc17"&gt;&lt;/A&gt;
+&lt;H1&gt;7. xfs 文件系统&lt;/H1&gt;
+
+&lt;P&gt;
+XFS 是 SGI 设计的 64 位日志文件系统，最初是在 SGI 自己的工作站上实现的，后来被移植到 Linux。
+&lt;/P&gt;
+
+&lt;A NAME="toc18"&gt;&lt;/A&gt;
+&lt;H2&gt;7.1. 源代码位置&lt;/H2&gt;
+
+&lt;P&gt;
+XFS 文件系统相关的代码分布在：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  linux-2.6.9
+      +---/include/linux 目录下的 fs 相关的 *.h 文件
+      +---/fs
+      |     +---/xfs
+&lt;/PRE&gt;
+
+&lt;A NAME="toc19"&gt;&lt;/A&gt;
+&lt;H2&gt;7.2. 数据结构&lt;/H2&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;AG
+&lt;P&gt;&lt;/P&gt;
+XFS 文件系统被分成若干个大小相等的 AG（分配组、Application Group）。每个 AG 可以被看成是一个独立的文件系统，它可以管理 1TB 的数据。每个 AG 包括了 ⑴ 一个 super block，用一描述这个 AG 的信息；⑵ 空闲空间的管理 ⑶ Inode 的管理。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;block
+&lt;P&gt;&lt;/P&gt;
+文件系统的基本单位，在创建文件系统时指定。通常情况下都是 4096 字节，当然也可以选择其他的大小，只要满足 block_size ∈［sector_size, Min(64KB, page_size)］即可，其中，sector 的大小基本上都是 512 字节。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;super block
+&lt;P&gt;&lt;/P&gt;
+每个 AG 都有自己的 super block，它在 AG 的最前面，是所在 AG 的元数据。其中第一个 AG 上的是 “ 主 super block”，它除了管理所在 AG 的元数据以外，还管理着所有 AG 的基本信息；第二个 AG 上的 super block 也起着类似的作用，在主 super block 被破坏时，可以利用它来修复整个文件系统。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;AG free block info
+&lt;P&gt;&lt;/P&gt;
+用来管理所在 AG 的空闲块。XFS 使用两棵 B+ 树来管理这些块，一棵是根据空闲块的大小来管理，另外一棵则是根据空闲块的编号来管理。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;AG inode B+ info
+&lt;P&gt;&lt;/P&gt;
+XFS 把 64 个 inode 作为一组，所有这些 inode 组被放在一棵 B+ 树上来管理。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;AG internal free list
+&lt;P&gt;&lt;/P&gt;
+XFS 缓存了一些磁盘空间，用来存储本身所需要的数据结构。
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;inode
+&lt;P&gt;&lt;/P&gt;
+所有的文件、目录、链接都是以 inode 的形式存储在文件系统里。inode 由以下几部分组成：
+&lt;P&gt;&lt;/P&gt;
+&lt;/OL&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;di_core：这部分记录了类型、各种时间、大小等等基本信息；
+&lt;LI&gt;di_next_unlinked：当一个文件已经被删除、但还被引用时，对应的 inode 会被加到 agi_unlinked（定义在 AG inode B+ tree list 里）里，结合 di_next_unlinked 这个字段来形成一个链表。
+&lt;LI&gt;di_u：它的类型取决于 di_core.di_format，即对于文件、目录、链接等等有着不同的解释：
+    &lt;UL&gt;
+    &lt;LI&gt;文件：记录文件数据的存储位置
+    &lt;LI&gt;目录：记录目录下的所有子目录、文件的名字、inode 等
+    &lt;LI&gt;链接：记录链接的内容
+    &lt;/UL&gt;
+&lt;LI&gt;di_a：记录了额外的信息。
+&lt;/UL&gt;
+
+&lt;A NAME="toc20"&gt;&lt;/A&gt;
+&lt;H2&gt;7.3. 磁盘上的布局&lt;/H2&gt;
+
+&lt;P&gt;
+文件系统被分成多个 AG，每个 AG 从前往后依次是：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  +-------------------------+
+  | super bock              | AG 的元数据
+  +-------------------------+
+  | AG free block info      | 管理空闲块的 B+ 树的信息
+  +-------------------------+
+  | AG inode B+ info        | 管理 inode 的 B+ 树的信息
+  +-------------------------+
+  | AG internal free list   | 管理内部数据结构所需要的空间
+  +-------------------------+
+  | Root of inode B+        | 管理 inode 的 B+ 树的树根
+  +-------------------------+
+  | Root of free space B+   | 基于空闲块大小的 B+ 树的树根
+  | Root of free space B+   | 基于空闲块位置的 B+ 树的树根
+  +-------------------------+
+  | Free list               | 预留给内部数据结构的 4 个 block
+  +-------------------------+
+  | Inodes                  | 预留的 64 个 Inode，正好是一个单位
+  +-------------------------+
+  | metadata &amp;amp; data blocks  | 数据区
+  +-------------------------+
+&lt;/PRE&gt;
+
+&lt;P&gt;
+对于文件（包括目录、链接）：
+&lt;/P&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;它对应的 inode.di_core 里记录了基本信息；
+&lt;LI&gt;inode.di_u 里直接或间接地记录了数据；
+&lt;LI&gt;它的名字记录在所处目录的内容里；
+&lt;LI&gt;它的全路径则散落在再上次各级目录的内容里。
+&lt;/UL&gt;
+
+&lt;P&gt;
+XFS 有三种方式来记录数据，具体使用时取决于文件的大小。下面列举了这三种模式，同时结合 xfs_db 工具来观察。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;local：当文件比较小，inode.di_u 里直接记录了对应的数据。
+
+&lt;PRE&gt;
+  xfs_db&amp;gt; inode 128
+  xfs_db&amp;gt; p                               ; 打印 128 号 inode 的内容，128 是根目录的 inode
+  core.format = 1 (local)
+  u.sfdir2.list[0].name = "music"
+  u.sfdir2.list[0].inumber.i4 = 132
+  u.sfdir2.list[1].name = "doc"
+  u.sfdir2.list[1].inumber.i4 = 163
+  u.sfdir2.list[2].name = "readme"              ; 这是删减后的输出
+  u.sfdir2.list[2].inumber.i4 = 165             ; ⑴ core.format 显示的是 local 的方式
+  u.sfdir2.list[3].name = "linux_documentation" ; ⑵ 在 inode 内部列举了 music、doc、
+  u.sfdir2.list[3].inumber.i4 = 166             ;    linux_documentation 以及对应的 inode 号
+  
+  ;; 显然，根目录（“/”）下的所有子目录、文件的信息都是直接记录在 inode 里的。
+&lt;/PRE&gt;
+
+&lt;LI&gt;extents：当文件比较大时，把数据记录在其他 block 上，inode.di_u 里记录了这些 block 的编号。
+
+&lt;PRE&gt;
+  xfs_db&amp;gt; inode 163
+  xfs_db&amp;gt; p                                ; 打印 doc（163）对应的 inode
+  core.format = 2 (extents)
+  u.bmx[0] = [startoff,startblock,blockcount,extentflag] 0:[0,1784,1,0]
+                                           ; 这是删减后的输出
+                                           ; ⑴ core.format 显示的是 extents 的方式
+                                           ; ⑵ 显示了 doc 目录下内容比较多，所在存储在
+                                           ; 1784 号 block
+  xfs_db&amp;gt; fsblock 1784
+  xfs_db&amp;gt; type dir2
+  xfs_db&amp;gt; p                                ; 按 dir2 的格式打印 1784 号 block 的内容
+  bu[0].inumber = 163
+  bu[0].name = "."
+  bu[1].inumber = 128
+  bu[1].name = ".."
+  bu[2].inumber = 164                      ; 这是删减后的输出
+  bu[2].name = "doc.tar.bz2"               ; 显示了 doc 目录下有 ".", "..", "doc.tar.bz2" 等
+  bu[3].inumber = 54651                    ; 内容以及对应的 inode 号
+  bu[3].name = "adfs.txt"
+  
+  ;; 可能看到：
+  ;; ⑴ 目录 “doc” 下文件较多，这些数据存储在 1784 号 block 上；
+  ;; ⑵ “1784” 这个编号则记录在 inode 里。
+&lt;/PRE&gt;
+
+&lt;LI&gt;btree：当文件更大时，使用 B+ 树来存储数据 block，而在 inode.di_u 里记录树的信息。
+
+&lt;PRE&gt;
+  xfs_db&amp;gt; inode 166
+  xfs_db&amp;gt; p                                ; 打印 linux_documentation（166）对应的 inode
+  core.format = 3 (btree)
+  u.bmbt.level = 1
+  u.bmbt.numrecs = 1                       ; 这里删减后的输出
+  u.bmbt.keys[1] = [startoff] 1:[0]        ; ⑴ core.format 显示的是 btree 的方式
+  u.bmbt.ptrs[1] = 1:2460                  ; ⑵ 树的信息在 2460 号 block 上
+  xfs_db&amp;gt; fsblock 2460
+  xfs_db&amp;gt; type bmapbtd
+  xfs_db&amp;gt; p                                ; 按 bmapbtd 的格式打印 2460 号 block 的内容
+  recs[1-16] = [startoff,startblock,blockcount,extentflag]
+  1:[0,1768,1,0] 2:[1,1778,2,0]            ; 这是删减后的输出
+  3:[3,1820,1,0] 4:[4,2450,1,0]            ; 内容存储在 1768、1778 等 block 里
+  xfs_db&amp;gt; fsblock 1768
+  xfs_db&amp;gt; type dir2
+  xfs_db&amp;gt; p                                ; 按 dir2 的格式打印 1768 号 block 的内容
+  du[0].inumber = 166
+  du[0].name = "."
+  du[1].inumber = 128
+  du[1].name = ".."
+  du[2].inumber = 133
+  du[2].name = "adfs.txt"                  ; 这是删减后的输出
+  du[3].inumber = 134                      ; 罗列了 ".", "..", "adfs.txt", "affs.txt" 等
+  du[3].name = "affs.txt"                  ; 内容
+  
+  ;; 可以看到：
+  ;; ⑴ “linux_documentation” 目录下的大量文件被记录在多个 block 里；
+  ;; ⑵ 这些 block 本身被记录在 B+ 树里。
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;/OL&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;对于普通文件，数据 block 里存储的就是文件的内容。
+&lt;LI&gt;目录对应的数据 block 里存储的是目录下的所有子目录、文件、链接，等等，这在上面的例子里也可以看到。存储的格式一般是每个文件（目录、链接、…）的名字、名字长度、inode 号、偏移。
+&lt;LI&gt;软链接的数据 block 里存储的是目标文件的路径，可能是相对路径，也可能是全路径。
+&lt;/UL&gt;
+
+&lt;A NAME="toc21"&gt;&lt;/A&gt;
+&lt;H2&gt;7.4. inode、block 的管理&lt;/H2&gt;
+
+&lt;P&gt;
+当空闲的 inode 用完时，XFS 会申请 64 个 inode 作为一个 chunk，挂在管理 inode 的 B+ 树上：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+               +------+
+               | node |     +-------------+
+             / +------+    /| 64 个 inode |
+            /     |       / +-------------+
+  +------+ /   +--v---+  /  +-------------+
+  | root |---- | node | --- | 64 个 inode |
+  +------+ \   +------+  \  +-------------+
+            \     |       \
+             \ +--v---+    \+-------------+
+               | node |     | 64 个 inode |
+               +------+     +-------------+
+&lt;/PRE&gt;
+
+&lt;P&gt;
+空闲的 block，会按照 block 区域的大小以及编号分别地挂在两棵 B+ 树上。
+&lt;/P&gt;
+
+&lt;A NAME="toc22"&gt;&lt;/A&gt;
+&lt;H2&gt;7.5. 日志&lt;/H2&gt;
+
+&lt;P&gt;
+&lt;CODE&gt;TODO&lt;/CODE&gt;
+&lt;/P&gt;
+
+&lt;A NAME="toc23"&gt;&lt;/A&gt;
+&lt;H2&gt;7.6. xfsprogs&lt;/H2&gt;
+
+&lt;P&gt;
+XFS 文件系统的创建、Dump、修复、调试的工具。包括了 mkfs.xfs、xfs_check、xfsdump、xfsrestore、xfs_repair、xfs_db 以及其他一些工具。
+&lt;/P&gt;
+&lt;P&gt;
+mkfs.xfs 用来创建一个 XFS 的文件系统，比如 "mkfs.xfs &lt;U&gt;device&lt;/U&gt;"。当然它有好多参数，比如可以指定 block 的大小、sector 的大小、AG 的个数、section 的属性、日志，等等。
+&lt;/P&gt;
+&lt;P&gt;
+xfs_check 是 XFS 文件系统检查的工具，被检查的分区最好是已经卸载，或者是以只读方式挂载的。
+&lt;/P&gt;
+&lt;P&gt;
+xfsdump 是 XFS 文件系统的 Dump 工具，比如：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  # xfsdump -c "inode 128" -c "p" device
+  
+  # 这里使用的命令、输出的结果跟 xfs_db 都一样。
+&lt;/PRE&gt;
+
+&lt;P&gt;
+xfsrestore、xfs_repair 是 XFS 文件系统的修复工具。比如，它可以验证并修复 super block、检查每个 AG（inode、空闲块、空闲链表）以及几棵 B+ 树，等等。
+&lt;/P&gt;
+&lt;P&gt;
+xfs_db 可以调试 XFS 文件系统。之前讨论 inode 与数据 block 之间的联系时，都是使用 xfs_db 来观察的。
+&lt;/P&gt;
+</content><category term="Programming"></category><category term="Linux"></category><category term="kernel"></category><category term="filesystem"></category></entry></feed>

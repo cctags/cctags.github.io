@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up - VCS</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/vcs.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2016-03-28T13:01:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>Using RCS Keywords in Perforce</title><link href="https://cctags.github.io/posts/2016/03/28/using_rcs_keywords_in_perforce.html" rel="alternate"></link><published>2016-03-28T13:01:00+08:00</published><updated>2016-03-28T13:01:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-03-28:/posts/2016/03/28/using_rcs_keywords_in_perforce.html</id><summary type="html">&lt;p&gt;使用 svn 时，有时会把版本管理系统的信息嵌入到代码里，比如版本号、最近修改时间，等等。在软件调试时，这会很有帮助。因为清晰的版本信息，可以避免很多不必要的版本不一致的问题。这里是 &lt;a href="http://svnbook.red-bean.com/en/1.7/svn.advanced.props.special.keywords.html"&gt;Subversion Keyword Substitution&lt;/a&gt; 的文档。&lt;/p&gt;
+&lt;p&gt;最近开始使用 Perforce，所以也专门研究了一下是否有类似的功能。&lt;/p&gt;
+&lt;p&gt;从文档来看，Perforce 提供了一些关键字，可以自动地展开和更新，比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$Id$&lt;/li&gt;
+&lt;li&gt;$Header$&lt;/li&gt;
+&lt;li&gt;$Date$&lt;/li&gt;
+&lt;li&gt;$DateTime$&lt;/li&gt;
+&lt;li&gt;$Change$&lt;/li&gt;
+&lt;li&gt;$File$&lt;/li&gt;
+&lt;li&gt;$Revision$&lt;/li&gt;
+&lt;li&gt;$Author$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个功能默认时并没有开启，需要修改文件本身的类型（"+k"），比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;p4 edit -t +k main.c
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;以下是 Perforce 的官方文档，可以参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Using RCS Keywords @ &lt;a href="http://answers.perforce.com/articles/KB/3482"&gt;http …&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;使用 svn 时，有时会把版本管理系统的信息嵌入到代码里，比如版本号、最近修改时间，等等。在软件调试时，这会很有帮助。因为清晰的版本信息，可以避免很多不必要的版本不一致的问题。这里是 &lt;a href="http://svnbook.red-bean.com/en/1.7/svn.advanced.props.special.keywords.html"&gt;Subversion Keyword Substitution&lt;/a&gt; 的文档。&lt;/p&gt;
+&lt;p&gt;最近开始使用 Perforce，所以也专门研究了一下是否有类似的功能。&lt;/p&gt;
+&lt;p&gt;从文档来看，Perforce 提供了一些关键字，可以自动地展开和更新，比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$Id$&lt;/li&gt;
+&lt;li&gt;$Header$&lt;/li&gt;
+&lt;li&gt;$Date$&lt;/li&gt;
+&lt;li&gt;$DateTime$&lt;/li&gt;
+&lt;li&gt;$Change$&lt;/li&gt;
+&lt;li&gt;$File$&lt;/li&gt;
+&lt;li&gt;$Revision$&lt;/li&gt;
+&lt;li&gt;$Author$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个功能默认时并没有开启，需要修改文件本身的类型（"+k"），比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;p4 edit -t +k main.c
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;以下是 Perforce 的官方文档，可以参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Using RCS Keywords @ &lt;a href="http://answers.perforce.com/articles/KB/3482"&gt;http://answers.perforce.com/articles/KB/3482&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;File Types @ &lt;a href="https://www.perforce.com/perforce/doc.current/manuals/cmdref/file.types.html"&gt;https://www.perforce.com/perforce/doc.current/manuals/cmdref/file.types.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="VCS"></category><category term="p4"></category><category term="svn"></category></entry><entry><title>Merging the upstream repository into the fork</title><link href="https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html" rel="alternate"></link><published>2015-12-15T12:45:00+08:00</published><updated>2015-12-15T12:45:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-12-15:/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html</id><summary type="html">&lt;p&gt;如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， &lt;a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/"&gt;https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/&lt;/a&gt;，关于对 &lt;code&gt;fork&lt;/code&gt; 进行更新。&lt;/p&gt;
+&lt;p&gt;记录一下，备忘。&lt;/p&gt;
+&lt;p&gt;o 切换到 &lt;code&gt;master&lt;/code&gt; 分支：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git checkout master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 从 upstream repository 更新下来：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 更新远程 repository：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git push origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;更新后，对于 bugfix 或者 new …&lt;/p&gt;</summary><content type="html">&lt;p&gt;如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， &lt;a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/"&gt;https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/&lt;/a&gt;，关于对 &lt;code&gt;fork&lt;/code&gt; 进行更新。&lt;/p&gt;
+&lt;p&gt;记录一下，备忘。&lt;/p&gt;
+&lt;p&gt;o 切换到 &lt;code&gt;master&lt;/code&gt; 分支：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git checkout master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 从 upstream repository 更新下来：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;o 更新远程 repository：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git push origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;更新后，对于 bugfix 或者 new feature 的开发，单独创建个分支出来即可。&lt;/p&gt;</content><category term="VCS"></category><category term="git"></category></entry><entry><title>Git-P4 Submit Error</title><link href="https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html" rel="alternate"></link><published>2015-09-30T14:23:00+08:00</published><updated>2015-09-30T14:23:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-09-30:/posts/2015/09/30/git_p4_submit_error.html</id><content type="html">&lt;P&gt;
+提交代码时遇到了这样的错误：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ git p4 submit
+  Error: Cannot locate perforce checkout of //XXX/YYY/ZZZ/ in client view
+&lt;/PRE&gt;
+
+&lt;P&gt;
+一下子还真没想明白是哪里不对。
+&lt;/P&gt;
+&lt;P&gt;
+后来想明白了，需要重新登录一下 Perfoce：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ p4 login
+  ...
+&lt;/PRE&gt;
+
+&lt;P&gt;
+解决。
+&lt;/P&gt;
+</content><category term="VCS"></category><category term="git"></category><category term="p4"></category></entry><entry><title>Using Git-P4</title><link href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html" rel="alternate"></link><published>2015-07-23T15:09:00+08:00</published><updated>2015-07-23T15:09:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-07-23:/posts/2015/07/23/using_git_p4.html</id><summary type="html">&lt;P&gt;
+平时一直使用 &lt;A HREF="https://git-scm.com/"&gt;git&lt;/A&gt;，习惯了各种离线操作和强大的分支功能，所以总觉得要比 &lt;A HREF="http://www.perforce.com/"&gt;Perforce / p4&lt;/A&gt; 好用太多。
+&lt;/P&gt;
+&lt;P&gt;
+对于目前项目里用到的 p4 仓库，找到了一个 &lt;A HREF="http://answers.perforce.com/articles/KB/2790"&gt;Git-P4&lt;/A&gt; 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
+&lt;/P&gt;
+&lt;P&gt;
+以下是一些关键操作，记录在这里备忘。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;Create a directory for the client workspace root; for example:
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ mkdir gp4-area
+&lt;/PRE&gt;
+
+&lt;LI&gt;Create a P4CONFIG file
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ cd gp4-area
+  $ vi p4config
+  $ ...
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Create the client workspace
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ p4 client …&lt;/pre&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</summary><content type="html">&lt;P&gt;
+平时一直使用 &lt;A HREF="https://git-scm.com/"&gt;git&lt;/A&gt;，习惯了各种离线操作和强大的分支功能，所以总觉得要比 &lt;A HREF="http://www.perforce.com/"&gt;Perforce / p4&lt;/A&gt; 好用太多。
+&lt;/P&gt;
+&lt;P&gt;
+对于目前项目里用到的 p4 仓库，找到了一个 &lt;A HREF="http://answers.perforce.com/articles/KB/2790"&gt;Git-P4&lt;/A&gt; 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
+&lt;/P&gt;
+&lt;P&gt;
+以下是一些关键操作，记录在这里备忘。
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;Create a directory for the client workspace root; for example:
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ mkdir gp4-area
+&lt;/PRE&gt;
+
+&lt;LI&gt;Create a P4CONFIG file
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ cd gp4-area
+  $ vi p4config
+  $ ...
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Create the client workspace
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ p4 client
+  $ ...
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Create a directory for the .git repository
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ cd ..
+  $ mkdir git-area
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Import history
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  $ export P4CONFIG=/path/to/.../p4config
+  $ git p4 clone //depot/path@all
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Git-p4 workflow follows this pattern:
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  Edit files
+  Submit edits to Git
+  ...repeat...
+  git p4 rebase
+  git p4 submit
+&lt;/PRE&gt;
+
+&lt;/OL&gt;
+
+</content><category term="VCS"></category><category term="git"></category><category term="p4"></category></entry><entry><title>Use ExamDiff in ClearCase</title><link href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html" rel="alternate"></link><published>2011-03-15T06:00:00+08:00</published><updated>2011-03-15T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-03-15:/posts/2011/03/15/use_examdiff_in_clearcase.html</id><summary type="html">&lt;p&gt;由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；&lt;/li&gt;
+&lt;li&gt;diffspawn.bat 的内容：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;@echo off
+&amp;quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&amp;quot; %5 %6
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;修改 &lt;code&gt;%ProgramFiles%\Rational\ClearCase\lib\mgrs\map&lt;/code&gt; 配置文件：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;text_file_delta     compare  &amp;lt;path&amp;gt;\diffspawn.exe
+text_file_delta     xcompare &amp;lt;path&amp;gt;\diffspawn.exe …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；&lt;/li&gt;
+&lt;li&gt;diffspawn.bat 的内容：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;@echo off
+&amp;quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&amp;quot; %5 %6
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;修改 &lt;code&gt;%ProgramFiles%\Rational\ClearCase\lib\mgrs\map&lt;/code&gt; 配置文件：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;text_file_delta     compare  &amp;lt;path&amp;gt;\diffspawn.exe
+text_file_delta     xcompare &amp;lt;path&amp;gt;\diffspawn.exe
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ul&gt;</content><category term="VCS"></category><category term="ClearCase"></category></entry><entry><title>git-svn 提示仓库格式错误</title><link href="https://cctags.github.io/posts/2010/12/28/update-svn-repo-format.html" rel="alternate"></link><published>2010-12-28T06:00:00+08:00</published><updated>2010-12-28T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2010-12-28:/posts/2010/12/28/update-svn-repo-format.html</id><summary type="html">&lt;p&gt;问题：使用 git 操作一个 svn 仓库时，报错如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Expected FS format &amp;#39;2&amp;#39;; found format &amp;#39;3&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;解决办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 &lt;strong&gt;v1.5&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin dump /path/to/repo1 &amp;gt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;切换到 &lt;strong&gt;v1.4&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin load /path/to/repo2 &amp;lt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;设置权限并开启服务：&lt;code&gt;svnserve -d [--foreground]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git svn clone svn://&amp;lt;ip&amp;gt;/path/to/repo2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;OK …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;问题：使用 git 操作一个 svn 仓库时，报错如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Expected FS format &amp;#39;2&amp;#39;; found format &amp;#39;3&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;解决办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 &lt;strong&gt;v1.5&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin dump /path/to/repo1 &amp;gt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;切换到 &lt;strong&gt;v1.4&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin load /path/to/repo2 &amp;lt; dump.db&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;设置权限并开启服务：&lt;code&gt;svnserve -d [--foreground]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git svn clone svn://&amp;lt;ip&amp;gt;/path/to/repo2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;OK&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;可能有更简单的办法，先这样快速解决一下。&lt;/p&gt;</content><category term="VCS"></category><category term="git"></category><category term="svn"></category></entry><entry><title>体验 svn 和 git 的使用差异</title><link href="https://cctags.github.io/posts/2010/12/27/the-difference-between-svn-and-git.html" rel="alternate"></link><published>2010-12-27T06:00:00+08:00</published><updated>2010-12-27T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2010-12-27:/posts/2010/12/27/the-difference-between-svn-and-git.html</id><summary type="html">&lt;p&gt;很长时间以来，一直是用 svn。最近开始学习和使用 git。通过一段时间的使用，感受到它们有不小的差异。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;svn&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有全局唯一的版本号，可以嵌到代码里；&lt;/li&gt;
+&lt;li&gt;可以下载部分模块、而不是全部；&lt;/li&gt;
+&lt;li&gt;有服务器存放仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;git&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;除了少数几个操作以外，几乎都可以不依赖网络，离线操作；&lt;/li&gt;
+&lt;li&gt;操作快速高效；&lt;/li&gt;
+&lt;li&gt;只有根目录有一个 &lt;code&gt;.git/&lt;/code&gt; 目录，没有多余的隐藏目录；&lt;/li&gt;
+&lt;li&gt;可以撤销之前的操作；&lt;/li&gt;
+&lt;li&gt;命令行的控制更加丰富；&lt;/li&gt;
+&lt;li&gt;可以通过 &lt;a href="https://git-scm.com/docs/git-svn"&gt;git-svn&lt;/a&gt; 访问 svn 仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外，还注意到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在目录结构上，git 更干净；在 svn 里，可以使用 export 导出干净的目录结构。&lt;/li&gt;
+&lt;li&gt;git 每次都有唯一的 ID，结合 post-commit，也可以嵌到代码里。&lt;/li&gt;
+&lt;li&gt;git 不会跟踪空目录，非要这样做，可以在空目录里放个空的 …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;很长时间以来，一直是用 svn。最近开始学习和使用 git。通过一段时间的使用，感受到它们有不小的差异。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;svn&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有全局唯一的版本号，可以嵌到代码里；&lt;/li&gt;
+&lt;li&gt;可以下载部分模块、而不是全部；&lt;/li&gt;
+&lt;li&gt;有服务器存放仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;git&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;除了少数几个操作以外，几乎都可以不依赖网络，离线操作；&lt;/li&gt;
+&lt;li&gt;操作快速高效；&lt;/li&gt;
+&lt;li&gt;只有根目录有一个 &lt;code&gt;.git/&lt;/code&gt; 目录，没有多余的隐藏目录；&lt;/li&gt;
+&lt;li&gt;可以撤销之前的操作；&lt;/li&gt;
+&lt;li&gt;命令行的控制更加丰富；&lt;/li&gt;
+&lt;li&gt;可以通过 &lt;a href="https://git-scm.com/docs/git-svn"&gt;git-svn&lt;/a&gt; 访问 svn 仓库；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外，还注意到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在目录结构上，git 更干净；在 svn 里，可以使用 export 导出干净的目录结构。&lt;/li&gt;
+&lt;li&gt;git 每次都有唯一的 ID，结合 post-commit，也可以嵌到代码里。&lt;/li&gt;
+&lt;li&gt;git 不会跟踪空目录，非要这样做，可以在空目录里放个空的 .gitignore，就好了。&lt;/li&gt;
+&lt;li&gt;gitk 不知道时区的？&lt;/li&gt;
+&lt;/ul&gt;</content><category term="VCS"></category><category term="git"></category><category term="svn"></category></entry></feed>

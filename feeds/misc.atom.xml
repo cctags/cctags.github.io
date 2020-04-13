@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up - misc</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/misc.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2018-10-08T08:18:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>中文技术文档的写作规范</title><link href="https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html" rel="alternate"></link><published>2018-10-08T08:18:00+08:00</published><updated>2018-10-08T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2018-10-08:/posts/2018/10/08/chinse_document_style_guide.html</id><content type="html">&lt;p&gt;这里是一份开源的《中文技术文档的写作规范》， &lt;a href="https://github.com/ruanyf/document-style-guide"&gt;https://github.com/ruanyf/document-style-guide&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这份写作规范，对文档的标题、文本、段落、数值甚至标点符号，都给出了具体的建议。另外，它还附录了一些知名公司的写作规范。&lt;/p&gt;
+&lt;p&gt;目前的 Star 数大概有 6.2k，应该说是相当高的，说明已经得到了很多人的认可。&lt;/p&gt;
+&lt;p&gt;对于我们来说，每次写文档之前，都值得拿来读一读，作为学习和参考。&lt;/p&gt;</content><category term="misc"></category><category term="spec"></category></entry><entry><title>以前的一个帖子</title><link href="https://cctags.github.io/posts/2012/04/16/baidu_and_google.html" rel="alternate"></link><published>2012-04-16T06:00:00+08:00</published><updated>2012-04-16T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2012-04-16:/posts/2012/04/16/baidu_and_google.html</id><content type="html">&lt;p&gt;&lt;a href="http://topic.csdn.net/t/20040616/15/3097196.html"&gt;这是&lt;/a&gt; 很久以前的一个夏天，在 csdn 论坛里的帖子，讨论一段不太优雅的 Python 代码。&lt;/p&gt;
+&lt;p&gt;很久以后，我在 Baidu 里找了好久，不过这个帖子后来找不到了，挺可惜的。&lt;/p&gt;
+&lt;p&gt;然后 Google 了一下，很快就找到了 -__-!&lt;/p&gt;</content><category term="misc"></category><category term="Python"></category></entry><entry><title>三思而行</title><link href="https://cctags.github.io/posts/2012/04/15/information.html" rel="alternate"></link><published>2012-04-15T06:00:00+08:00</published><updated>2012-04-15T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2012-04-15:/posts/2012/04/15/information.html</id><summary type="html">&lt;p&gt;今天在 python-chinese 的邮件列表里看到一段话：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;All of the messages you send to these mailing lists will be archived. If you include sensitive information in your message it will be viewable by anyone. That includes email addresses, phone numbers, addresses, etc.  Site policy is to not edit the archives except, possibly to remove …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;今天在 python-chinese 的邮件列表里看到一段话：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;All of the messages you send to these mailing lists will be archived. If you include sensitive information in your message it will be viewable by anyone. That includes email addresses, phone numbers, addresses, etc.  Site policy is to not edit the archives except, possibly to remove viruses. This means that your information will be viewable by posterity, so be careful.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;网络是个好东西，有什么问题，尽力去找，几乎总能找到答案的，因为似乎总是有人已经问过类似的问题了。所以不要随意地发问，尽量地自己解决。这是对自己负责，同时也是对别人负责。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;从搜索到的结果来看，这段话也被写在以下邮件列表里：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.huihoo.com/systemtap/sourceware.org/lists.html"&gt;https://docs.huihoo.com/systemtap/sourceware.org/lists.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.cygwin.com/lists.html"&gt;https://www.cygwin.com/lists.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category></entry></feed>

@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up - Tools</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/tools.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2020-04-02T18:18:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>utmp records of tmux</title><link href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" rel="alternate"></link><published>2020-04-02T18:18:00+08:00</published><updated>2020-04-02T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</id><summary type="html">&lt;h2&gt;0x0&lt;/h2&gt;
+&lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。&lt;/p&gt;
+&lt;h2&gt;0x1&lt;/h2&gt;
+&lt;p&gt;感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 &lt;a href="https://github.com/tmux/tmux/issues/1260"&gt;utmp records are potentially dangerous&lt;/a&gt;，基本确认应该是对 utmp 信息的处理不一致。&lt;/p&gt;
+&lt;h2&gt;0x2&lt;/h2&gt;
+&lt;p&gt;查看并对比了 tmux 对应的依赖库：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ldd …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;h2&gt;0x0&lt;/h2&gt;
+&lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。&lt;/p&gt;
+&lt;h2&gt;0x1&lt;/h2&gt;
+&lt;p&gt;感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 &lt;a href="https://github.com/tmux/tmux/issues/1260"&gt;utmp records are potentially dangerous&lt;/a&gt;，基本确认应该是对 utmp 信息的处理不一致。&lt;/p&gt;
+&lt;h2&gt;0x2&lt;/h2&gt;
+&lt;p&gt;查看并对比了 tmux 对应的依赖库：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ldd /usr/bin/tmux
+        linux-vdso.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fff0437f000&lt;span class="o"&gt;)&lt;/span&gt;
+        libutil.so.1 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libutil.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca07370000&lt;span class="o"&gt;)&lt;/span&gt;
+        libutempter.so.0 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libutempter.so.0 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca0716d000&lt;span class="o"&gt;)&lt;/span&gt;
+        libtinfo.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libtinfo.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca0713f000&lt;span class="o"&gt;)&lt;/span&gt;
+        libevent-2.1.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libevent-2.1.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06eee000&lt;span class="o"&gt;)&lt;/span&gt;
+        libresolv.so.2 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libresolv.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06ed3000&lt;span class="o"&gt;)&lt;/span&gt;
+        libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06ce8000&lt;span class="o"&gt;)&lt;/span&gt;
+        libpthread.so.0 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libpthread.so.0 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca06cc5000&lt;span class="o"&gt;)&lt;/span&gt;
+        /lib64/ld-linux-x86-64.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0x00007fca07427000&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;观察到，在高版本的 Ubuntu 里，才出现了对 &lt;code&gt;libutempter.so.0&lt;/code&gt; 的依赖。&lt;/p&gt;
+&lt;p&gt;进一步查看并对比了不同版本的 Ubuntu 里对 tmux 的编译：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Xenial Xerus &lt;a href="https://launchpad.net/ubuntu/+source/tmux/2.1-3build1"&gt;tmux 2.1-3build1 source package in Ubuntu&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/tmux/2.1-3build1/tmux_2.1-3build1.debian.tar.xz&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Bionic Beaver &lt;a href="https://launchpad.net/ubuntu/+source/tmux/2.6-3"&gt;tmux 2.6-3 source package in Ubuntu&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/tmux/2.6-3/tmux_2.6-3.debian.tar.xz&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gd"&gt;--- 2.1/debian/rules    2015-10-19 02:05:15.000000000 +0800&lt;/span&gt;
+&lt;span class="gi"&gt;+++ 2.6-3/debian/rules  2017-12-31 00:43:41.000000000 +0800&lt;/span&gt;
+&lt;span class="gu"&gt;@@ -1,7 +1,10 @@&lt;/span&gt;
+ #!/usr/bin/make -f
+
+ export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+ export DEB_LDFLAGS_MAINT_APPEND=-Wl,--as-needed
+
+ %:
+        dh $@ --parallel --with autoreconf
+&lt;span class="gi"&gt;+&lt;/span&gt;
+&lt;span class="gi"&gt;+override_dh_auto_configure:&lt;/span&gt;
+&lt;span class="gi"&gt;+       dh_auto_configure -- --enable-utempter&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这就能看出问题了。原来，在高版本的 Ubuntu 里编译 tmux 时，打开了 &lt;code&gt;--enable-utempter&lt;/code&gt; 编译选项。&lt;/p&gt;
+&lt;h2&gt;0x3&lt;/h2&gt;
+&lt;p&gt;这下问题就清楚了。&lt;code&gt;--enable-utempter&lt;/code&gt; 这个编译选项的目的，是 tmux 在创建新的 shell 时，向系统更新一下 utempter。而这里的解决办法，就是下载 tmux &lt;a href="https://github.com/tmux/tmux.git"&gt;源码&lt;/a&gt;，关掉这个编译选项、编译并重新安装即可。&lt;/p&gt;</content><category term="Tools"></category><category term="tmux"></category><category term="ubuntu"></category></entry><entry><title>.NET Framework 3.5 installation error</title><link href="https://cctags.github.io/posts/2018/02/02/net_framework_3_5_installation_error.html" rel="alternate"></link><published>2018-02-02T08:18:00+08:00</published><updated>2018-02-02T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2018-02-02:/posts/2018/02/02/net_framework_3_5_installation_error.html</id><summary type="html">&lt;p&gt;安装某软件时，它提示有对 .NET 3.5 的依赖，因为本地没有安装对应的版本。但 Windows 在自动安装 .NET 3.5 失败了，返回了错误号：0x800F081F。查看了微软文档，对这个错误号的解释是：&lt;a href="https://support.microsoft.com/en-us/help/2734782/net-framework-3-5-installation-error-0x800f0906-0x800f081f-0x800f0907"&gt;0x800F081F - CBS_E_SOURCE_MISSING&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The source files could not be found.&lt;/p&gt;
+&lt;p&gt;Use the "Source" option to specify the location of the files that are required to restore the feature. For more information on specifying …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;安装某软件时，它提示有对 .NET 3.5 的依赖，因为本地没有安装对应的版本。但 Windows 在自动安装 .NET 3.5 失败了，返回了错误号：0x800F081F。查看了微软文档，对这个错误号的解释是：&lt;a href="https://support.microsoft.com/en-us/help/2734782/net-framework-3-5-installation-error-0x800f0906-0x800f081f-0x800f0907"&gt;0x800F081F - CBS_E_SOURCE_MISSING&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The source files could not be found.&lt;/p&gt;
+&lt;p&gt;Use the "Source" option to specify the location of the files that are required to restore the feature. For more information on specifying a source location, see http://go.microsoft.com/fwlink/?LinkId=243077.&lt;/p&gt;
+&lt;p&gt;The DISM log file can be found at C:\Windows\Logs\DISM\dism.log&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;考虑到手头没有系统安装包，所以没法试验。&lt;/p&gt;
+&lt;p&gt;这里是找到的&lt;a href="http://blog.csdn.net/kr0920/article/details/70153935"&gt;另外一个安装方法&lt;/a&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;下载文件：&lt;a href="http://download.windowsupdate.com/d/msdownload/update/software/updt/2015/11/microsoft-windows-netfx3-ondemand-package_421a25bf409692045d1cbfab0d99f8def8d95d3f.cab"&gt;http://download.windowsupdate.com/d/msdownload/update/software/updt/2015/11/microsoft-windows-netfx3-ondemand-package_421a25bf409692045d1cbfab0d99f8def8d95d3f.cab&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;将文件复制到系统盘的 Windows 目录下&lt;/li&gt;
+&lt;li&gt;以管理员打开命令提示符，运行以下命令&lt;blockquote&gt;
+&lt;p&gt;dism /online /Enable-Feature /FeatureName:NetFx3 /Source:"%windir%" /LimitAccess&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;另外，从注册表的 &lt;code&gt;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP&lt;/code&gt; 这个路径下，可以查看本地已经安装的 .NET 版本。&lt;/p&gt;</content><category term="Tools"></category><category term="microsoft"></category><category term="window"></category><category term="dotnet"></category></entry><entry><title>Pelican 编译问题</title><link href="https://cctags.github.io/posts/2017/12/22/build_issue_of_pelican_without_markdown.html" rel="alternate"></link><published>2017-12-22T08:18:00+08:00</published><updated>2017-12-22T08:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2017-12-22:/posts/2017/12/22/build_issue_of_pelican_without_markdown.html</id><content type="html">&lt;p&gt;今天遇到了一个问题：重新编译 pelican 项目时，发现编译生成的 articles 数量要比正常的少很多，而且没有任何出错信息。&lt;/p&gt;
+&lt;p&gt;经过研究，找到了原因。前段时间更新了 Python 2.7 到最新版本，并且安装了第三方的库，当然包括了 pelican。但 markdown 并没有安装，这导致在编译时 markdown 文件时无法解析。&lt;/p&gt;
+&lt;p&gt;解决方案很简单，安装 markdown，然后重新编译即可。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;pip install markdown
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;之后又重新看了一遍 pelican 安装说明，明确了 &lt;a href="http://docs.getpelican.com/en/stable/install.html#optional-packages"&gt;markdown 只属于 optional packages&lt;/a&gt;，而不是必选的依赖项。&lt;/p&gt;</content><category term="Tools"></category><category term="Pelican"></category><category term="Python"></category></entry><entry><title>Highlight All Occurrences of Selected Word</title><link href="https://cctags.github.io/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html" rel="alternate"></link><published>2016-02-26T16:55:00+08:00</published><updated>2016-02-26T16:55:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-02-26:/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html</id><content type="html">&lt;p&gt;在选中某个单词（比如变量、函数、自定义类型，等等）时，如果能把屏幕上所有出现这个单词的地方，都高亮显示出来，对于程序开发来说，是非常方便和直观的。&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://visualstudio.microsoft.com/"&gt;Visual Studio&lt;/a&gt; 插件库里有好多插件都实现了这个功能，这个&lt;a href="http://stackoverflow.com/questions/9435642/how-to-get-visual-studio-2010-to-highlight-instances-of-a-variable"&gt;贴子&lt;/a&gt;里说得很详细了。&lt;/p&gt;
+&lt;p&gt;经过比较，最后下载并安装了 &lt;code&gt;Productivity Power Tools 2012&lt;/code&gt; @ &lt;a href="https://visualstudiogallery.msdn.microsoft.com/3a96a4dc-ba9c-4589-92c5-640e07332afd"&gt;https://visualstudiogallery.msdn.microsoft.com/3a96a4dc-ba9c-4589-92c5-640e07332afd&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;这个插件是微软发布的，功能十分强大，并且 Free。&lt;/p&gt;</content><category term="Tools"></category><category term="VisualStudio"></category></entry><entry><title>Remove Trailing Whitespace in Visual Studio</title><link href="https://cctags.github.io/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html" rel="alternate"></link><published>2016-02-24T12:25:00+08:00</published><updated>2016-02-24T12:25:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-02-24:/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html</id><content type="html">&lt;p&gt;编程习惯里通常会建议删除行尾的空格。在 Visual Studio 里，可以通过 &lt;code&gt;Ctrl+K, Ctrl+\&lt;/code&gt; 的按键操作来实现。&lt;/p&gt;
+&lt;p&gt;不过每次通过手动的方式，未免有些麻烦，最好还是在保存文件时自动完成。网上找了一下，有个&lt;a href="http://stackoverflow.com/questions/12122846/how-to-trim-trailing-whitespace-in-visual-studio-2012"&gt;讨论贴子&lt;/a&gt;里推荐了 &lt;code&gt;Trailing Whitespace Visualizer&lt;/code&gt;，这是个 Visual Studio 的免费插件，可以实现这个功能。&lt;/p&gt;
+&lt;p&gt;这里是插件的地址：&lt;a href="https://visualstudiogallery.msdn.microsoft.com/a204e29b-1778-4dae-affd-209bea658a59"&gt;https://visualstudiogallery.msdn.microsoft.com/a204e29b-1778-4dae-affd-209bea658a59&lt;/a&gt;。下载后点击安装并重启 Visual Studio 即可。&lt;/p&gt;</content><category term="Tools"></category><category term="VisualStudio"></category></entry><entry><title>Find the file by inode number</title><link href="https://cctags.github.io/posts/2016/01/22/find_the_file_by_inode_number.html" rel="alternate"></link><published>2016-01-22T12:27:00+08:00</published><updated>2016-01-22T12:27:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2016-01-22:/posts/2016/01/22/find_the_file_by_inode_number.html</id><content type="html">&lt;P&gt;
+在命令行下会遇到一些文件名里包含有中文、符号或者某些奇怪字符的文件，如果命令的自动补全不完整，键盘操作起来还是有些麻烦的。这时候，可以考虑利用 inode 来定位这样的文件：
+&lt;/P&gt;
+&lt;P&gt;
+1. 使用 &lt;CODE&gt;ls&lt;/CODE&gt; 显示其对应的 inode 号：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  ls -i
+&lt;/PRE&gt;
+
+&lt;P&gt;
+2. 使用 &lt;CODE&gt;find&lt;/CODE&gt; 显示其文件名：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  find . -inum &amp;lt;inode-number&amp;gt;
+&lt;/PRE&gt;
+
+&lt;P&gt;
+好吧，拿到文件名了。
+&lt;/P&gt;
+</content><category term="Tools"></category><category term="shell"></category></entry><entry><title>iPhone Photo Library "Ghost" Space</title><link href="https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html" rel="alternate"></link><published>2015-12-25T09:17:00+08:00</published><updated>2015-12-25T09:17:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-12-25:/posts/2015/12/25/iphone_photo_library_ghost_space.html</id><content type="html">&lt;p&gt;最近 iPhone 手机遇到个问题：照片拍了很多了，想清理一下，结果发现即使是删掉了绝大部分照片，照片图库仍然占用了大量的系统存储空间。尝试了好几次，都无法解决。&lt;/p&gt;
+&lt;p&gt;后来发现，这其实是 iPhone 的一个 Bug。网上已经有了一个临时的解决办法，请参考这个官方论坛里的帖子：&lt;a href="https://discussions.apple.com/thread/6560594?tstart=0"&gt;https://discussions.apple.com/thread/6560594?tstart=0&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;以下是解决步骤：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;把手机系统时间改回很久以前；&lt;/li&gt;
+&lt;li&gt;切换到照片图库，在 “ 最近删除 ” 里面，会看到很多照片；&lt;/li&gt;
+&lt;li&gt;删除这些照片；&lt;/li&gt;
+&lt;li&gt;切换到系统设置里，查看系统存储空间变化；&lt;/li&gt;
+&lt;li&gt;恢复系统时间；&lt;/li&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个 Bug 很奇怪，这个解决办法更奇怪。&lt;/p&gt;</content><category term="Tools"></category><category term="iOS"></category></entry><entry><title>Dial Toll Free Numbers in Skype</title><link href="https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html" rel="alternate"></link><published>2015-12-08T08:49:00+08:00</published><updated>2015-12-08T08:49:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-12-08:/posts/2015/12/08/dial_toll_free_numbers_in_skype.html</id><content type="html">&lt;p&gt;电话会议，一般是用电话拨进去参加的会议，其中有些号码是免费的，有些则是付费的。&lt;/p&gt;
+&lt;p&gt;当然，如果 Dial-In Number 里包括了以下这些：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;USA: +1 800, +1 866, +1 877, +1 888&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;那也可以用 Skype 直接打过去。这里有使用说明：&lt;a href="https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series"&gt;https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series&lt;/a&gt;。 即使没有 Skype Credit，也可以使用。&lt;/p&gt;</content><category term="Tools"></category><category term="Skype"></category></entry><entry><title>Change the Background Color in PDF Reader</title><link href="https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html" rel="alternate"></link><published>2015-10-28T14:32:00+08:00</published><updated>2015-10-28T14:32:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-10-28:/posts/2015/10/28/change_the_background_color_in_pdf_reader.html</id><content type="html">&lt;p&gt;以 Adobe Reader 为例，从主菜单选择：编辑 ∕ 首选项 ∕ 辅助工具 ∕ 自定义颜色 ∕ 页面背景 ∕ 其它颜色，比如色调 45、饱和度 35、亮度 165。&lt;/p&gt;
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2"&gt;http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast"&gt;http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Tools"></category><category term="PDF"></category></entry><entry><title>Setup Comments with Disqus in Pelican</title><link href="https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html" rel="alternate"></link><published>2015-09-18T09:33:00+08:00</published><updated>2015-09-18T09:33:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-09-18:/posts/2015/09/18/setup_comments_with_disqus.html</id><content type="html">&lt;p&gt;&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt; 是一个外挂的评论系统，对于像 GitHub Pages 这种静态网页来说，非常实用。&lt;/p&gt;
+&lt;p&gt;找到一个文档 &lt;a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html"&gt;http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html&lt;/a&gt;，把&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt;的使用步骤写得很清楚了。&lt;/p&gt;
+&lt;p&gt;以下是主要的配置说明，记录在这里，备忘。&lt;/p&gt;
+&lt;p&gt;注册 Disqus 账号：通过链接：http://&amp;lt;YOUR_DOMAINE&gt;.disqus.com/admin/settings，进行设置。&lt;/p&gt;
+&lt;p&gt;配置 Pelican：在 &lt;code&gt;pelicanconfig.py&lt;/code&gt; 文件里，添加如下配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;DISQUS_SITENAME = &amp;quot;&amp;lt;YOUR_DOMAINE&amp;gt;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Tools"></category><category term="Pelican"></category><category term="Disqus"></category></entry><entry><title>More Use of Pelican</title><link href="https://cctags.github.io/posts/2015/07/10/linuxtoy_uses_pelican.html" rel="alternate"></link><published>2015-07-10T09:46:00+08:00</published><updated>2015-07-10T09:46:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-07-10:/posts/2015/07/10/linuxtoy_uses_pelican.html</id><content type="html">&lt;p&gt;经常会去 &lt;a href="https://linuxtoy.org/"&gt;LinuxTOY&lt;/a&gt;, 看看有哪些新的 Linux 相关的信息。&lt;/p&gt;
+&lt;p&gt;好吧，最近它也已经 &lt;a href="https://linuxtoy.org/archives/moving-to-pelican.html"&gt;从 WordPress 迁移到 Pelican&lt;/a&gt;，现在访问速度快了不是一点点。&lt;/p&gt;</content><category term="Tools"></category><category term="Pelican"></category></entry><entry><title>Upgrade to Pelican 3.6</title><link href="https://cctags.github.io/posts/2015/06/18/upgrade_to_pelican_3_6.html" rel="alternate"></link><published>2015-06-18T11:12:00+08:00</published><updated>2015-06-18T11:12:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-06-18:/posts/2015/06/18/upgrade_to_pelican_3_6.html</id><content type="html">&lt;p&gt;&lt;a href="http://blog.getpelican.com/pelican-3.6-released.html"&gt;Pelican 3.6&lt;/a&gt; 发布了。&lt;/p&gt;
+&lt;p&gt;可以使用万能的 &lt;code&gt;easy_install&lt;/code&gt; 来更新：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ easy_install --upgrade pelican
+Searching for pelican
+Reading http://pypi.python.org/simple/pelican/
+Best match: pelican 3.6.0
+Processing pelican-3.6.0-py2.7.egg
+...
+
+$ pelican --version
+3.6.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;浏览了这个版本的变化，其中较大的一个变化是在默认情况下不再缓存编译内容，从而可以规避下次编译时的潜在冲突。当然也可以按照&lt;a href="http://docs.getpelican.com/en/latest/settings.html#reading-only-modified-content"&gt;这里的文档&lt;/a&gt;，重新打开这个功能。&lt;/p&gt;</content><category term="Tools"></category><category term="Pelican"></category></entry><entry><title>Use txt2tags in Pelican</title><link href="https://cctags.github.io/posts/2015/06/07/use_txt2tags_in_pelican.html" rel="alternate"></link><published>2015-06-07T07:53:00+08:00</published><updated>2015-06-07T07:53:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-06-07:/posts/2015/06/07/use_txt2tags_in_pelican.html</id><summary type="html">
+&lt;H1&gt;1. txt2tags&lt;/H1&gt;
+
+&lt;P&gt;
+&lt;A HREF="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/A&gt; 是 &lt;A HREF="http://blog.getpelican.com/"&gt;Pelican&lt;/A&gt; 默认支持的标记语言。其语法简洁，功能实用，多数情况下，可以满足实际的使用需求。
+&lt;/P&gt;
+&lt;P&gt;
+&lt;A HREF="http://txt2tags.org"&gt;txt2tags&lt;/A&gt; 是一个类似的项目：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  Txt2tags is a text formatting and conversion tool.
+&lt;/PRE&gt;
+
+&lt;P&gt;
+相比于 Markdown：
+&lt;/P&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;txt2tags 包括了以下这些有用的功能：
+    &lt;UL&gt;
+    &lt;LI&gt;可以指定生成目录，比如 &lt;CODE&gt;%!options: -n --toc&lt;/CODE&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/TitleNumberedTitle.html"&gt;Numbered Title&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/Table.html"&gt;Table&lt;/A&gt;
+    &lt;LI&gt;Macros
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/UL&gt;
+&lt;LI&gt;当然也有一些不足：
+    &lt;UL&gt;
+    &lt;LI&gt;Verbatim line 没有语法高亮
+    &lt;/UL&gt;
+&lt;/UL&gt;
+
+&lt;P&gt;
+更多功能，请参考&lt;A HREF="http://txt2tags.org/userguide/"&gt;用户手册&lt;/A&gt;。
+&lt;/P&gt;
+&lt;P&gt;
+总的来说，txt2tags 的这些功能，可以使得内容更加清晰，有条理。
+&lt;/P&gt;
+
+&lt;H1&gt;2. txt2tags reader plugin&lt;/H1&gt;
+
+&lt;P&gt;
+浏览了 …&lt;/p&gt;</summary><content type="html">
+&lt;H1&gt;1. txt2tags&lt;/H1&gt;
+
+&lt;P&gt;
+&lt;A HREF="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/A&gt; 是 &lt;A HREF="http://blog.getpelican.com/"&gt;Pelican&lt;/A&gt; 默认支持的标记语言。其语法简洁，功能实用，多数情况下，可以满足实际的使用需求。
+&lt;/P&gt;
+&lt;P&gt;
+&lt;A HREF="http://txt2tags.org"&gt;txt2tags&lt;/A&gt; 是一个类似的项目：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  Txt2tags is a text formatting and conversion tool.
+&lt;/PRE&gt;
+
+&lt;P&gt;
+相比于 Markdown：
+&lt;/P&gt;
+
+&lt;UL&gt;
+&lt;LI&gt;txt2tags 包括了以下这些有用的功能：
+    &lt;UL&gt;
+    &lt;LI&gt;可以指定生成目录，比如 &lt;CODE&gt;%!options: -n --toc&lt;/CODE&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/TitleNumberedTitle.html"&gt;Numbered Title&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/Table.html"&gt;Table&lt;/A&gt;
+    &lt;LI&gt;Macros
+    &lt;P&gt;&lt;/P&gt;
+    &lt;/UL&gt;
+&lt;LI&gt;当然也有一些不足：
+    &lt;UL&gt;
+    &lt;LI&gt;Verbatim line 没有语法高亮
+    &lt;/UL&gt;
+&lt;/UL&gt;
+
+&lt;P&gt;
+更多功能，请参考&lt;A HREF="http://txt2tags.org/userguide/"&gt;用户手册&lt;/A&gt;。
+&lt;/P&gt;
+&lt;P&gt;
+总的来说，txt2tags 的这些功能，可以使得内容更加清晰，有条理。
+&lt;/P&gt;
+
+&lt;H1&gt;2. txt2tags reader plugin&lt;/H1&gt;
+
+&lt;P&gt;
+浏览了 &lt;A HREF="https://github.com/getpelican/pelican-plugins"&gt;pelican-plugins&lt;/A&gt; 官方插件库，发现它并没有 txt2tags 的插件。
+&lt;/P&gt;
+&lt;P&gt;
+还好是开源软件，缺什么，动手写一个就是了。参考了 &lt;A HREF="https://github.com/dames57/multimarkdown_reader"&gt;multimarkdown_reader&lt;/A&gt; 的代码，写了个 txt2tags_reader。
+&lt;/P&gt;
+&lt;P&gt;
+然后发了个 &lt;A HREF="https://github.com/getpelican/pelican-plugins/pull/510"&gt;pull request&lt;/A&gt;，没想到很快就被合并进去，成为了 &lt;A HREF="https://github.com/getpelican/pelican-plugins"&gt;pelican-plugins&lt;/A&gt; 官方插件库的&lt;A HREF="https://github.com/getpelican/pelican-plugins/tree/master/txt2tags_reader"&gt;一部分&lt;/A&gt;。
+&lt;/P&gt;
+
+&lt;H2&gt;2.1. How to use&lt;/H2&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;更新 pelican-plugins
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Config file
+&lt;P&gt;&lt;/P&gt;
+&lt;PRE&gt;
+  PLUGINS = ["txt2tags_reader"]
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;Content file
+&lt;P&gt;&lt;/P&gt;
+使用 txt2tags 语法来编辑内容，并将内容文件的扩展名设置为 &lt;CODE&gt;t2t&lt;/CODE&gt;，或者 &lt;CODE&gt;txt2tags&lt;/CODE&gt;即可。
+&lt;/OL&gt;
+
+&lt;H2&gt;2.2. Known Issues&lt;/H2&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;目录里是相对路径的定位方式，如果一篇内容被部分地包含在另一个页面里，此时点击目录里的链接，就有问题了。
+&lt;/OL&gt;
+
+</content><category term="Tools"></category><category term="Pelican"></category><category term="txt2tags"></category></entry><entry><title>Pelican 使用记录</title><link href="https://cctags.github.io/posts/2015/06/02/use_pelican.html" rel="alternate"></link><published>2015-06-02T09:52:00+08:00</published><updated>2015-06-02T09:52:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2015-06-02:/posts/2015/06/02/use_pelican.html</id><summary type="html">&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+  &lt;OL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc1"&gt;Why Here?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc2"&gt;Why Pelican?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc3"&gt;Use Pelican&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc4"&gt;3.1. Install&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc5"&gt;3.2. Kickstart your site&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc6"&gt;3.3. Config file&lt;/A&gt;
+      &lt;UL&gt;
+      &lt;LI&gt;&lt;A HREF="#toc7"&gt;3.3.1. Theme&lt;/A&gt;
+      &lt;LI&gt;&lt;A HREF="#toc8"&gt;3.3.2. Plugin&lt;/A&gt;
+      &lt;/UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc9"&gt;3.4. Add a note&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc10"&gt;3.5. Compile&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc11"&gt;Publish&lt;/A&gt;
+  &lt;/OL&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+&lt;A NAME="toc1"&gt;&lt;/A&gt;
+&lt;H1&gt;1. Why Here?&lt;/H1&gt;
+
+&lt;P&gt;
+之前博客搭在 &lt;A HREF="http://hi.baidu.com/"&gt;Baidu Hi&lt;/A&gt; 上面，前后也用了好长时间了。直到最近，Baidu Hi 要下线了。。
+&lt;/P&gt;
+&lt;P&gt;
+所以把原有的内容整理了一下，准备放到 &lt;A HREF="https://pages.github.com/"&gt;GitHub …&lt;/a&gt;&lt;/p&gt;</summary><content type="html">&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+  &lt;OL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc1"&gt;Why Here?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc2"&gt;Why Pelican?&lt;/A&gt;
+  &lt;LI&gt;&lt;A HREF="#toc3"&gt;Use Pelican&lt;/A&gt;
+    &lt;UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc4"&gt;3.1. Install&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc5"&gt;3.2. Kickstart your site&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc6"&gt;3.3. Config file&lt;/A&gt;
+      &lt;UL&gt;
+      &lt;LI&gt;&lt;A HREF="#toc7"&gt;3.3.1. Theme&lt;/A&gt;
+      &lt;LI&gt;&lt;A HREF="#toc8"&gt;3.3.2. Plugin&lt;/A&gt;
+      &lt;/UL&gt;
+    &lt;LI&gt;&lt;A HREF="#toc9"&gt;3.4. Add a note&lt;/A&gt;
+    &lt;LI&gt;&lt;A HREF="#toc10"&gt;3.5. Compile&lt;/A&gt;
+    &lt;/UL&gt;
+  &lt;LI&gt;&lt;A HREF="#toc11"&gt;Publish&lt;/A&gt;
+  &lt;/OL&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;HR NOSHADE SIZE=1&gt;
+&lt;P&gt;&lt;/P&gt;
+
+&lt;A NAME="toc1"&gt;&lt;/A&gt;
+&lt;H1&gt;1. Why Here?&lt;/H1&gt;
+
+&lt;P&gt;
+之前博客搭在 &lt;A HREF="http://hi.baidu.com/"&gt;Baidu Hi&lt;/A&gt; 上面，前后也用了好长时间了。直到最近，Baidu Hi 要下线了。。
+&lt;/P&gt;
+&lt;P&gt;
+所以把原有的内容整理了一下，准备放到 &lt;A HREF="https://pages.github.com/"&gt;GitHub Pages&lt;/A&gt; 上面。
+&lt;/P&gt;
+
+&lt;A NAME="toc2"&gt;&lt;/A&gt;
+&lt;H1&gt;2. Why Pelican?&lt;/H1&gt;
+
+&lt;P&gt;
+经过比较，决定选择基于 &lt;A HREF="http://blog.getpelican.com/"&gt;Pelican&lt;/A&gt; 生成静态页面的方式。
+&lt;/P&gt;
+&lt;P&gt;
+目前的使用里，基本只关心内容；至于页面格式，可以使用工具来完成。Pelican 就是这样的工具：
+&lt;/P&gt;
+&lt;P&gt;
+&lt;CODE&gt;Pelican is a static site generator, written in Python, that requires no database or server-side logic.&lt;/CODE&gt;
+&lt;/P&gt;
+&lt;P&gt;
+这是 Pelican 项目的 one-sentence 介绍。详细的文档地址是 &lt;A HREF="http://docs.getpelican.com/en/latest/"&gt;http://docs.getpelican.com/en/latest/&lt;/A&gt;。
+&lt;/P&gt;
+&lt;P&gt;
+除了本身是用 Python 开发的，Pelican 使用过程中的一些配置文件也是用 Python 来完成，这点非常实用。
+&lt;/P&gt;
+
+&lt;A NAME="toc3"&gt;&lt;/A&gt;
+&lt;H1&gt;3. Use Pelican&lt;/H1&gt;
+
+&lt;A NAME="toc4"&gt;&lt;/A&gt;
+&lt;H2&gt;3.1. Install&lt;/H2&gt;
+
+&lt;P&gt;
+使用万能的 &lt;CODE&gt;easy_install&lt;/CODE&gt; 安装即可：
+&lt;/P&gt;
+
+&lt;PRE&gt;
+  easy_install pelican
+  easy_install Markdown
+&lt;/PRE&gt;
+
+&lt;A NAME="toc5"&gt;&lt;/A&gt;
+&lt;H2&gt;3.2. Kickstart your site&lt;/H2&gt;
+
+&lt;PRE&gt;
+  pelican-quickstart
+&lt;/PRE&gt;
+
+&lt;P&gt;
+这是一个向导程序，跟着提示逐步地填写，即可生成一份配置文件 &lt;CODE&gt;pelicanconf.py&lt;/CODE&gt;。配置文件也可以手动修改，逐步完善。
+&lt;/P&gt;
+
+&lt;A NAME="toc6"&gt;&lt;/A&gt;
+&lt;H2&gt;3.3. Config file&lt;/H2&gt;
+
+&lt;P&gt;
+基本的配置文件 &lt;CODE&gt;pelicanconf.py&lt;/CODE&gt; 已经可以满足使用，以下只是一些小的修改：
+&lt;/P&gt;
+
+&lt;A NAME="toc7"&gt;&lt;/A&gt;
+&lt;H3&gt;3.3.1. Theme&lt;/H3&gt;
+
+&lt;PRE&gt;
+  # https://github.com/cctags/pelican-octopress-theme
+  THEME = HOME + r"/src/reference/pelican-octopress-theme"
+  DISPLAY_CATEGORIES_ON_MENU = True
+  MENUITEMS_AFTER = (('Archive', '/archives.html'),
+                    )
+&lt;/PRE&gt;
+
+&lt;A NAME="toc8"&gt;&lt;/A&gt;
+&lt;H3&gt;3.3.2. Plugin&lt;/H3&gt;
+
+&lt;PRE&gt;
+  PLUGIN_PATHS = ["plugins", HOME + r"/src/reference"]
+  
+  PLUGINS = ["cjk-auto-spacing"]  #https://github.com/yuex/cjk-auto-spacing
+&lt;/PRE&gt;
+
+&lt;A NAME="toc9"&gt;&lt;/A&gt;
+&lt;H2&gt;3.4. Add a note&lt;/H2&gt;
+
+&lt;P&gt;
+使用 &lt;CODE&gt;YYYYmmdd.xxx&lt;/CODE&gt; 的格式来命名内容文件是比较直观的，且符合 Pelican 的文件排序约定。
+&lt;/P&gt;
+&lt;P&gt;
+内容文件需要放置在 content 目录下。对于特殊的内容文件，则是 content/pages 目录下。
+&lt;/P&gt;
+&lt;P&gt;
+内容文件本身是文本的，可以使用版本管理。
+&lt;/P&gt;
+
+&lt;A NAME="toc10"&gt;&lt;/A&gt;
+&lt;H2&gt;3.5. Compile&lt;/H2&gt;
+
+&lt;P&gt;
+使用 &lt;CODE&gt;pelican&lt;/CODE&gt; 命令编译。
+&lt;/P&gt;
+
+&lt;A NAME="toc11"&gt;&lt;/A&gt;
+&lt;H1&gt;4. Publish&lt;/H1&gt;
+
+&lt;P&gt;
+把生成的静态页面提交到 GitHub Pages 即可。
+&lt;/P&gt;
+</content><category term="Tools"></category><category term="Pelican"></category><category term="Python"></category></entry><entry><title>如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键</title><link href="https://cctags.github.io/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html" rel="alternate"></link><published>2012-08-07T06:00:00+08:00</published><updated>2012-08-07T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2012-08-07:/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html</id><content type="html">&lt;p&gt;使用 vim 的时候，经常会用到 Ctrl-Fn 及 Shift-Fn 这样的组合键，无奈 PuTTY 不支持。&lt;/p&gt;
+&lt;p&gt;从网上找到的解决办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://www.newsmth.net/nForum/#!article/PHP/88598"&gt;http://www.newsmth.net/nForum/#!article/PHP/88598&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.newsmth.net/nForum/#!article/LinuxApp/859371"&gt;http://www.newsmth.net/nForum/#!article/LinuxApp/859371&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html"&gt;http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;出于安全，小心使用。&lt;/p&gt;</content><category term="Tools"></category><category term="PuTTY"></category><category term="ssh"></category></entry><entry><title>chrome 导入 portable firefox 收藏夹</title><link href="https://cctags.github.io/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html" rel="alternate"></link><published>2011-09-05T06:00:00+08:00</published><updated>2011-09-05T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-09-05:/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html</id><content type="html">&lt;p&gt;之前用的是 portable firefox，现在慢慢地转到 chrome 了。
+在导入收藏夹时遇到了问题。chrome 不知道 portable firefox 收藏夹的位置，折腾了好一会儿，找到个办法：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;将 firefox 的收藏夹导出为 bookmarks.html；&lt;/li&gt;
+&lt;li&gt;将 bookmarks.html 导入 IE；&lt;/li&gt;
+&lt;li&gt;在 chrome 里，导入 IE Favorites；&lt;/li&gt;
+&lt;li&gt;OK!&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Tools"></category><category term="Chrome"></category><category term="Firefox"></category></entry><entry><title>Automatically cc/bcc the mail messages</title><link href="https://cctags.github.io/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html" rel="alternate"></link><published>2011-07-25T06:00:00+08:00</published><updated>2011-07-25T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-07-25:/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html</id><summary type="html">&lt;p&gt;用了很长时间的 Thunderbird，随着收件箱里的邮件越来越多，形成了以下的使用习惯：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;按邮件的属性分成多个类别（文件夹）；&lt;/li&gt;
+&lt;li&gt;更改设置，在发送一封邮件的同时，将其 bcc 给自己；&lt;/li&gt;
+&lt;li&gt;在一个分类下，按索引（会话）方式罗列邮件；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这样，邮箱里显示的是一个个的索引（会话），而不再是单独的邮件。其实用性不用多说，好多人也是这样用的。&lt;/p&gt;
+&lt;p&gt;由于工作原因，目前使用的是 Outlook。在 Outlook 里，1 和 3 基本上不是问题，但 2 却无法直接搞定。&lt;/p&gt;
+&lt;p&gt;还好有网络，花了点时间，找到了一些免费的解决方案：&lt;a href="http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html"&gt;http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html&lt;/a&gt;，&lt;a href="http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw"&gt;http://www.slipstick.com/mail1/always_bcc …&lt;/a&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;用了很长时间的 Thunderbird，随着收件箱里的邮件越来越多，形成了以下的使用习惯：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;按邮件的属性分成多个类别（文件夹）；&lt;/li&gt;
+&lt;li&gt;更改设置，在发送一封邮件的同时，将其 bcc 给自己；&lt;/li&gt;
+&lt;li&gt;在一个分类下，按索引（会话）方式罗列邮件；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这样，邮箱里显示的是一个个的索引（会话），而不再是单独的邮件。其实用性不用多说，好多人也是这样用的。&lt;/p&gt;
+&lt;p&gt;由于工作原因，目前使用的是 Outlook。在 Outlook 里，1 和 3 基本上不是问题，但 2 却无法直接搞定。&lt;/p&gt;
+&lt;p&gt;还好有网络，花了点时间，找到了一些免费的解决方案：&lt;a href="http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html"&gt;http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html&lt;/a&gt;，&lt;a href="http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw"&gt;http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw&lt;/a&gt;。当然，需要调整一下安全设置。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Sub&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Application_ItemSend&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ByVal&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Item&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Cancel&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Boolean&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Recipient&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;strMsg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Integer&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;Dim&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;strBcc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;As&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;On&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Error&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Resume&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Next&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;strBcc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;user@domain.com&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;Set&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Item&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Recipients&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;Add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strBcc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;olBCC&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ow"&gt;Not&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Resolve&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Then&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="n"&gt;strMsg&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;Could not resolve the Bcc recipient. &amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                 &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;Do you want still to send the message?&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;MsgBox&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strMsg&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbYesNo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbDefaultButton1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;Could Not Resolve Bcc Recipient&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbNo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Then&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;&lt;span class="n"&gt;Cancel&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;True&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="k"&gt;End&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;End&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;Set&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;objRecip&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Nothing&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;End&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Sub&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Tools"></category><category term="Outlook"></category></entry><entry><title>虚拟机里的时间走慢的问题</title><link href="https://cctags.github.io/posts/2011/07/13/os_time_not_correct_in_vm.html" rel="alternate"></link><published>2011-07-13T06:00:00+08:00</published><updated>2011-07-13T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-07-13:/posts/2011/07/13/os_time_not_correct_in_vm.html</id><content type="html">&lt;p&gt;使用过程中碰到了这个问题，很麻烦。&lt;/p&gt;
+&lt;p&gt;参考了现成的解决方法，基本上可以通过安装 VMwareTools 工具解决。&lt;/p&gt;</content><category term="Tools"></category><category term="VM"></category></entry><entry><title>How to undo "clear offline items"</title><link href="https://cctags.github.io/posts/2011/07/08/how_to_undo_clear_offline_items.html" rel="alternate"></link><published>2011-07-08T06:00:00+08:00</published><updated>2011-07-08T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-07-08:/posts/2011/07/08/how_to_undo_clear_offline_items.html</id><content type="html">&lt;p&gt;在 Outlook 里浏览邮件分类目录时，点了 “clear offline items” 按钮，这下邮件全没了。。那叫一个紧张呀。&lt;/p&gt;
+&lt;p&gt;赶紧搜索一下，找到了几个：&lt;a href="http://www.pcreview.co.uk/forums/do-undo-clear-offline-items-and-regain-my-calendar-t2961229.html"&gt;how do i undo "clear offline items"&lt;/a&gt;，&lt;a href="http://www.office-outlook.com/outlook-forum/index.php/m/511008/"&gt;how do i recoover "clear offline items"&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;按着罗列的方法，邮件终于回来了。有惊无险。&lt;/p&gt;</content><category term="Tools"></category><category term="Outlook"></category></entry><entry><title>UltraEdit 函数列表错位的问题</title><link href="https://cctags.github.io/posts/2011/06/09/the_function_list_issue_in_ultraedit.html" rel="alternate"></link><published>2011-06-09T06:00:00+08:00</published><updated>2011-06-09T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-06-09:/posts/2011/06/09/the_function_list_issue_in_ultraedit.html</id><summary type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;在 UltraEdit 里遇到一个问题：通过函数列表跳转到函数实现的时候，会出现定位不准、有错位的情况。&lt;/p&gt;
+&lt;h2&gt;0x1 解决方法&lt;/h2&gt;
+&lt;p&gt;问题的解决方法，请参考以下链接：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html"&gt;http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078"&gt;http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里把解决方法记录一下，备忘：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;As workaround you can modify the first function string in c_cplusplus.uew from
+
+/Function String = &amp;quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;在 UltraEdit 里遇到一个问题：通过函数列表跳转到函数实现的时候，会出现定位不准、有错位的情况。&lt;/p&gt;
+&lt;h2&gt;0x1 解决方法&lt;/h2&gt;
+&lt;p&gt;问题的解决方法，请参考以下链接：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html"&gt;http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078"&gt;http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里把解决方法记录一下，备忘：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;As workaround you can modify the first function string in c_cplusplus.uew from
+
+/Function String = &amp;quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t]++([^p*&amp;amp;:, ^t^[^]a-zA-Z_0-9./()!&amp;lt;&amp;gt;]++)[~;]&amp;quot;
+
+to
+
+/Function String = &amp;quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t]++([ ^t]++$&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;0x2 另一个问题&lt;/h2&gt;
+&lt;p&gt;这时，遇到了另一个问题，由于是工作机器，对于 c_cplusplus.uew 所在的 C: 盘分区，没有写权限！&lt;/p&gt;
+&lt;p&gt;这时，可以把 UltraEdit 的 wordfiles 目录拷贝到其他分区的某个位置，比如 D:\a\b\wordfiles，同时修改 Advanced/Configuration/Editor Display/Syntax Highlighting 下的配置，重启即可。&lt;/p&gt;</content><category term="Tools"></category><category term="UltraEdit"></category></entry><entry><title>终端与远程之间的文件传递</title><link href="https://cctags.github.io/posts/2011/01/11/file-transfer.html" rel="alternate"></link><published>2011-01-11T06:00:00+08:00</published><updated>2011-01-11T06:00:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2011-01-11:/posts/2011/01/11/file-transfer.html</id><summary type="html">&lt;p&gt;经常需要在终端和远程服务器之间进行文件传递，以下是几种常用的方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ssh（文件比较大时，会比较慢）&lt;ul&gt;
+&lt;li&gt;rz/sz &lt;a href="https://linux.die.net/man/1/sz"&gt;https://linux.die.net/man/1/sz&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;rsync &lt;a href="https://linux.die.net/man/1/rsync"&gt;https://linux.die.net/man/1/rsync&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;pscp &lt;a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html"&gt;https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;WinSCP&lt;/li&gt;
+&lt;li&gt;Xshell，可以直接拖拽，连 rz/sz 都省了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;sftp&lt;/li&gt;
+&lt;li&gt;ftp，速度快；需要考虑文件的访问权限；&lt;/li&gt;
+&lt;li&gt;python 小工具：&lt;ul&gt;
+&lt;li&gt;下载文件，&lt;code&gt;python -m SimpleHTTPServer …&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;经常需要在终端和远程服务器之间进行文件传递，以下是几种常用的方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ssh（文件比较大时，会比较慢）&lt;ul&gt;
+&lt;li&gt;rz/sz &lt;a href="https://linux.die.net/man/1/sz"&gt;https://linux.die.net/man/1/sz&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;rsync &lt;a href="https://linux.die.net/man/1/rsync"&gt;https://linux.die.net/man/1/rsync&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;pscp &lt;a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html"&gt;https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;WinSCP&lt;/li&gt;
+&lt;li&gt;Xshell，可以直接拖拽，连 rz/sz 都省了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;sftp&lt;/li&gt;
+&lt;li&gt;ftp，速度快；需要考虑文件的访问权限；&lt;/li&gt;
+&lt;li&gt;python 小工具：&lt;ul&gt;
+&lt;li&gt;下载文件，&lt;code&gt;python -m SimpleHTTPServer &amp;lt;port&amp;gt;&lt;/code&gt;，以及 &lt;code&gt;wget http://&amp;lt;ip&amp;gt;:port/xxx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;上传文件，可以使用 SimpleHTTPServerWithUpload.py&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://gist.github.com/UniIsland/3346170"&gt;https://gist.github.com/UniIsland/3346170&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://linuxtoy.org/archives/simple-http-server-with-upload.html"&gt;https://linuxtoy.org/archives/simple-http-server-with-upload.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Tools"></category><category term="linux"></category><category term="ssh"></category><category term="Python"></category></entry></feed>

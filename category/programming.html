@@ -40,7 +40,8 @@
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://cctags.github.io"/>
 
-  <title>Gang Up</title>
+  <title>Gang Up &ndash;     Category Programming
+</title>
 
 </head>
 <body>
@@ -87,32 +88,6 @@
 
 
 
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html#utmp_records_of_tmux">utmp records of tmux</a></h2>
-    <p>
-          Posted on 2020-04-02 星期四 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/tmux.html">tmux</a>,              <a href="https://cctags.github.io/tag/ubuntu.html">ubuntu</a>
-    </p>
-  </header>
-  <div>
-      <h2>0x0</h2>
-<p>在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 <code>w</code> 或者 <code>who</code> 的输出里，会有好多条登录信息；如果 <code>pane</code> 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。</p>
-<h2>0x1</h2>
-<p>感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 <a href="https://github.com/tmux/tmux/issues/1260">utmp records are potentially dangerous</a>，基本确认应该是对 utmp 信息的处理不一致。</p>
-<h2>0x2</h2>
-<p>查看并对比了 tmux 对应的依赖库：</p>
-<div class="highlight"><pre><span></span><code>$ ldd …</code></pre></div>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html#utmp_records_of_tmux">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
 <article>
   <header>
     <h2><a href="https://cctags.github.io/posts/2019/09/04/python_difference_between_str_and_repr.html#python_difference_between_str_and_repr">Difference between __str__ and __repr__ in Python</a></h2>
@@ -286,29 +261,6 @@
 </article>
 <article>
   <header>
-    <h2><a href="https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html#chinse_document_style_guide">中文技术文档的写作规范</a></h2>
-    <p>
-          Posted on 2018-10-08 星期一 in <a href="https://cctags.github.io/category/misc.html">misc</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/spec.html">spec</a>
-    </p>
-  </header>
-  <div>
-      <p>这里是一份开源的《中文技术文档的写作规范》， <a href="https://github.com/ruanyf/document-style-guide">https://github.com/ruanyf/document-style-guide</a></p>
-<p>这份写作规范，对文档的标题、文本、段落、数值甚至标点符号，都给出了具体的建议。另外，它还附录了一些知名公司的写作规范。</p>
-<p>目前的 Star 数大概有 6.2k，应该说是相当高的，说明已经得到了很多人的认可。</p>
-<p>对于我们来说，每次写文档之前，都值得拿来读一读，作为学习和参考。</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html#chinse_document_style_guide">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
     <h2><a href="https://cctags.github.io/posts/2018/09/17/gettid_build_issue.html#gettid_build_issue">gettid() 编译问题</a></h2>
     <p>
           Posted on 2018-09-17 星期一 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
@@ -343,29 +295,95 @@
 </article>
 <article>
   <header>
-    <h2><a href="https://cctags.github.io/posts/2018/02/02/net_framework_3_5_installation_error.html#net_framework_3_5_installation_error">.NET Framework 3.5 installation error</a></h2>
+    <h2><a href="https://cctags.github.io/posts/2017/10/01/issue_of_using_kill_to_send_signal.html#issue_of_using_kill_to_send_signal">使用 Kill 发信号时误杀进程的问题</a></h2>
     <p>
-          Posted on 2018-02-02 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
+          Posted on 2017-10-01 星期日 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
 
 
           &#8226;     Tagged with
 
-              <a href="https://cctags.github.io/tag/microsoft.html">microsoft</a>,              <a href="https://cctags.github.io/tag/window.html">window</a>,              <a href="https://cctags.github.io/tag/dotnet.html">dotnet</a>
+              <a href="https://cctags.github.io/tag/procps.html">procps</a>,              <a href="https://cctags.github.io/tag/shell.html">shell</a>,              <a href="https://cctags.github.io/tag/linux.html">Linux</a>
     </p>
   </header>
   <div>
-      <p>安装某软件时，它提示有对 .NET 3.5 的依赖，因为本地没有安装对应的版本。但 Windows 在自动安装 .NET 3.5 失败了，返回了错误号：0x800F081F。查看了微软文档，对这个错误号的解释是：<a href="https://support.microsoft.com/en-us/help/2734782/net-framework-3-5-installation-error-0x800f0906-0x800f081f-0x800f0907">0x800F081F - CBS_E_SOURCE_MISSING</a></p>
-<blockquote>
-<p>The source files could not be found.</p>
-<p>Use the "Source" option to specify the location of the files that are required to restore the feature. For more information on specifying …</p></blockquote>
+      <p>程序里会使用 Kill 发送 SIGTERM 信号，要求某进程组结束：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">kill</span> -15 -&lt;pgid&gt;
+</code></pre></div>
+
+
+<p>实际运行时发现一个问题，除了这个目标进程组之外，有时候其他一些进程也会被强行结束。但是，如果在 shell 里执行类似的命令，问题不会出现。</p>
+<p>经过反复试验，定位到 Kill 有两个入口：</p>
+<ul>
+<li><code>/bin/kill</code>，这是个二进程程序，是 <a href="https://gitlab.com/procps-ng/procps">procps</a> 的一部分。在处理上述命令的时候，如果第二个参数是 <code>-1xy..</code> 的形式，它会解析成 <code>-1</code>，而 <code>-1</code> 表示把信号发给所有的在操作权限范围内的进程。这就是某些用户进程被意外结束的原因。</li>
+<li><code>builtin 命令</code>，是 <a href="https://linux.die.net/man/1/bash">shell</a> 的一部分。研究了 shell 里的 builtin kill 的实现代码，没有这个问题。这是 …</li></ul>
       <br>
-      <a class="btn" href="https://cctags.github.io/posts/2018/02/02/net_framework_3_5_installation_error.html#net_framework_3_5_installation_error">    Continue reading
+      <a class="btn" href="https://cctags.github.io/posts/2017/10/01/issue_of_using_kill_to_send_signal.html#issue_of_using_kill_to_send_signal">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html#app_crash_because_of_multiple_libc_instances">混用不同版本的 libc 造成程序崩溃</a></h2>
+    <p>
+          Posted on 2016-03-25 星期五 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/linker.html">linker</a>
+    </p>
+  </header>
+  <div>
+      <p>程序发生崩溃，调试器提示崩溃发生在 libc 的 free() 函数里面：</p>
+<div class="highlight"><pre><span></span><code><span class="n">Debug</span> <span class="n">Assertion</span> <span class="nl">Failed</span><span class="p">:</span> <span class="n">_CrtIsValidHeapPointer</span><span class="p">(</span><span class="n">pUserData</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>初步判断，可能是堆（Heap）被写坏了。</p>
+<p>于是修改代码，在程序初始化的地方，调用了 <code>_CrtSetDbgFlag</code> 来设置一些调试的开关，希望调试器能够捕获到堆被写坏的操作。以下是这个 API 的原型，更多信息可以参考文档 <a href="https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx">https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx</a>。</p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="nf">_CrtSetDbgFlag</span><span class="p">(</span>
+   <span class="kt">int</span> <span class="n">newFlag</span>
+<span class="p">);</span>
+
+<span class="nl">Flags</span><span class="p">:</span>
+  <span class="n">o</span> <span class="n">_CRTDBG_ALLOC_MEM_DF</span>
+  <span class="n">o</span> <span class="n">_CRTDBG_CHECK_ALWAYS_DF</span>
+  <span class="n">o</span> <span class="n">_CRTDBG_CHECK_CRT_DF</span>
+  <span class="n">o</span> <span class="n">_CRTDBG_DELAY_FREE_MEM_DF</span>
+  <span class="n">o …</span></code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html#app_crash_because_of_multiple_libc_instances">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="https://cctags.github.io/posts/2016/01/28/what_is_ulp.html#what_is_ulp">What is ULP?</a></h2>
+    <p>
+          Posted on 2016-01-28 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/opencl.html">OpenCL</a>
+    </p>
+  </header>
+  <div>
+      <p>The maximum relative error is defined as ulp (units in the last place).</p>
+<p>The ULP is defined as follows:</p>
+<div class="highlight"><pre><span></span><code>If x is a real number that lies between two finite consecutive
+floating-point numbers a and b, without being equal to one of them,
+then ulp(x) = |b - a|, otherwise ulp …</code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2016/01/28/what_is_ulp.html#what_is_ulp">    Continue reading
 </a>
   </div>
 </article>
 
   <div class="pagination">
-    <a class="btn float-left" href="https://cctags.github.io/index2.html">
+    <a class="btn float-left" href="https://cctags.github.io/category/programming2.html">
       <i class="fa fa-angle-left"></i>     Older Posts
 
     </a>
