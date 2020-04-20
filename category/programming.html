@@ -100,6 +100,38 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html#issue_of_upgrade_psutil">Ubuntu 无法更新 psutil 的问题</a></h2>
+    <p>
+          Posted on 2020-04-16 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/python.html">Python</a>,              <a href="https://cctags.github.io/tag/psutil.html">psutil</a>,              <a href="https://cctags.github.io/tag/ubuntu.html">ubuntu</a>
+    </p>
+  </header>
+  <div>
+      <h2>0x0 问题</h2>
+<p>编写 <a href="https://github.com/cctags/tmux-system-info">tmux-system-info</a> 的时候，有依赖到高版本 <a href="https://pypi.org/project/psutil">psutil</a> 里的接口功能。</p>
+<p>因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：</p>
+<div class="highlight"><pre><span></span><code>sudo pip3 install --upgrade psutil
+</code></pre></div>
+
+
+<p>没想到，升级遇到了以下问题：</p>
+<div class="highlight"><pre><span></span><code>Collecting psutil
+  Downloading psutil-5.7.0.tar.gz (449 kB)
+     |████████████████████████████████| 449 kB 1.3 MB/s
+Building wheels for collected packages: psutil
+  Building wheel for psutil (setup.py) ... done …</code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html#issue_of_upgrade_psutil">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2019/09/04/python_difference_between_str_and_repr.html#python_difference_between_str_and_repr">Difference between __str__ and __repr__ in Python</a></h2>
     <p>
           Posted on 2019-09-04 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
@@ -364,30 +396,6 @@
   <span class="n">o …</span></code></pre></div>
       <br>
       <a class="btn" href="https://cctags.github.io/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html#app_crash_because_of_multiple_libc_instances">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2016/01/28/what_is_ulp.html#what_is_ulp">What is ULP?</a></h2>
-    <p>
-          Posted on 2016-01-28 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/opencl.html">OpenCL</a>
-    </p>
-  </header>
-  <div>
-      <p>The maximum relative error is defined as ulp (units in the last place).</p>
-<p>The ULP is defined as follows:</p>
-<div class="highlight"><pre><span></span><code>If x is a real number that lies between two finite consecutive
-floating-point numbers a and b, without being equal to one of them,
-then ulp(x) = |b - a|, otherwise ulp …</code></pre></div>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2016/01/28/what_is_ulp.html#what_is_ulp">    Continue reading
 </a>
   </div>
 </article>

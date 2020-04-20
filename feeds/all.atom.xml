@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/all.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2020-04-02T18:18:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>utmp records of tmux</title><link href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" rel="alternate"></link><published>2020-04-02T18:18:00+08:00</published><updated>2020-04-02T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</id><summary type="html">&lt;h2&gt;0x0&lt;/h2&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/all.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2020-04-16T10:08:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>Ubuntu 无法更新 psutil 的问题</title><link href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html" rel="alternate"></link><published>2020-04-16T10:08:00+08:00</published><updated>2020-04-16T10:08:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-16:/posts/2020/04/16/issue_of_upgrade_psutil.html</id><summary type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;编写 &lt;a href="https://github.com/cctags/tmux-system-info"&gt;tmux-system-info&lt;/a&gt; 的时候，有依赖到高版本 &lt;a href="https://pypi.org/project/psutil"&gt;psutil&lt;/a&gt; 里的接口功能。&lt;/p&gt;
+&lt;p&gt;因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo pip3 install --upgrade psutil
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;没想到，升级遇到了以下问题：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Collecting psutil
+  Downloading psutil-5.7.0.tar.gz (449 kB)
+     |████████████████████████████████| 449 kB 1.3 MB/s
+Building wheels for collected packages: psutil
+  Building wheel for psutil (setup.py) ... done …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;编写 &lt;a href="https://github.com/cctags/tmux-system-info"&gt;tmux-system-info&lt;/a&gt; 的时候，有依赖到高版本 &lt;a href="https://pypi.org/project/psutil"&gt;psutil&lt;/a&gt; 里的接口功能。&lt;/p&gt;
+&lt;p&gt;因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo pip3 install --upgrade psutil
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;没想到，升级遇到了以下问题：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Collecting psutil
+  Downloading psutil-5.7.0.tar.gz (449 kB)
+     |████████████████████████████████| 449 kB 1.3 MB/s
+Building wheels for collected packages: psutil
+  Building wheel for psutil (setup.py) ... done
+  Created wheel for psutil: filename=psutil-5.7.0-cp35-cp35m-linux_x86_64.whl size=266930 sha256=d58c92ec6957c1cd803740b507bcb2cc773de126d1c84e6b2a6cef24d3d691ff
+  Stored in directory: /tmp/pip-ephem-wheel-cache-b_kxa327/wheels/bf/8a/50/4becf3b59de9aae0750147dfbf2f23470c9670c7c31c00df19
+Successfully built psutil
+Installing collected packages: psutil
+  Attempting uninstall: psutil
+    Found existing installation: psutil 3.4.2
+ERROR: Cannot uninstall &amp;#39;psutil&amp;#39;. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstall.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;0x1 原因&lt;/h2&gt;
+&lt;p&gt;经过研究，发现系统里的 psutil 是通过 apt 安装的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo apt list --installed &lt;span class="p"&gt;|&lt;/span&gt; grep psutil
+
+python3-psutil/xenial-updates,xenial-security,now &lt;span class="m"&gt;3&lt;/span&gt;.4.2-1ubuntu0.1 amd64 &lt;span class="o"&gt;[&lt;/span&gt;installed,automatic&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这就导致了 pip3 提示无法卸载和更新。&lt;/p&gt;
+&lt;h2&gt;0x2 解决办法&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 apt remove 掉 python3-psutil&lt;/li&gt;
+&lt;li&gt;pip3 重新安装即可&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Programming"></category><category term="Python"></category><category term="psutil"></category><category term="ubuntu"></category></entry><entry><title>utmp records of tmux</title><link href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" rel="alternate"></link><published>2020-04-02T18:18:00+08:00</published><updated>2020-04-02T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</id><summary type="html">&lt;h2&gt;0x0&lt;/h2&gt;
 &lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。&lt;/p&gt;
 &lt;h2&gt;0x1&lt;/h2&gt;
 &lt;p&gt;感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 &lt;a href="https://github.com/tmux/tmux/issues/1260"&gt;utmp records are potentially dangerous&lt;/a&gt;，基本确认应该是对 utmp 信息的处理不一致。&lt;/p&gt;

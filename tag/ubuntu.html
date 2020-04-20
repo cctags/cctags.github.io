@@ -100,6 +100,38 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html#issue_of_upgrade_psutil">Ubuntu 无法更新 psutil 的问题</a></h2>
+    <p>
+          Posted on 2020-04-16 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/python.html">Python</a>,              <a href="https://cctags.github.io/tag/psutil.html">psutil</a>,              <a href="https://cctags.github.io/tag/ubuntu.html">ubuntu</a>
+    </p>
+  </header>
+  <div>
+      <h2>0x0 问题</h2>
+<p>编写 <a href="https://github.com/cctags/tmux-system-info">tmux-system-info</a> 的时候，有依赖到高版本 <a href="https://pypi.org/project/psutil">psutil</a> 里的接口功能。</p>
+<p>因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：</p>
+<div class="highlight"><pre><span></span><code>sudo pip3 install --upgrade psutil
+</code></pre></div>
+
+
+<p>没想到，升级遇到了以下问题：</p>
+<div class="highlight"><pre><span></span><code>Collecting psutil
+  Downloading psutil-5.7.0.tar.gz (449 kB)
+     |████████████████████████████████| 449 kB 1.3 MB/s
+Building wheels for collected packages: psutil
+  Building wheel for psutil (setup.py) ... done …</code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html#issue_of_upgrade_psutil">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html#utmp_records_of_tmux">utmp records of tmux</a></h2>
     <p>
           Posted on 2020-04-02 星期四 in <a href="https://cctags.github.io/category/tools.html">Tools</a>

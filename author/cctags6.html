@@ -100,6 +100,40 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html#use_examdiff_in_clearcase">Use ExamDiff in ClearCase</a></h2>
+    <p>
+          Posted on 2011-03-15 星期二 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/clearcase.html">ClearCase</a>
+    </p>
+  </header>
+  <div>
+      <p>由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。</p>
+<ul>
+<li>写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；</li>
+<li>diffspawn.bat 的内容：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>@echo off
+&quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&quot; %5 %6
+</code></pre></div>
+
+
+<ul>
+<li>修改 <code>%ProgramFiles%\Rational\ClearCase\lib\mgrs\map</code> 配置文件：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>text_file_delta     compare  &lt;path&gt;\diffspawn.exe
+text_file_delta     xcompare &lt;path&gt;\diffspawn.exe …</code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html#use_examdiff_in_clearcase">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2011/02/11/wx_id_yes_not_yes.html#wx_id_yes_not_yes">wxPython 里的 wx.ID_YES 与 wx.YES 不是一回事</a></h2>
     <p>
           Posted on 2011-02-11 星期五 in <a href="https://cctags.github.io/category/programming.html">Programming</a>

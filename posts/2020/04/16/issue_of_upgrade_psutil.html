@@ -42,23 +42,25 @@
     <meta name="msapplication-TileColor" content="#eff3f9">
 
 <meta name="author" content="cctags" />
-<meta name="description" content="在 Python 里，__str__ 和 __repr__ 的功能类似，但又有区别，经常容易搞混。以下列举了它们在使用上的注意点。 __repr__ __repr__ goal is to be unambiguous __repr__ is for developers __repr__ representation of python object usually eval will convert it back to that object 正式的字符串，多数情况下是一个有效的 python 表达式，用于 repr() __str__ __str__ goal is to be readable __str__ is …" />
-<meta name="keywords" content="Python">
+<meta name="description" content="0x0 问题 编写 tmux-system-info 的时候，有依赖到高版本 psutil 里的接口功能。 因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下： sudo pip3 install --upgrade psutil 没想到，升级遇到了以下问题： Collecting psutil Downloading psutil-5.7.0.tar.gz (449 kB) |████████████████████████████████| 449 kB 1.3 MB/s Building wheels for collected packages: psutil Building wheel for psutil (setup.py) ... done …" />
+<meta name="keywords" content="Python, psutil, ubuntu">
 
 <meta property="og:site_name" content="Gang Up"/>
-<meta property="og:title" content="Difference between __str__ and __repr__ in Python"/>
-<meta property="og:description" content="在 Python 里，__str__ 和 __repr__ 的功能类似，但又有区别，经常容易搞混。以下列举了它们在使用上的注意点。 __repr__ __repr__ goal is to be unambiguous __repr__ is for developers __repr__ representation of python object usually eval will convert it back to that object 正式的字符串，多数情况下是一个有效的 python 表达式，用于 repr() __str__ __str__ goal is to be readable __str__ is …"/>
+<meta property="og:title" content="Ubuntu 无法更新 psutil 的问题"/>
+<meta property="og:description" content="0x0 问题 编写 tmux-system-info 的时候，有依赖到高版本 psutil 里的接口功能。 因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下： sudo pip3 install --upgrade psutil 没想到，升级遇到了以下问题： Collecting psutil Downloading psutil-5.7.0.tar.gz (449 kB) |████████████████████████████████| 449 kB 1.3 MB/s Building wheels for collected packages: psutil Building wheel for psutil (setup.py) ... done …"/>
 <meta property="og:locale" content="zh_CN"/>
-<meta property="og:url" content="https://cctags.github.io/posts/2019/09/04/python_difference_between_str_and_repr.html"/>
+<meta property="og:url" content="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html"/>
 <meta property="og:type" content="article"/>
-<meta property="article:published_time" content="2019-09-04 18:18:00+08:00"/>
+<meta property="article:published_time" content="2020-04-16 10:08:00+08:00"/>
 <meta property="article:modified_time" content=""/>
 <meta property="article:author" content="https://cctags.github.io/author/cctags.html">
 <meta property="article:section" content="Programming"/>
 <meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="psutil"/>
+<meta property="article:tag" content="ubuntu"/>
 <meta property="og:image" content="">
 
-  <title>Gang Up &ndash; Difference between __str__ and __repr__ in Python</title>
+  <title>Gang Up &ndash; Ubuntu 无法更新 psutil 的问题</title>
 
 </head>
 <body>
@@ -106,9 +108,9 @@
 <article class="single">
   <header>
       
-    <h1 id="python_difference_between_str_and_repr">Difference between __str__ and __repr__ in Python</h1>
+    <h1 id="issue_of_upgrade_psutil">Ubuntu 无法更新 psutil 的问题</h1>
     <p>
-          Posted on 2019-09-04 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+          Posted on 2020-04-16 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
 
 
     </p>
@@ -116,44 +118,57 @@
 
 
   <div>
-    <p>在 Python 里，__str__ 和 __repr__ 的功能类似，但又有区别，经常容易搞混。以下列举了它们在使用上的注意点。</p>
-<p><strong>__repr__</strong></p>
-<ul>
-<li>__repr__ goal is to be unambiguous</li>
-<li>__repr__ is for developers</li>
-<li>__repr__ representation of python object usually eval will convert it back to that object</li>
-<li>正式的字符串，多数情况下是一个有效的 python 表达式，用于 <a href="https://docs.python.org/3.8/library/functions.html#repr">repr()</a></li>
-</ul>
-<p><strong>__str__</strong></p>
-<ul>
-<li>__str__ goal is to be readable</li>
-<li>__str__ is for customers</li>
-<li>__str__ is whatever you think is that object in text form</li>
-<li>非正式的字符串，用于 <a href="https://docs.python.org/3.8/library/functions.html#print">print()</a></li>
-<li>如果 __str__ 没有定义，__str__ = __repr__</li>
-</ul>
-<p>这里有几个描述，可以参考：</p>
-<ul>
-<li><a href="https://stackoverflow.com/a/2626364">https://stackoverflow.com/a/2626364</a></li>
-<li><a href="https://stackoverflow.com/a/1436756">https://stackoverflow.com/a/1436756</a></li>
-<li><a href="https://www.geeksforgeeks.org/str-vs-repr-in-python/">https://www.geeksforgeeks.org/str-vs-repr-in-python/</a></li>
-</ul>
+    <h2>0x0 问题</h2>
+<p>编写 <a href="https://github.com/cctags/tmux-system-info">tmux-system-info</a> 的时候，有依赖到高版本 <a href="https://pypi.org/project/psutil">psutil</a> 里的接口功能。</p>
+<p>因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：</p>
+<div class="highlight"><pre><span></span><code>sudo pip3 install --upgrade psutil
+</code></pre></div>
+
+
+<p>没想到，升级遇到了以下问题：</p>
+<div class="highlight"><pre><span></span><code>Collecting psutil
+  Downloading psutil-5.7.0.tar.gz (449 kB)
+     |████████████████████████████████| 449 kB 1.3 MB/s
+Building wheels for collected packages: psutil
+  Building wheel for psutil (setup.py) ... done
+  Created wheel for psutil: filename=psutil-5.7.0-cp35-cp35m-linux_x86_64.whl size=266930 sha256=d58c92ec6957c1cd803740b507bcb2cc773de126d1c84e6b2a6cef24d3d691ff
+  Stored in directory: /tmp/pip-ephem-wheel-cache-b_kxa327/wheels/bf/8a/50/4becf3b59de9aae0750147dfbf2f23470c9670c7c31c00df19
+Successfully built psutil
+Installing collected packages: psutil
+  Attempting uninstall: psutil
+    Found existing installation: psutil 3.4.2
+ERROR: Cannot uninstall &#39;psutil&#39;. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstall.
+</code></pre></div>
+
+
+<h2>0x1 原因</h2>
+<p>经过研究，发现系统里的 psutil 是通过 apt 安装的：</p>
+<div class="highlight"><pre><span></span><code>sudo apt list --installed <span class="p">|</span> grep psutil
+
+python3-psutil/xenial-updates,xenial-security,now <span class="m">3</span>.4.2-1ubuntu0.1 amd64 <span class="o">[</span>installed,automatic<span class="o">]</span>
+</code></pre></div>
+
+
+<p>这就导致了 pip3 提示无法卸载和更新。</p>
+<h2>0x2 解决办法</h2>
+<ol>
+<li>使用 apt remove 掉 python3-psutil</li>
+<li>pip3 重新安装即可</li>
+</ol>
   </div>
   <div class="tag-cloud">
     <p>
       <a href="https://cctags.github.io/tag/python.html">Python</a>
+      <a href="https://cctags.github.io/tag/psutil.html">psutil</a>
+      <a href="https://cctags.github.io/tag/ubuntu.html">ubuntu</a>
     </p>
   </div>
 
 
   <div class="neighbors">
-    <a class="btn float-left" href="https://cctags.github.io/posts/2019/06/20/pthread_memory_leak_issue.html" title="使用 pthread 时遇到的资源不足的问题">
+    <a class="btn float-left" href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" title="utmp records of tmux">
       <i class="fa fa-angle-left"></i>     Previous Post
 
-    </a>
-    <a class="btn float-right" href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" title="utmp records of tmux">
-          Next Post
- <i class="fa fa-angle-right"></i>
     </a>
   </div>
 
@@ -162,7 +177,7 @@
 </h4>
     <ul class="related-posts">
       <li><a href="https://cctags.github.io/posts/2012/04/16/baidu_and_google.html">以前的一个帖子</a></li>
-      <li><a href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html">Ubuntu 无法更新 psutil 的问题</a></li>
+      <li><a href="https://cctags.github.io/posts/2019/09/04/python_difference_between_str_and_repr.html">Difference between __str__ and __repr__ in Python</a></li>
       <li><a href="https://cctags.github.io/posts/2017/12/22/build_issue_of_pelican_without_markdown.html">Pelican 编译问题</a></li>
       <li><a href="https://cctags.github.io/posts/2015/06/10/subprocess_popen_use.html">Use subprocess.Popen class in Python</a></li>
       <li><a href="https://cctags.github.io/posts/2015/06/02/use_pelican.html">Pelican 使用记录</a></li>

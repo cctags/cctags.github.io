@@ -100,6 +100,40 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2014/10/17/debug_the_stack_overflow.html#debug_the_stack_overflow">栈溢出的调试及解决办法</a></h2>
+    <p>
+          Posted on 2014-10-17 星期五 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+
+    </p>
+  </header>
+  <div>
+      <h3>※ 问题：</h3>
+<p>栈上消耗的内存太多，导致溢出，程序崩溃。</p>
+<h3>※ 程序崩溃的过程是怎样的？</h3>
+<div class="highlight"><pre><span></span><code>1. CPU 执行代码时，反复地压栈；
+2. 访问栈上内存时缺页， CPU 抛异常，操作系统内核接管；
+3. 操作系统内核计算出异常地址已经低于栈的低地址，所以拒绝补页，同时抛出软件异常；
+4. 程序崩溃，调试器接管，或者提示错误并退出。
+</code></pre></div>
+
+
+<h3>※ 如何知道栈的大小？</h3>
+<p>一个简单的办法是，程序崩溃后，在调试器里，对比函数调用栈最高和最低处的栈指针即可。</p>
+<h3>※ 如何调整栈的大小？</h3>
+<p>设置全局配置、修改可执行文件内部属性、创建线程前指定栈大小等等。比如：</p>
+<div class="highlight"><pre><span></span><code>1. 主线程： ldrel -S 10M -L &lt;program&gt;   /* 10M + Lazy */
+2. 子线程： pthread_attr_setstacksize() + pthread_attr_setstacklazy()
+</code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2014/10/17/debug_the_stack_overflow.html#debug_the_stack_overflow">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html#how_to_use_ctrl_shift_fn_keys_in_putty">如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键</a></h2>
     <p>
           Posted on 2012-08-07 星期二 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
@@ -321,40 +355,6 @@
 /Function String = &quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t …</code></pre></div>
       <br>
       <a class="btn" href="https://cctags.github.io/posts/2011/06/09/the_function_list_issue_in_ultraedit.html#the_function_list_issue_in_ultraedit">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html#use_examdiff_in_clearcase">Use ExamDiff in ClearCase</a></h2>
-    <p>
-          Posted on 2011-03-15 星期二 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/clearcase.html">ClearCase</a>
-    </p>
-  </header>
-  <div>
-      <p>由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。</p>
-<ul>
-<li>写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；</li>
-<li>diffspawn.bat 的内容：</li>
-</ul>
-<div class="highlight"><pre><span></span><code>@echo off
-&quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&quot; %5 %6
-</code></pre></div>
-
-
-<ul>
-<li>修改 <code>%ProgramFiles%\Rational\ClearCase\lib\mgrs\map</code> 配置文件：</li>
-</ul>
-<div class="highlight"><pre><span></span><code>text_file_delta     compare  &lt;path&gt;\diffspawn.exe
-text_file_delta     xcompare &lt;path&gt;\diffspawn.exe …</code></pre></div>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html#use_examdiff_in_clearcase">    Continue reading
 </a>
   </div>
 </article>
