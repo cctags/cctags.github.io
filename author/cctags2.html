@@ -100,6 +100,40 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2018/09/17/gettid_build_issue.html#gettid_build_issue">gettid() 编译问题</a></h2>
+    <p>
+          Posted on 2018-09-17 星期一 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/pthread.html">pthread</a>
+    </p>
+  </header>
+  <div>
+      <p>代码里用到的 <code>gettid()</code>，编译时有报错，说找不到对应的头文件。</p>
+<p>根据 <a href="http://man7.org/linux/man-pages/man2/gettid.2.html#NOTES">man gettid</a> 里的说法，libc 并没有提供这个系统调用的包装：</p>
+<div class="highlight"><pre><span></span><code>NOTES
+    Glibc does not provide a wrapper for this system call; call it using syscall(2).
+
+    ...
+</code></pre></div>
+
+
+<p>所以在实际使用时，需要添加以下声明：</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span> <span class="cpf">&lt;sys/syscall.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#define gettid() syscall(SYS_gettid)</span>
+</code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2018/09/17/gettid_build_issue.html#gettid_build_issue">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2018/02/02/net_framework_3_5_installation_error.html#net_framework_3_5_installation_error">.NET Framework 3.5 installation error</a></h2>
     <p>
           Posted on 2018-02-02 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
@@ -360,39 +394,6 @@ then ulp(x) = |b - a|, otherwise ulp …</code></pre></div>
 
       <br>
       <a class="btn" href="https://cctags.github.io/posts/2016/01/22/find_the_file_by_inode_number.html#find_the_file_by_inode_number">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html#cl_set_event_callback_in_ocl">Set Event Callback in OpenCL</a></h2>
-    <p>
-          Posted on 2015-12-30 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/opencl.html">OpenCL</a>
-    </p>
-  </header>
-  <div>
-      <p>这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下是原型：</p>
-<div class="highlight"><pre><span></span><code><span class="n">cl_int</span> <span class="n">clSetEventCallback</span><span class="p">(</span>
-    <span class="n">cl_event</span> <span class="n">event</span><span class="p">,</span>
-    <span class="n">cl_int</span> <span class="n">command_exec_callback_type</span><span class="p">,</span>
-    <span class="kt">void</span> <span class="p">(</span><span class="n">CL_CALLBACK</span>  <span class="o">*</span><span class="n">pfn_event_notify</span><span class="p">)</span> <span class="p">(</span><span class="n">cl_event</span> <span class="n">event</span><span class="p">,</span>
-                                           <span class="n">cl_int</span> <span class="n">event_command_exec_status</span><span class="p">,</span>
-                                           <span class="kt">void</span> <span class="o">*</span><span class="n">user_data</span><span class="p">),</span>
-    <span class="kt">void</span> <span class="o">*</span><span class="n">user_data</span><span class="p">)</span>
-</code></pre></div>
-
-
-<p>其中 <code>command_exec_callback_type</code> 参数在不同版本里有 <strong>差异</strong>：</p>
-<ul>
-<li><a href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clSetEventCallback.html">OpenCL 1.1</a>: The command execution callback value for which a callback can be registered is …</li></ul>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html#cl_set_event_callback_in_ocl">    Continue reading
 </a>
   </div>
 </article>

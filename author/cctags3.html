@@ -100,6 +100,39 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html#cl_set_event_callback_in_ocl">Set Event Callback in OpenCL</a></h2>
+    <p>
+          Posted on 2015-12-30 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/opencl.html">OpenCL</a>
+    </p>
+  </header>
+  <div>
+      <p>这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下是原型：</p>
+<div class="highlight"><pre><span></span><code><span class="n">cl_int</span> <span class="n">clSetEventCallback</span><span class="p">(</span>
+    <span class="n">cl_event</span> <span class="n">event</span><span class="p">,</span>
+    <span class="n">cl_int</span> <span class="n">command_exec_callback_type</span><span class="p">,</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="n">CL_CALLBACK</span>  <span class="o">*</span><span class="n">pfn_event_notify</span><span class="p">)</span> <span class="p">(</span><span class="n">cl_event</span> <span class="n">event</span><span class="p">,</span>
+                                           <span class="n">cl_int</span> <span class="n">event_command_exec_status</span><span class="p">,</span>
+                                           <span class="kt">void</span> <span class="o">*</span><span class="n">user_data</span><span class="p">),</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">user_data</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>其中 <code>command_exec_callback_type</code> 参数在不同版本里有 <strong>差异</strong>：</p>
+<ul>
+<li><a href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clSetEventCallback.html">OpenCL 1.1</a>: The command execution callback value for which a callback can be registered is …</li></ul>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html#cl_set_event_callback_in_ocl">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html#iphone_photo_library_ghost_space">iPhone Photo Library "Ghost" Space</a></h2>
     <p>
           Posted on 2015-12-25 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
@@ -354,58 +387,6 @@
 <li>当车不多的时候，load …</li></ul>
       <br>
       <a class="btn" href="https://cctags.github.io/posts/2015/09/15/the_linux_cpu_load.html#the_linux_cpu_load">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html#using_git_p4">Using Git-P4</a></h2>
-    <p>
-          Posted on 2015-07-23 星期四 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/git.html">git</a>,              <a href="https://cctags.github.io/tag/p4.html">p4</a>
-    </p>
-  </header>
-  <div>
-      <P>
-平时一直使用 <A HREF="https://git-scm.com/">git</A>，习惯了各种离线操作和强大的分支功能，所以总觉得要比 <A HREF="http://www.perforce.com/">Perforce / p4</A> 好用太多。
-</P>
-<P>
-对于目前项目里用到的 p4 仓库，找到了一个 <A HREF="http://answers.perforce.com/articles/KB/2790">Git-P4</A> 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
-</P>
-<P>
-以下是一些关键操作，记录在这里备忘。
-</P>
-
-<OL>
-<LI>Create a directory for the client workspace root; for example:
-<P></P>
-
-<PRE>
-  $ mkdir gp4-area
-</PRE>
-
-<LI>Create a P4CONFIG file
-<P></P>
-
-<PRE>
-  $ cd gp4-area
-  $ vi p4config
-  $ ...
-</PRE>
-
-<P></P>
-<LI>Create the client workspace
-<P></P>
-
-<PRE>
-  $ p4 client …</pre></li></li></li></ol>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html#using_git_p4">    Continue reading
 </a>
   </div>
 </article>

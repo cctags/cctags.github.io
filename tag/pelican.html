@@ -100,6 +100,51 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html#use_google_analytics_with_pelican">Use Google Analytics With Pelican</a></h2>
+    <p>
+          Posted on 2020-04-13 星期一 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/pelican.html">Pelican</a>
+    </p>
+  </header>
+  <div>
+      <P>
+基于 <A HREF="https://getpelican.com">Pelican</A> 生成的静态页面，可以使用 <A HREF="https://analytics.google.com/analytics/web/">Google Analytics</A> 来统计访问数据。
+</P>
+<P>
+以下是操作步骤，记录在这里备忘：
+</P>
+
+<OL>
+<LI>登录到 Google Analytics，创建账号；
+<LI>添加需要统计的 URL；
+<LI>获取 Tracking ID；
+<LI>把 Tracking ID 添加到 <CODE>publishconf.py</CODE> 里：
+<P></P>
+
+<PRE>
+  GOOGLE_ANALYTICS = 'UA-XXXXXX-Y'
+</PRE>
+
+<P></P>
+<LI>重新编译并发布即可。
+</OL>
+
+<P>
+参考：<A HREF="https://matthewdevaney.com/posts/2019/03/17/google-analytics-with-pelican/">Google Analytics With Pelican</A>
+</P>
+
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html#use_google_analytics_with_pelican">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2017/12/22/build_issue_of_pelican_without_markdown.html#build_issue_of_pelican_without_markdown">Pelican 编译问题</a></h2>
     <p>
           Posted on 2017-12-22 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>

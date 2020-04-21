@@ -99,6 +99,58 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html#using_git_p4">Using Git-P4</a></h2>
+    <p>
+          Posted on 2015-07-23 星期四 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/git.html">git</a>,              <a href="https://cctags.github.io/tag/p4.html">p4</a>
+    </p>
+  </header>
+  <div>
+      <P>
+平时一直使用 <A HREF="https://git-scm.com/">git</A>，习惯了各种离线操作和强大的分支功能，所以总觉得要比 <A HREF="http://www.perforce.com/">Perforce / p4</A> 好用太多。
+</P>
+<P>
+对于目前项目里用到的 p4 仓库，找到了一个 <A HREF="http://answers.perforce.com/articles/KB/2790">Git-P4</A> 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
+</P>
+<P>
+以下是一些关键操作，记录在这里备忘。
+</P>
+
+<OL>
+<LI>Create a directory for the client workspace root; for example:
+<P></P>
+
+<PRE>
+  $ mkdir gp4-area
+</PRE>
+
+<LI>Create a P4CONFIG file
+<P></P>
+
+<PRE>
+  $ cd gp4-area
+  $ vi p4config
+  $ ...
+</PRE>
+
+<P></P>
+<LI>Create the client workspace
+<P></P>
+
+<PRE>
+  $ p4 client …</pre></li></li></li></ol>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html#using_git_p4">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2015/07/15/sysfs.html#sysfs">Sysfs</a></h2>
     <p>
           Posted on 2015-07-15 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
@@ -414,24 +466,6 @@ $ pelican --version
 <p><a href="http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6">http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6</a></p>
       <br>
       <a class="btn" href="https://cctags.github.io/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html#redefinition_of_typedef_error_with_gcc">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html#gcc_reverse_iterator_comparison_operators_missing">gcc reverse_iterator comparison operators missing?</a></h2>
-    <p>
-          Posted on 2014-10-22 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-
-    </p>
-  </header>
-  <div>
-      <p>I get a compile error of the iterator when porting an application which is based on the C++ standard library. Someone get the same issue before, and there is already an answer at <a href="http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing">http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing</a>.</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html#gcc_reverse_iterator_comparison_operators_missing">    Continue reading
 </a>
   </div>
 </article>

@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up - Tools</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/tools.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2020-04-02T18:18:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>utmp records of tmux</title><link href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" rel="alternate"></link><published>2020-04-02T18:18:00+08:00</published><updated>2020-04-02T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</id><summary type="html">&lt;h2&gt;0x0&lt;/h2&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up - Tools</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/tools.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2020-04-13T14:05:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>Use Google Analytics With Pelican</title><link href="https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html" rel="alternate"></link><published>2020-04-13T14:05:00+08:00</published><updated>2020-04-13T14:05:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-13:/posts/2020/04/13/use_google_analytics_with_pelican.html</id><content type="html">&lt;P&gt;
+基于 &lt;A HREF="https://getpelican.com"&gt;Pelican&lt;/A&gt; 生成的静态页面，可以使用 &lt;A HREF="https://analytics.google.com/analytics/web/"&gt;Google Analytics&lt;/A&gt; 来统计访问数据。
+&lt;/P&gt;
+&lt;P&gt;
+以下是操作步骤，记录在这里备忘：
+&lt;/P&gt;
+
+&lt;OL&gt;
+&lt;LI&gt;登录到 Google Analytics，创建账号；
+&lt;LI&gt;添加需要统计的 URL；
+&lt;LI&gt;获取 Tracking ID；
+&lt;LI&gt;把 Tracking ID 添加到 &lt;CODE&gt;publishconf.py&lt;/CODE&gt; 里：
+&lt;P&gt;&lt;/P&gt;
+
+&lt;PRE&gt;
+  GOOGLE_ANALYTICS = 'UA-XXXXXX-Y'
+&lt;/PRE&gt;
+
+&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;重新编译并发布即可。
+&lt;/OL&gt;
+
+&lt;P&gt;
+参考：&lt;A HREF="https://matthewdevaney.com/posts/2019/03/17/google-analytics-with-pelican/"&gt;Google Analytics With Pelican&lt;/A&gt;
+&lt;/P&gt;
+</content><category term="Tools"></category><category term="Pelican"></category></entry><entry><title>utmp records of tmux</title><link href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html" rel="alternate"></link><published>2020-04-02T18:18:00+08:00</published><updated>2020-04-02T18:18:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</id><summary type="html">&lt;h2&gt;0x0&lt;/h2&gt;
 &lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。&lt;/p&gt;
 &lt;h2&gt;0x1&lt;/h2&gt;
 &lt;p&gt;感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 &lt;a href="https://github.com/tmux/tmux/issues/1260"&gt;utmp records are potentially dangerous&lt;/a&gt;，基本确认应该是对 utmp 信息的处理不一致。&lt;/p&gt;

@@ -100,6 +100,51 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html#use_google_analytics_with_pelican">Use Google Analytics With Pelican</a></h2>
+    <p>
+          Posted on 2020-04-13 星期一 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/pelican.html">Pelican</a>
+    </p>
+  </header>
+  <div>
+      <P>
+基于 <A HREF="https://getpelican.com">Pelican</A> 生成的静态页面，可以使用 <A HREF="https://analytics.google.com/analytics/web/">Google Analytics</A> 来统计访问数据。
+</P>
+<P>
+以下是操作步骤，记录在这里备忘：
+</P>
+
+<OL>
+<LI>登录到 Google Analytics，创建账号；
+<LI>添加需要统计的 URL；
+<LI>获取 Tracking ID；
+<LI>把 Tracking ID 添加到 <CODE>publishconf.py</CODE> 里：
+<P></P>
+
+<PRE>
+  GOOGLE_ANALYTICS = 'UA-XXXXXX-Y'
+</PRE>
+
+<P></P>
+<LI>重新编译并发布即可。
+</OL>
+
+<P>
+参考：<A HREF="https://matthewdevaney.com/posts/2019/03/17/google-analytics-with-pelican/">Google Analytics With Pelican</A>
+</P>
+
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html#use_google_analytics_with_pelican">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html#utmp_records_of_tmux">utmp records of tmux</a></h2>
     <p>
           Posted on 2020-04-02 星期四 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
@@ -338,32 +383,6 @@
 </ul>
       <br>
       <a class="btn" href="https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html#change_the_background_color_in_pdf_reader">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html#setup_comments_with_disqus">Setup Comments with Disqus in Pelican</a></h2>
-    <p>
-          Posted on 2015-09-18 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/pelican.html">Pelican</a>,              <a href="https://cctags.github.io/tag/disqus.html">Disqus</a>
-    </p>
-  </header>
-  <div>
-      <p><a href="https://disqus.com/">Disqus</a> 是一个外挂的评论系统，对于像 GitHub Pages 这种静态网页来说，非常实用。</p>
-<p>找到一个文档 <a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html</a>，把<a href="https://disqus.com/">Disqus</a>的使用步骤写得很清楚了。</p>
-<p>以下是主要的配置说明，记录在这里，备忘。</p>
-<p>注册 Disqus 账号：通过链接：http://&lt;YOUR_DOMAINE>.disqus.com/admin/settings，进行设置。</p>
-<p>配置 Pelican：在 <code>pelicanconfig.py</code> 文件里，添加如下配置：</p>
-<div class="highlight"><pre><span></span><code>DISQUS_SITENAME = &quot;&lt;YOUR_DOMAINE&gt;&quot;
-</code></pre></div>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html#setup_comments_with_disqus">    Continue reading
 </a>
   </div>
 </article>
