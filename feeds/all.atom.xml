@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/all.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2020-04-16T10:08:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>Ubuntu 无法更新 psutil 的问题</title><link href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html" rel="alternate"></link><published>2020-04-16T10:08:00+08:00</published><updated>2020-04-16T10:08:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-16:/posts/2020/04/16/issue_of_upgrade_psutil.html</id><summary type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gang Up</title><link href="https://cctags.github.io/" rel="alternate"></link><link href="https://cctags.github.io/feeds/all.atom.xml" rel="self"></link><id>https://cctags.github.io/</id><updated>2021-11-19T10:08:00+08:00</updated><subtitle>Random notes from a random developer</subtitle><entry><title>Python 命令行里显示十六进制</title><link href="https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html" rel="alternate"></link><published>2021-11-19T10:08:00+08:00</published><updated>2021-11-19T10:08:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2021-11-19:/posts/2021/11/19/python_console_hex_display.html</id><summary type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 &lt;code&gt;hex()&lt;/code&gt; 函数，或者按 &lt;code&gt;{:x}.format(123)&lt;/code&gt; 格式打印出来。&lt;/p&gt;
+&lt;p&gt;这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。&lt;/p&gt;
+&lt;h2&gt;0x1 解决办法&lt;/h2&gt;
+&lt;p&gt;其实，Python 的 sys 标准模块里，提供了 &lt;code&gt;displayhook&lt;/code&gt;，对于数字如何显示，可以添加自定义的操作。&lt;/p&gt;
+&lt;p&gt;比如添加 hex.py 文件如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;_displayhook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;int&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;long&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 &lt;code&gt;hex()&lt;/code&gt; 函数，或者按 &lt;code&gt;{:x}.format(123)&lt;/code&gt; 格式打印出来。&lt;/p&gt;
+&lt;p&gt;这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。&lt;/p&gt;
+&lt;h2&gt;0x1 解决办法&lt;/h2&gt;
+&lt;p&gt;其实，Python 的 sys 标准模块里，提供了 &lt;code&gt;displayhook&lt;/code&gt;，对于数字如何显示，可以添加自定义的操作。&lt;/p&gt;
+&lt;p&gt;比如添加 hex.py 文件如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;_displayhook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;int&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;long&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;hex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;__displayhook__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;hexon&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;displayhook&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;_displayhook&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;hexoff&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;displayhook&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;__displayhook__&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然后运行 &lt;code&gt;python3 -i hex.py&lt;/code&gt; 进入命令行。这时，如果需要以十六进制方式显示数字，只需要在执行 &lt;code&gt;hexon()&lt;/code&gt; 即可开启。&lt;/p&gt;
+&lt;h2&gt;0x2 参考资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;https://docs.python.org/3/library/sys.html#sys.displayhook&lt;/li&gt;
+&lt;li&gt;Python console default hex display @ https://stackoverflow.com/questions/6307433/python-console-default-hex-display&lt;/li&gt;
+&lt;li&gt;Digit grouping in python hexadecimal number formatting @　https://stackoverflow.com/questions/56132859/digit-grouping-in-python-hexadecimal-number-formatting&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Tools"></category><category term="Python"></category><category term="Linux"></category><category term="hexdump"></category></entry><entry><title>Ubuntu 无法更新 psutil 的问题</title><link href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html" rel="alternate"></link><published>2020-04-16T10:08:00+08:00</published><updated>2020-04-16T10:08:00+08:00</updated><author><name>cctags</name></author><id>tag:cctags.github.io,2020-04-16:/posts/2020/04/16/issue_of_upgrade_psutil.html</id><summary type="html">&lt;h2&gt;0x0 问题&lt;/h2&gt;
 &lt;p&gt;编写 &lt;a href="https://github.com/cctags/tmux-system-info"&gt;tmux-system-info&lt;/a&gt; 的时候，有依赖到高版本 &lt;a href="https://pypi.org/project/psutil"&gt;psutil&lt;/a&gt; 里的接口功能。&lt;/p&gt;
 &lt;p&gt;因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo pip3 install --upgrade psutil

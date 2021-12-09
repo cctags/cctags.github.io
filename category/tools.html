@@ -100,6 +100,36 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html#python_console_hex_display">Python 命令行里显示十六进制</a></h2>
+    <p>
+          Posted on 2021-11-19 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/python.html">Python</a>,              <a href="https://cctags.github.io/tag/linux.html">Linux</a>,              <a href="https://cctags.github.io/tag/hexdump.html">hexdump</a>
+    </p>
+  </header>
+  <div>
+      <h2>0x0 问题</h2>
+<p>Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 <code>hex()</code> 函数，或者按 <code>{:x}.format(123)</code> 格式打印出来。</p>
+<p>这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。</p>
+<h2>0x1 解决办法</h2>
+<p>其实，Python 的 sys 标准模块里，提供了 <code>displayhook</code>，对于数字如何显示，可以添加自定义的操作。</p>
+<p>比如添加 hex.py 文件如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">_displayhook</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;long&#39;</span><span class="p">):</span>
+        <span class="k">print …</span></code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html#python_console_hex_display">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html#use_google_analytics_with_pelican">Use Google Analytics With Pelican</a></h2>
     <p>
           Posted on 2020-04-13 星期一 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
@@ -360,31 +390,6 @@
       <a class="btn" href="https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html#dial_toll_free_numbers_in_skype">    Continue reading
 </a>
   </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html#change_the_background_color_in_pdf_reader">Change the Background Color in PDF Reader</a></h2>
-    <p>
-          Posted on 2015-10-28 星期三 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/pdf.html">PDF</a>
-    </p>
-  </header>
-  <div>
-      <p>以 Adobe Reader 为例，从主菜单选择：编辑 ∕ 首选项 ∕ 辅助工具 ∕ 自定义颜色 ∕ 页面背景 ∕ 其它颜色，比如色调 45、饱和度 35、亮度 165。</p>
-<p>参考：</p>
-<ul>
-<li><a href="http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2">http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2</a></li>
-<li><a href="http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast">http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast</a></li>
-</ul>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html#change_the_background_color_in_pdf_reader">    Continue reading
-</a>
-  </div>
 </article>
 
   <div class="pagination">
@@ -399,7 +404,7 @@
 
     <footer>
 <p>
-  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+  &copy;  2009 - 2021 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
 </p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p><p>

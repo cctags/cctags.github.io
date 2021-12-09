@@ -42,23 +42,25 @@
     <meta name="msapplication-TileColor" content="#eff3f9">
 
 <meta name="author" content="cctags" />
-<meta name="description" content="如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/，关于对 fork 进行更新。 记录一下，备忘。 o 切换到 master 分支： git checkout master o 从 upstream repository 更新下来： git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master o 更新远程 repository： git push origin master 更新后，对于 bugfix 或者 new …" />
-<meta name="keywords" content="git">
+<meta name="description" content="0x0 问题 Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 hex() 函数，或者按 {:x}.format(123) 格式打印出来。 这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。 0x1 解决办法 其实，Python 的 sys 标准模块里，提供了 displayhook，对于数字如何显示，可以添加自定义的操作。 比如添加 hex.py 文件如下： import sys def _displayhook(o): if type(o).__name__ in (&#39;int&#39;, &#39;long&#39;): print …" />
+<meta name="keywords" content="Python, Linux, hexdump">
 
 <meta property="og:site_name" content="Gang Up"/>
-<meta property="og:title" content="Merging the upstream repository into the fork"/>
-<meta property="og:description" content="如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/，关于对 fork 进行更新。 记录一下，备忘。 o 切换到 master 分支： git checkout master o 从 upstream repository 更新下来： git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master o 更新远程 repository： git push origin master 更新后，对于 bugfix 或者 new …"/>
+<meta property="og:title" content="Python 命令行里显示十六进制"/>
+<meta property="og:description" content="0x0 问题 Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 hex() 函数，或者按 {:x}.format(123) 格式打印出来。 这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。 0x1 解决办法 其实，Python 的 sys 标准模块里，提供了 displayhook，对于数字如何显示，可以添加自定义的操作。 比如添加 hex.py 文件如下： import sys def _displayhook(o): if type(o).__name__ in (&#39;int&#39;, &#39;long&#39;): print …"/>
 <meta property="og:locale" content="zh_CN"/>
-<meta property="og:url" content="https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html"/>
+<meta property="og:url" content="https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html"/>
 <meta property="og:type" content="article"/>
-<meta property="article:published_time" content="2015-12-15 12:45:00+08:00"/>
+<meta property="article:published_time" content="2021-11-19 10:08:00+08:00"/>
 <meta property="article:modified_time" content=""/>
 <meta property="article:author" content="https://cctags.github.io/author/cctags.html">
-<meta property="article:section" content="VCS"/>
-<meta property="article:tag" content="git"/>
+<meta property="article:section" content="Tools"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="Linux"/>
+<meta property="article:tag" content="hexdump"/>
 <meta property="og:image" content="">
 
-  <title>Gang Up &ndash; Merging the upstream repository into the fork</title>
+  <title>Gang Up &ndash; Python 命令行里显示十六进制</title>
 
 </head>
 <body>
@@ -106,9 +108,9 @@
 <article class="single">
   <header>
       
-    <h1 id="merging_the_upstream_repository_into_the_fork">Merging the upstream repository into the fork</h1>
+    <h1 id="python_console_hex_display">Python 命令行里显示十六进制</h1>
     <p>
-          Posted on 2015-12-15 星期二 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
+          Posted on 2021-11-19 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
 
 
     </p>
@@ -116,40 +118,49 @@
 
 
   <div>
-    <p>如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， <a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/">https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/</a>，关于对 <code>fork</code> 进行更新。</p>
-<p>记录一下，备忘。</p>
-<p>o 切换到 <code>master</code> 分支：</p>
-<div class="highlight"><pre><span></span><code>git checkout master
+    <h2>0x0 问题</h2>
+<p>Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 <code>hex()</code> 函数，或者按 <code>{:x}.format(123)</code> 格式打印出来。</p>
+<p>这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。</p>
+<h2>0x1 解决办法</h2>
+<p>其实，Python 的 sys 标准模块里，提供了 <code>displayhook</code>，对于数字如何显示，可以添加自定义的操作。</p>
+<p>比如添加 hex.py 文件如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">_displayhook</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;long&#39;</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">__displayhook__</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">hexon</span><span class="p">():</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">displayhook</span> <span class="o">=</span> <span class="n">_displayhook</span>
+
+<span class="k">def</span> <span class="nf">hexoff</span><span class="p">():</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">displayhook</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">__displayhook__</span>
 </code></pre></div>
 
 
-<p>o 从 upstream repository 更新下来：</p>
-<div class="highlight"><pre><span></span><code>git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
-</code></pre></div>
-
-
-<p>o 更新远程 repository：</p>
-<div class="highlight"><pre><span></span><code>git push origin master
-</code></pre></div>
-
-
-<p>更新后，对于 bugfix 或者 new feature 的开发，单独创建个分支出来即可。</p>
+<p>然后运行 <code>python3 -i hex.py</code> 进入命令行。这时，如果需要以十六进制方式显示数字，只需要在执行 <code>hexon()</code> 即可开启。</p>
+<h2>0x2 参考资料</h2>
+<ul>
+<li>https://docs.python.org/3/library/sys.html#sys.displayhook</li>
+<li>Python console default hex display @ https://stackoverflow.com/questions/6307433/python-console-default-hex-display</li>
+<li>Digit grouping in python hexadecimal number formatting @　https://stackoverflow.com/questions/56132859/digit-grouping-in-python-hexadecimal-number-formatting</li>
+</ul>
   </div>
   <div class="tag-cloud">
     <p>
-      <a href="https://cctags.github.io/tag/git.html">git</a>
+      <a href="https://cctags.github.io/tag/python.html">Python</a>
+      <a href="https://cctags.github.io/tag/linux.html">Linux</a>
+      <a href="https://cctags.github.io/tag/hexdump.html">hexdump</a>
     </p>
   </div>
 
 
   <div class="neighbors">
-    <a class="btn float-left" href="https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html" title="Dial Toll Free Numbers in Skype">
+    <a class="btn float-left" href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html" title="Ubuntu 无法更新 psutil 的问题">
       <i class="fa fa-angle-left"></i>     Previous Post
 
-    </a>
-    <a class="btn float-right" href="https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html" title="iPhone Photo Library "Ghost" Space">
-          Next Post
- <i class="fa fa-angle-right"></i>
     </a>
   </div>
 
@@ -157,10 +168,11 @@
     <h4>    You might enjoy
 </h4>
     <ul class="related-posts">
-      <li><a href="https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html">Git-P4 Submit Error</a></li>
-      <li><a href="https://cctags.github.io/posts/2010/12/28/update-svn-repo-format.html">git-svn 提示仓库格式错误</a></li>
-      <li><a href="https://cctags.github.io/posts/2010/12/27/the-difference-between-svn-and-git.html">体验 svn 和 git 的使用差异</a></li>
-      <li><a href="https://cctags.github.io/posts/2015/07/23/using_git_p4.html">Using Git-P4</a></li>
+      <li><a href="https://cctags.github.io/posts/2011/01/11/file-transfer.html">终端与远程之间的文件传递</a></li>
+      <li><a href="https://cctags.github.io/posts/2009/09/17/load_kernel_module.html">Linux 内核模块加载过程</a></li>
+      <li><a href="https://cctags.github.io/posts/2011/02/11/wx_id_yes_not_yes.html">wxPython 里的 wx.ID_YES 与 wx.YES 不是一回事</a></li>
+      <li><a href="https://cctags.github.io/posts/2019/03/31/zynq_usb_drive_issue.html">Zynq USB Drive Issue</a></li>
+      <li><a href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html">Ubuntu 无法更新 psutil 的问题</a></li>
     </ul>
   </div>
 

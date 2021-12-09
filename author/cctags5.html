@@ -100,6 +100,25 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html#redefinition_of_typedef_error_with_gcc">redefinition of typedef error</a></h2>
+    <p>
+          Posted on 2014-10-30 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+
+    </p>
+  </header>
+  <div>
+      <p>又是一个坑。。啥也别说了。。</p>
+<p><a href="http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6">http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6</a></p>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html#redefinition_of_typedef_error_with_gcc">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html#gcc_reverse_iterator_comparison_operators_missing">gcc reverse_iterator comparison operators missing?</a></h2>
     <p>
           Posted on 2014-10-22 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
@@ -315,35 +334,6 @@
       <a class="btn" href="https://cctags.github.io/posts/2011/07/08/how_to_undo_clear_offline_items.html#how_to_undo_clear_offline_items">    Continue reading
 </a>
   </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2011/07/06/pthread_tls_destructor_issue.html#pthread_tls_destructor_issue">使用 pthread tls destructor 时遇到的问题</a></h2>
-    <p>
-          Posted on 2011-07-06 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/pthread.html">pthread</a>
-    </p>
-  </header>
-  <div>
-      <p>使用 pthread 线程时，可以通过 pthread_key_create() 这个 API，给新创建的线程添加一个回调函数，在线程退出时会被系统调用到，通常用于线程相关资源的清理，等等。</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="nf">pthread_key_create</span><span class="p">(</span>
-    <span class="n">pthread_key_t</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">destructor</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="p">));</span>
-</code></pre></div>
-
-
-<p>特别要注意的是，在 destructor 被回调时，其参数肯定不为空，但此时 <strong>对应的 tls 已经被清空！</strong> 所以，如果 destructor 里有依赖 tls 的，其运行结果肯定跟预期的不一样。</p>
-<p>写代码的时候没注意，出了问题也没有头绪，仔细看了 <a href="https://linux.die.net/man/3/pthread_key_create">pthread_key_create 的文档</a> 才清楚：</p>
-<blockquote>
-<p>An optional destructor function may be associated with each key …</p></blockquote>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2011/07/06/pthread_tls_destructor_issue.html#pthread_tls_destructor_issue">    Continue reading
-</a>
-  </div>
 </article>
 
   <div class="pagination">
@@ -362,7 +352,7 @@
 
     <footer>
 <p>
-  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+  &copy;  2009 - 2021 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
 </p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p><p>

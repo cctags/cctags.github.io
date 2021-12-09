@@ -99,6 +99,36 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html#python_console_hex_display">Python 命令行里显示十六进制</a></h2>
+    <p>
+          Posted on 2021-11-19 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/python.html">Python</a>,              <a href="https://cctags.github.io/tag/linux.html">Linux</a>,              <a href="https://cctags.github.io/tag/hexdump.html">hexdump</a>
+    </p>
+  </header>
+  <div>
+      <h2>0x0 问题</h2>
+<p>Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 <code>hex()</code> 函数，或者按 <code>{:x}.format(123)</code> 格式打印出来。</p>
+<p>这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。</p>
+<h2>0x1 解决办法</h2>
+<p>其实，Python 的 sys 标准模块里，提供了 <code>displayhook</code>，对于数字如何显示，可以添加自定义的操作。</p>
+<p>比如添加 hex.py 文件如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">_displayhook</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;long&#39;</span><span class="p">):</span>
+        <span class="k">print …</span></code></pre></div>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html#python_console_hex_display">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html#issue_of_upgrade_psutil">Ubuntu 无法更新 psutil 的问题</a></h2>
     <p>
           Posted on 2020-04-16 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
@@ -369,29 +399,6 @@ Building wheels for collected packages: psutil
       <a class="btn" href="https://cctags.github.io/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html#zynqmp_linux_freezes_when_loaded_via_jtag">    Continue reading
 </a>
   </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html#chinse_document_style_guide">中文技术文档的写作规范</a></h2>
-    <p>
-          Posted on 2018-10-08 星期一 in <a href="https://cctags.github.io/category/misc.html">misc</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/spec.html">spec</a>
-    </p>
-  </header>
-  <div>
-      <p>这里是一份开源的《中文技术文档的写作规范》， <a href="https://github.com/ruanyf/document-style-guide">https://github.com/ruanyf/document-style-guide</a></p>
-<p>这份写作规范，对文档的标题、文本、段落、数值甚至标点符号，都给出了具体的建议。另外，它还附录了一些知名公司的写作规范。</p>
-<p>目前的 Star 数大概有 6.2k，应该说是相当高的，说明已经得到了很多人的认可。</p>
-<p>对于我们来说，每次写文档之前，都值得拿来读一读，作为学习和参考。</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html#chinse_document_style_guide">    Continue reading
-</a>
-  </div>
 </article>
 
   <div class="pagination">
@@ -406,7 +413,7 @@ Building wheels for collected packages: psutil
 
     <footer>
 <p>
-  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+  &copy;  2009 - 2021 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
 </p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p><p>

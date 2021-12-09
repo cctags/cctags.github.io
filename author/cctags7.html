@@ -100,6 +100,62 @@
 
 <article>
   <header>
+    <h2><a href="https://cctags.github.io/posts/2009/09/17/load_kernel_module.html#load_kernel_module">Linux 内核模块加载过程</a></h2>
+    <p>
+          Posted on 2009-09-17 星期四 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="https://cctags.github.io/tag/linux.html">Linux</a>,              <a href="https://cctags.github.io/tag/kernel.html">kernel</a>
+    </p>
+  </header>
+  <div>
+      
+<H2>0x0</H2>
+
+<P>
+项目开发过程中，尝试加载一个内核模块时出错，查看系统日志，有以下错误信息：
+</P>
+
+<PRE>
+  iscsi_sfnet: disagrees about version of symbol struct_module
+</PRE>
+
+<P>
+经过调试发现，是因为这个内核模块与当前 Linux kernel 版本不一致，所以无法加载。更新版本后问题解决。
+</P>
+
+<H2>0x1</H2>
+
+<P>
+以下内容是在问题解决后对于内核模块加载过程的一些学习记录。
+</P>
+
+<OL>
+<LI>使用 insmod 或者 modprobe 加载内核模块（需要 root 权限），比如：
+
+<PRE>
+  insmod hello.ko，    或者
+  modprobe hello      （需要通过 depmod 更新模块的依赖关系）
+</PRE>
+
+<P></P>
+<LI>用户工具通过 <CODE>sys_init_module()</CODE> 这个系统调用陷入内核，来完成将模块加载到内核里去的动作
+<P></P>
+    <OL>
+    <LI>首先，会对这个模块进行各种检查，以确保对它的加载不会影响内核的运行，包括
+    <P></P>
+        <OL>
+        <LI>确认文件的大小，比如最大不能超过 6MB …</li></ol></li></ol></li></li></ol>
+      <br>
+      <a class="btn" href="https://cctags.github.io/posts/2009/09/17/load_kernel_module.html#load_kernel_module">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
     <h2><a href="https://cctags.github.io/posts/2009/02/27/filesystem_review.html#filesystem_review">文件系统学习笔记</a></h2>
     <p>
           Posted on 2009-02-27 星期五 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
@@ -161,7 +217,7 @@
 
     <footer>
 <p>
-  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+  &copy;  2009 - 2021 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
 </p>
 <p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p><p>

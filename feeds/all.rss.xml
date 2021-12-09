@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>Gang Up</title><link>https://cctags.github.io/</link><description>Random notes from a random developer</description><lastBuildDate>Thu, 16 Apr 2020 10:08:00 +0800</lastBuildDate><item><title>Ubuntu 无法更新 psutil 的问题</title><link>https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
+<rss version="2.0"><channel><title>Gang Up</title><link>https://cctags.github.io/</link><description>Random notes from a random developer</description><lastBuildDate>Fri, 19 Nov 2021 10:08:00 +0800</lastBuildDate><item><title>Python 命令行里显示十六进制</title><link>https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 &lt;code&gt;hex()&lt;/code&gt; 函数，或者按 &lt;code&gt;{:x}.format(123)&lt;/code&gt; 格式打印出来。&lt;/p&gt;
+&lt;p&gt;这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。&lt;/p&gt;
+&lt;h2&gt;0x1 解决办法&lt;/h2&gt;
+&lt;p&gt;其实，Python 的 sys 标准模块里，提供了 &lt;code&gt;displayhook&lt;/code&gt;，对于数字如何显示，可以添加自定义的操作。&lt;/p&gt;
+&lt;p&gt;比如添加 hex.py 文件如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;_displayhook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;int&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;long&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 19 Nov 2021 10:08:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2021-11-19:/posts/2021/11/19/python_console_hex_display.html</guid><category>Tools</category><category>Python</category><category>Linux</category><category>hexdump</category></item><item><title>Ubuntu 无法更新 psutil 的问题</title><link>https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
 &lt;p&gt;编写 &lt;a href="https://github.com/cctags/tmux-system-info"&gt;tmux-system-info&lt;/a&gt; 的时候，有依赖到高版本 &lt;a href="https://pypi.org/project/psutil"&gt;psutil&lt;/a&gt; 里的接口功能。&lt;/p&gt;
 &lt;p&gt;因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo pip3 install --upgrade psutil
