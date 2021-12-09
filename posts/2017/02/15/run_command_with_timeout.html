@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>运行程序时添加时间限制 &middot; Gang Up</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2017/02/15/run_command_with_timeout.html">
+        <meta name="twitter:title" content="运行程序时添加时间限制">
+        <meta name="twitter:description" content="问题 因为有个临时的需求，所以开了服务并监听在某个公网端口上，然后忘了关了 …… 直到很久才想起 …… 解决 对于类似的使用 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2017/02/15/run_command_with_timeout.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="运行程序时添加时间限制">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 因为有个临时的需求，所以开了服务并监听在某个公网端口上，然后忘了关了 …… 直到很久才想起 …… 解决 对于类似的使用 …">
+        <meta property="og:site_name" content="Gang Up">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2017/02/15/run_command_with_timeout.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="Gang Up">Gang Up</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2017/02/15/run_command_with_timeout.html" rel="bookmark" title="Permalink to 运行程序时添加时间限制">运行程序时添加时间限制</a>
+                </h2>
+                <p class="post-meta">
+                    2017-02-15 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2017/02/15/run_command_with_timeout.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题</strong></p>
+<p>因为有个临时的需求，所以开了服务并监听在某个公网端口上，然后忘了关了 …… 直到很久才想起 ……</p>
+<p><strong>解决</strong></p>
+<p>对于类似的使用情况，最好还是要在运行程序时加上时间限制，避免引起不必要的问题。</p>
+<p>比如这样的，运行 <code>service.py</code>，运行 1 小时后退出：</p>
+<div class="highlight"><pre><span></span><code>timeout<span class="w"> </span>1h<span class="w"> </span>./service.py
+</code></pre></div>
+
+<p>其中，<code>timeout</code> 是用来控制程序运行的时间，如果程序在指定时间里还没有结束，就会在时间到期后，杀掉进程。查到 <code>timeout</code> 的帮助：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>timeout<span class="w"> </span>--help
+Usage:<span class="w"> </span>timeout<span class="w"> </span><span class="o">[</span>OPTION<span class="o">]</span><span class="w"> </span>DURATION<span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARG<span class="o">]</span>...
+<span class="w">  </span>or:<span class="w">  </span>timeout<span class="w"> </span><span class="o">[</span>OPTION<span class="o">]</span>
+Start<span class="w"> </span>COMMAND,<span class="w"> </span>and<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>it<span class="w"> </span><span class="k">if</span><span class="w"> </span>still<span class="w"> </span>running<span class="w"> </span>after<span class="w"> </span>DURATION.
+
+Mandatory<span class="w"> </span>arguments<span class="w"> </span>to<span class="w"> </span>long<span class="w"> </span>options<span class="w"> </span>are<span class="w"> </span>mandatory<span class="w"> </span><span class="k">for</span><span class="w"> </span>short<span class="w"> </span>options<span class="w"> </span>too.
+<span class="w">      </span>--preserve-status
+<span class="w">                 </span><span class="nb">exit</span><span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>same<span class="w"> </span>status<span class="w"> </span>as<span class="w"> </span>COMMAND,<span class="w"> </span>even<span class="w"> </span>when<span class="w"> </span>the
+<span class="w">                   </span><span class="nb">command</span><span class="w"> </span><span class="nb">times</span><span class="w"> </span>out
+<span class="w">      </span>--foreground
+<span class="w">                 </span>when<span class="w"> </span>not<span class="w"> </span>running<span class="w"> </span>timeout<span class="w"> </span>directly<span class="w"> </span>from<span class="w"> </span>a<span class="w"> </span>shell<span class="w"> </span>prompt,
+<span class="w">                   </span>allow<span class="w"> </span>COMMAND<span class="w"> </span>to<span class="w"> </span><span class="nb">read</span><span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>TTY<span class="w"> </span>and<span class="w"> </span>get<span class="w"> </span>TTY<span class="w"> </span>signals<span class="p">;</span>
+<span class="w">                   </span><span class="k">in</span><span class="w"> </span>this<span class="w"> </span>mode,<span class="w"> </span>children<span class="w"> </span>of<span class="w"> </span>COMMAND<span class="w"> </span>will<span class="w"> </span>not<span class="w"> </span>be<span class="w"> </span>timed<span class="w"> </span>out
+<span class="w">  </span>-k,<span class="w"> </span>--kill-after<span class="o">=</span>DURATION
+<span class="w">                 </span>also<span class="w"> </span>send<span class="w"> </span>a<span class="w"> </span>KILL<span class="w"> </span>signal<span class="w"> </span><span class="k">if</span><span class="w"> </span>COMMAND<span class="w"> </span>is<span class="w"> </span>still<span class="w"> </span>running
+<span class="w">                   </span>this<span class="w"> </span>long<span class="w"> </span>after<span class="w"> </span>the<span class="w"> </span>initial<span class="w"> </span>signal<span class="w"> </span>was<span class="w"> </span>sent
+<span class="w">  </span>-s,<span class="w"> </span>--signal<span class="o">=</span>SIGNAL
+<span class="w">                 </span>specify<span class="w"> </span>the<span class="w"> </span>signal<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>sent<span class="w"> </span>on<span class="w"> </span>timeout<span class="p">;</span>
+<span class="w">                   </span>SIGNAL<span class="w"> </span>may<span class="w"> </span>be<span class="w"> </span>a<span class="w"> </span>name<span class="w"> </span>like<span class="w"> </span><span class="s1">&#39;HUP&#39;</span><span class="w"> </span>or<span class="w"> </span>a<span class="w"> </span>number<span class="p">;</span>
+<span class="w">                   </span>see<span class="w"> </span><span class="s1">&#39;kill -l&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>list<span class="w"> </span>of<span class="w"> </span>signals
+<span class="w">      </span>--help<span class="w">     </span>display<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<span class="w">      </span>--version<span class="w">  </span>output<span class="w"> </span>version<span class="w"> </span>information<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+
+DURATION<span class="w"> </span>is<span class="w"> </span>a<span class="w"> </span>floating<span class="w"> </span>point<span class="w"> </span>number<span class="w"> </span>with<span class="w"> </span>an<span class="w"> </span>optional<span class="w"> </span>suffix:
+<span class="s1">&#39;s&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>seconds<span class="w"> </span><span class="o">(</span>the<span class="w"> </span>default<span class="o">)</span>,<span class="w"> </span><span class="s1">&#39;m&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>minutes,<span class="w"> </span><span class="s1">&#39;h&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>hours<span class="w"> </span>or<span class="w"> </span><span class="s1">&#39;d&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>days.
+
+If<span class="w"> </span>the<span class="w"> </span><span class="nb">command</span><span class="w"> </span><span class="nb">times</span><span class="w"> </span>out,<span class="w"> </span>and<span class="w"> </span>--preserve-status<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>set,<span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span>with
+status<span class="w"> </span><span class="m">124</span>.<span class="w">  </span>Otherwise,<span class="w"> </span><span class="nb">exit</span><span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>status<span class="w"> </span>of<span class="w"> </span>COMMAND.<span class="w">  </span>If<span class="w"> </span>no<span class="w"> </span>signal
+is<span class="w"> </span>specified,<span class="w"> </span>send<span class="w"> </span>the<span class="w"> </span>TERM<span class="w"> </span>signal<span class="w"> </span>upon<span class="w"> </span>timeout.<span class="w">  </span>The<span class="w"> </span>TERM<span class="w"> </span>signal<span class="w"> </span>kills
+any<span class="w"> </span>process<span class="w"> </span>that<span class="w"> </span>does<span class="w"> </span>not<span class="w"> </span>block<span class="w"> </span>or<span class="w"> </span>catch<span class="w"> </span>that<span class="w"> </span>signal.<span class="w">  </span>It<span class="w"> </span>may<span class="w"> </span>be<span class="w"> </span>necessary
+to<span class="w"> </span>use<span class="w"> </span>the<span class="w"> </span>KILL<span class="w"> </span><span class="o">(</span><span class="m">9</span><span class="o">)</span><span class="w"> </span>signal,<span class="w"> </span>since<span class="w"> </span>this<span class="w"> </span>signal<span class="w"> </span>cannot<span class="w"> </span>be<span class="w"> </span>caught,<span class="w"> </span><span class="k">in</span><span class="w"> </span>which
+<span class="k">case</span><span class="w"> </span>the<span class="w"> </span><span class="nb">exit</span><span class="w"> </span>status<span class="w"> </span>is<span class="w"> </span><span class="m">128</span>+9<span class="w"> </span>rather<span class="w"> </span>than<span class="w"> </span><span class="m">124</span>.
+</code></pre></div>
+
+<p>其中，时间可以按 “ 秒 ”、“ 分钟 ”、“ 小时 ” 和 “ 天 ” 来指定，比如：1s、2m、3h、4d。</p>
+<p>至于 <code>signal</code>，默认是 <code>TERM</code>，也可以指定其他的，可以从 <code>kill -l</code> 来查看：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>-l
+<span class="w"> </span><span class="m">1</span><span class="o">)</span><span class="w"> </span>SIGHUP<span class="w">       </span><span class="m">2</span><span class="o">)</span><span class="w"> </span>SIGINT<span class="w">       </span><span class="m">3</span><span class="o">)</span><span class="w"> </span>SIGQUIT<span class="w">      </span><span class="m">4</span><span class="o">)</span><span class="w"> </span>SIGILL<span class="w">       </span><span class="m">5</span><span class="o">)</span><span class="w"> </span>SIGTRAP
+<span class="w"> </span><span class="m">6</span><span class="o">)</span><span class="w"> </span>SIGABRT<span class="w">      </span><span class="m">7</span><span class="o">)</span><span class="w"> </span>SIGBUS<span class="w">       </span><span class="m">8</span><span class="o">)</span><span class="w"> </span>SIGFPE<span class="w">       </span><span class="m">9</span><span class="o">)</span><span class="w"> </span>SIGKILL<span class="w">     </span><span class="m">10</span><span class="o">)</span><span class="w"> </span>SIGUSR1
+<span class="m">11</span><span class="o">)</span><span class="w"> </span>SIGSEGV<span class="w">     </span><span class="m">12</span><span class="o">)</span><span class="w"> </span>SIGUSR2<span class="w">     </span><span class="m">13</span><span class="o">)</span><span class="w"> </span>SIGPIPE<span class="w">     </span><span class="m">14</span><span class="o">)</span><span class="w"> </span>SIGALRM<span class="w">     </span><span class="m">15</span><span class="o">)</span><span class="w"> </span>SIGTERM
+<span class="m">16</span><span class="o">)</span><span class="w"> </span>SIGSTKFLT<span class="w">   </span><span class="m">17</span><span class="o">)</span><span class="w"> </span>SIGCHLD<span class="w">     </span><span class="m">18</span><span class="o">)</span><span class="w"> </span>SIGCONT<span class="w">     </span><span class="m">19</span><span class="o">)</span><span class="w"> </span>SIGSTOP<span class="w">     </span><span class="m">20</span><span class="o">)</span><span class="w"> </span>SIGTSTP
+<span class="m">21</span><span class="o">)</span><span class="w"> </span>SIGTTIN<span class="w">     </span><span class="m">22</span><span class="o">)</span><span class="w"> </span>SIGTTOU<span class="w">     </span><span class="m">23</span><span class="o">)</span><span class="w"> </span>SIGURG<span class="w">      </span><span class="m">24</span><span class="o">)</span><span class="w"> </span>SIGXCPU<span class="w">     </span><span class="m">25</span><span class="o">)</span><span class="w"> </span>SIGXFSZ
+<span class="m">26</span><span class="o">)</span><span class="w"> </span>SIGVTALRM<span class="w">   </span><span class="m">27</span><span class="o">)</span><span class="w"> </span>SIGPROF<span class="w">     </span><span class="m">28</span><span class="o">)</span><span class="w"> </span>SIGWINCH<span class="w">    </span><span class="m">29</span><span class="o">)</span><span class="w"> </span>SIGIO<span class="w">       </span><span class="m">30</span><span class="o">)</span><span class="w"> </span>SIGPWR
+<span class="m">31</span><span class="o">)</span><span class="w"> </span>SIGSYS<span class="w">      </span><span class="m">34</span><span class="o">)</span><span class="w"> </span>SIGRTMIN<span class="w">    </span><span class="m">35</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+1<span class="w">  </span><span class="m">36</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+2<span class="w">  </span><span class="m">37</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+3
+<span class="m">38</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+4<span class="w">  </span><span class="m">39</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+5<span class="w">  </span><span class="m">40</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+6<span class="w">  </span><span class="m">41</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+7<span class="w">  </span><span class="m">42</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+8
+<span class="m">43</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+9<span class="w">  </span><span class="m">44</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+10<span class="w"> </span><span class="m">45</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+11<span class="w"> </span><span class="m">46</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+12<span class="w"> </span><span class="m">47</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+13
+<span class="m">48</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+14<span class="w"> </span><span class="m">49</span><span class="o">)</span><span class="w"> </span>SIGRTMIN+15<span class="w"> </span><span class="m">50</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-14<span class="w"> </span><span class="m">51</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-13<span class="w"> </span><span class="m">52</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-12
+<span class="m">53</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-11<span class="w"> </span><span class="m">54</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-10<span class="w"> </span><span class="m">55</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-9<span class="w">  </span><span class="m">56</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-8<span class="w">  </span><span class="m">57</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-7
+<span class="m">58</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-6<span class="w">  </span><span class="m">59</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-5<span class="w">  </span><span class="m">60</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-4<span class="w">  </span><span class="m">61</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-3<span class="w">  </span><span class="m">62</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-2
+<span class="m">63</span><span class="o">)</span><span class="w"> </span>SIGRTMAX-1<span class="w">  </span><span class="m">64</span><span class="o">)</span><span class="w"> </span>SIGRTMAX
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/07/28/python-crypt-module.html">Python crypt 模块</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html">
+                &laquo; vim 里打开 file:line
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2017/10/01/issue_of_using_kill_to_send_signal.html">
+                使用 Kill 发信号时误杀进程的问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
