@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
+
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/07/15/sysfs.html" rel="bookmark" title="Permalink to Sysfs">Sysfs</a>
+                </h2>
+                <p class="post-meta">
+                    2015-07-15 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/07/15/sysfs.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>在 linux 里，<a href="https://en.wikipedia.org/wiki/Sysfs">sysfs</a> 和 <a href="https://en.wikipedia.org/wiki/Procfs">procfs</a> 都是没有存储介质的虚拟文件系统，用于内核与用户态的交互。以下是摘自《Professional Linux Kernel Architecture》的一段话，对两者在概 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/07/10/linuxtoy_uses_pelican.html" rel="bookmark" title="Permalink to More Use of Pelican">More Use of Pelican</a>
+                </h2>
+                <p class="post-meta">
+                    2015-07-10 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/07/10/linuxtoy_uses_pelican.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>经常会去 <a href="https://linuxtoy.org/">LinuxTOY</a>, 看看有哪些新的 Linux 相关的信息。</p>
+<p>好吧，最近它也已经 <a href="https://linuxtoy.org/archives/moving-to-pelican.html">从 WordPress 迁移到 Pelican</a>，现在访问速度快了不是一点点。</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/18/upgrade_to_pelican_3_6.html" rel="bookmark" title="Permalink to Upgrade to Pelican 3.6">Upgrade to Pelican 3.6</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-18 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/06/18/upgrade_to_pelican_3_6.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="http://blog.getpelican.com/pelican-3.6-released.html">Pelican 3.6</a> 发布了。</p>
+<p>可以使用万能的 <code>easy_install</code> 来更新：</p>
+<div class="highlight"><pre><span></span><code>$ easy_install --upgrade pelican
+Searching for pelican
+Reading http://pypi.python.org/simple/pelican/
+Best match: pelican 3.6.0
+Processing pelican-3.6.0-py2.7.egg
+...
+
+$ pelican --version
+3.6.0
+</code></pre></div>
+
+<p>浏览了 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/10/subprocess_popen_use.html" rel="bookmark" title="Permalink to Use subprocess.Popen class in Python">Use subprocess.Popen class in Python</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-10 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/06/10/subprocess_popen_use.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="https://docs.python.org/2/library/subprocess.html#popen-constructor">subprocess.Popen</a> 是 Python 标准库提供的一个类，用于进程的创建、管理以及数据交互。在实现上，它尽可能地屏蔽了操作系统之间相关语义 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/07/use_txt2tags_in_pelican.html" rel="bookmark" title="Permalink to Use txt2tags in Pelican">Use txt2tags in Pelican</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-07 Sunday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/06/07/use_txt2tags_in_pelican.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            
+<H1>1. txt2tags</H1>
+
+<P>
+<A HREF="http://daringfireball.net/projects/markdown/">Markdown</A> 是 <A HREF="http://blog.getpelican.com/">Pelican</A> 默认支持的标记语言。其语法简洁，功能实用，多数情况下，可以满足实际的使用需求。
+</P>
+<P>
+<A HREF="http://txt2tags.org">txt2tags</A> 是一个类似的项目：
+</P>
+
+<PRE>
+  Txt2tags is …</pre>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/02/use_pelican.html" rel="bookmark" title="Permalink to Pelican 使用记录">Pelican 使用记录</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-02 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/06/02/use_pelican.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+  <OL>
+  <LI><A HREF="#toc1">Why Here?</A>
+  <LI><A HREF="#toc2">Why Pelican?</A>
+  <LI><A HREF="#toc3">Use Pelican</A>
+    <UL>
+    <LI><A HREF="#toc4">3.1. Install</A>
+    <LI><A HREF="#toc5">3.2. Kickstart your site</A>
+    <LI><A HREF="#toc6">3.3. Config file</A>
+      <UL>
+      <LI><A HREF="#toc7">3.3.1. Theme</A>
+      <LI><A HREF="#toc8">3.3.2. Plugin</A>
+      </UL>
+    <LI><A HREF="#toc9">3.4. Add a note</A>
+    <LI><A HREF="#toc10">3.5. Compile</A>
+    </UL>
+  <LI><A HREF="#toc11">Publish</A>
+  </OL>
+
+<P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+<A NAME="toc1"></A>
+<H1>1. Why Here?</H1>
+
+<P>
+之前博客搭在 <A HREF="http://hi.baidu.com/">Baidu Hi</A> 上面，前后 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/05/29/gcc_linker_order.html" rel="bookmark" title="Permalink to GCC Linker Order">GCC Linker Order</a>
+                </h2>
+                <p class="post-meta">
+                    2015-05-29 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/05/29/gcc_linker_order.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题</h3>
+<p>在程序开发过程中遇到了这样的问题：</p>
+<p>程序比较大，因而拆分成了若干个静态库：</p>
+<ol>
+<li>编译：OK!</li>
+<li>链接：把静态库链接到可执行 …</li></ol>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/12/12/global_variable_name_conflict.html" rel="bookmark" title="Permalink to 同名全局变量造成的冲突">同名全局变量造成的冲突</a>
+                </h2>
+                <p class="post-meta">
+                    2014-12-12 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/12/12/global_variable_name_conflict.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>0x0 问题</h3>
+<p>程序运行时崩溃。</p>
+<h3>0x1 调试</h3>
+<p>经过调试发现，程序本身、和它所依赖的动态库里，有同名的全局变量，Loader 表示很凌乱。。</p>
+<h3>0x2 解决 …</h3>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html" rel="bookmark" title="Permalink to redefinition of typedef error">redefinition of typedef error</a>
+                </h2>
+                <p class="post-meta">
+                    2014-10-30 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>又是一个坑。。啥也别说了。。</p>
+<p><a href="http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6">http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6</a></p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html" rel="bookmark" title="Permalink to gcc reverse_iterator comparison operators missing?">gcc reverse_iterator comparison operators missing?</a>
+                </h2>
+                <p class="post-meta">
+                    2014-10-22 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>I get a compile error of the iterator when porting an application which is based on the C++ standard library. Someone get the same issue before, and there is already an answer at <a href="http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing">http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing</a>.</p>
+            </div>
+        </section>
+    </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index7.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 8/10</li>
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index9.html">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
+
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
