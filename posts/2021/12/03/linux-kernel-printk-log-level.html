@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux kernel printk log level &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2021/12/03/linux-kernel-printk-log-level.html">
+        <meta name="twitter:title" content="Linux kernel printk log level">
+        <meta name="twitter:description" content="1. Log level 的定义 在 Linux 内核里，printk 经常用来格式化输出，类似于常见的 printf。需要注意的是，printk 有一个 log level 的参数，使用的时候经常 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2021/12/03/linux-kernel-printk-log-level.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux kernel printk log level">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="1. Log level 的定义 在 Linux 内核里，printk 经常用来格式化输出，类似于常见的 printf。需要注意的是，printk 有一个 log level 的参数，使用的时候经常 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2021/12/03/linux-kernel-printk-log-level.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2021/12/03/linux-kernel-printk-log-level.html" rel="bookmark" title="Permalink to Linux kernel printk log level">Linux kernel printk log level</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-03 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2021/12/03/linux-kernel-printk-log-level.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>1. Log level 的定义</strong></p>
+<p>在 Linux 内核里，printk 经常用来格式化输出，类似于常见的 printf。需要注意的是，printk 有一个 log level 的参数，使用的时候经常是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="n">printk</span><span class="p">(</span><span class="n">KERN_WARNING</span><span class="w"> </span><span class="s">&quot;Trying to free nonexistent resource&quot;</span><span class="p">);</span>
+</code></pre></div>
+
+<p>浏览内核头文件，<code>include/linux/kern_levels.h</code> 里有这样的定义：</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define KERN_EMERG      KERN_SOH &quot;0&quot;    </span><span class="cm">/* system is unusable */</span>
+<span class="cp">#define KERN_ALERT      KERN_SOH &quot;1&quot;    </span><span class="cm">/* action must be taken immediately */</span>
+<span class="cp">#define KERN_CRIT       KERN_SOH &quot;2&quot;    </span><span class="cm">/* critical conditions */</span>
+<span class="cp">#define KERN_ERR        KERN_SOH &quot;3&quot;    </span><span class="cm">/* error conditions */</span>
+<span class="cp">#define KERN_WARNING    KERN_SOH &quot;4&quot;    </span><span class="cm">/* warning conditions */</span>
+<span class="cp">#define KERN_NOTICE     KERN_SOH &quot;5&quot;    </span><span class="cm">/* normal but significant condition */</span>
+<span class="cp">#define KERN_INFO       KERN_SOH &quot;6&quot;    </span><span class="cm">/* informational */</span>
+<span class="cp">#define KERN_DEBUG      KERN_SOH &quot;7&quot;    </span><span class="cm">/* debug-level messages */</span>
+</code></pre></div>
+
+<p>使用的时候要选择合适的 level。</p>
+<p>既然打印时指定了不同的 log level，那系统运行时，可以屏蔽到一些打印，从而实现日志的过滤。默认的过滤级别是 CONSOLE_LOGLEVEL_DEFAULT。这个值定义在 defconfig 里。</p>
+<p>如果在调用 printk 时没有指定，会使用默认的 MESSAGE_LOGLEVEL_DEFAULT。这个值同样定义在 defconfig 里。</p>
+<p><strong>2. 调整 log level</strong></p>
+<p>系统运行过程中，可以通过 <code>/proc/sys/kernel/printk</code> 文件，来查看和调整运行时的 log level：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>cat<span class="w"> </span>/proc/sys/kernel/printk
+<span class="m">4</span><span class="w">       </span><span class="m">4</span><span class="w">       </span><span class="m">1</span><span class="w">       </span><span class="m">7</span>
+</code></pre></div>
+
+<p>这四个数值，分别是：</p>
+<ol>
+<li>目前的控制台的 log level。日志的 log level 小于（优先级高于）这个值的时候，才会输出；</li>
+<li>默认的 log level，如果调用 printk 时没有指定的话；</li>
+<li>第 1 个参数可以设置的最小值；</li>
+<li>boot 时的 log level，尽量大（优先级低）一些，从而可以看到更多启动日志；</li>
+</ol>
+<p>如果要修改，用 echo 就可以了。</p>
+<p><strong>3. Kernel 里的相关代码</strong></p>
+<p><strong>log level 数组定义 @ kernel/printk/printk.c</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">console_printk</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">CONSOLE_LOGLEVEL_DEFAULT</span><span class="p">,</span><span class="w">       </span><span class="cm">/* console_loglevel */</span>
+<span class="w">        </span><span class="n">MESSAGE_LOGLEVEL_DEFAULT</span><span class="p">,</span><span class="w">       </span><span class="cm">/* default_message_loglevel */</span>
+<span class="w">        </span><span class="n">CONSOLE_LOGLEVEL_MIN</span><span class="p">,</span><span class="w">           </span><span class="cm">/* minimum_console_loglevel */</span>
+<span class="w">        </span><span class="n">CONSOLE_LOGLEVEL_DEFAULT</span><span class="p">,</span><span class="w">       </span><span class="cm">/* default_console_loglevel */</span>
+<span class="p">};</span>
+<span class="n">EXPORT_SYMBOL_GPL</span><span class="p">(</span><span class="n">console_printk</span><span class="p">);</span>
+</code></pre></div>
+
+<p><strong>console_printk @ include/linux/printk.h</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">extern</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">console_printk</span><span class="p">[];</span>
+<span class="cp">#define console_loglevel (console_printk[0])</span>
+</code></pre></div>
+
+<p><strong>读写 /proc/sys/kernel/printk 的实现 @ kernel/sysctl.c</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">procname</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;printk&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">data</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">console_loglevel</span><span class="p">,</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">},</span>
+</code></pre></div>
+
+<p><strong>参考资料</strong></p>
+<ul>
+<li>Documentation/admin-guide/sysctl/kernel.rst, printk</li>
+<li>man 2 syslog</li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html">
+                &laquo; RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2021/12/05/linux-kernel-printk-alias-function.html">
+                Linux kernel printk 以及 pr_err, dev_err 等包装函数 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

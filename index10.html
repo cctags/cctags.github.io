@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
+
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/10/17/debug_the_stack_overflow.html" rel="bookmark" title="Permalink to 栈溢出的调试及解决办法">栈溢出的调试及解决办法</a>
+                </h2>
+                <p class="post-meta">
+                    2014-10-17 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/10/17/debug_the_stack_overflow.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题：</h3>
+<p>栈上消耗的内存太多，导致溢出，程序崩溃。</p>
+<h3>※ 程序崩溃的过程是怎样的？</h3>
+<div class="highlight"><pre><span></span><code>1. CPU 执行代码时，反复地压栈；
+2. 访问栈上内存时 …</code></pre></div>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2013/09/11/grep-less-with-highlight-color.html" rel="bookmark" title="Permalink to 保持 grep 的输出重定向到 less 时的颜色高亮">保持 grep 的输出重定向到 less 时的颜色高亮</a>
+                </h2>
+                <p class="post-meta">
+                    2013-09-11 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2013/09/11/grep-less-with-highlight-color.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>使用 <code>grep</code> 搜索，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>cat<span class="w"> </span>a.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;word&quot;</span>
+</code></pre></div>
+
+<p>在输出结果里，匹配到的字符会通过颜色高亮显示，方便定位；</p>
+<p>但如果输出结果比较多 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2013/09/11/pthread-rwlock-writer-starvation.html" rel="bookmark" title="Permalink to 读写锁 rwlock 实现里的避免写锁饥饿问题">读写锁 rwlock 实现里的避免写锁饥饿问题</a>
+                </h2>
+                <p class="post-meta">
+                    2013-09-11 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2013/09/11/pthread-rwlock-writer-starvation.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>使用读写锁时，同一时刻可以有多个读锁占用，但只能有一个写锁占用。</p>
+<p>使用 pthread 多线程时，需要考虑如果持续地有多个线程 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html" rel="bookmark" title="Permalink to 如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键">如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键</a>
+                </h2>
+                <p class="post-meta">
+                    2012-08-07 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>使用 vim 的时候，经常会用到 Ctrl-Fn 及 Shift-Fn 这样的组合键，无奈 PuTTY 不支持。</p>
+<p>从网上找到的解决办法：</p>
+<ul>
+<li><a href="http://www.newsmth.net/nForum/#!article/PHP/88598">http://www.newsmth.net/nForum/#!article/PHP/88598</a></li>
+<li><a href="http://www.newsmth.net/nForum/#!article/LinuxApp/859371">http://www.newsmth.net/nForum/#!article …</a></li></ul>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2012/04/16/baidu_and_google.html" rel="bookmark" title="Permalink to 以前的一个帖子">以前的一个帖子</a>
+                </h2>
+                <p class="post-meta">
+                    2012-04-16 Monday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/misc.html">misc</a>
+                    &middot; <a href="./posts/2012/04/16/baidu_and_google.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="http://topic.csdn.net/t/20040616/15/3097196.html">这是</a> 很久以前的一个夏天，在 csdn 论坛里的帖子，讨论一段不太优雅的 Python 代码。</p>
+<p>很久以后，我在 Baidu 里找了好久，不过这个帖子后 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2012/04/15/information.html" rel="bookmark" title="Permalink to 三思而行">三思而行</a>
+                </h2>
+                <p class="post-meta">
+                    2012-04-15 Sunday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/misc.html">misc</a>
+                    &middot; <a href="./posts/2012/04/15/information.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>今天在 python-chinese 的邮件列表里看到一段话：</p>
+<blockquote>
+<p>All of the messages you send to these mailing lists will be archived. If you include sensitive information in your message it will be viewable by anyone. That includes email addresses, phone numbers, addresses, etc …</p></blockquote>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2012/03/03/python-module-path.html" rel="bookmark" title="Permalink to Python 加载模块的搜索路径">Python 加载模块的搜索路径</a>
+                </h2>
+                <p class="post-meta">
+                    2012-03-03 Saturday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2012/03/03/python-module-path.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>这里记录一下，在运行 <code>import xxx</code> 语句时，Python 运行时是怎么样查找这个模块的。</p>
+<ol>
+<li>Python 会从 <code>sys.modules</code> 里查找，这个 <code>sys.modules</code> 里保存了已经加载过 …</li></ol>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2011/09/05/import_the_bookmarked_items_from_firefox.html" rel="bookmark" title="Permalink to chrome 导入 portable firefox 收藏夹">chrome 导入 portable firefox 收藏夹</a>
+                </h2>
+                <p class="post-meta">
+                    2011-09-05 Monday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2011/09/05/import_the_bookmarked_items_from_firefox.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>之前用的是 portable firefox，现在慢慢地转到 chrome 了。
+在导入收藏夹时遇到了问题。chrome 不知道 portable firefox 收藏夹的位置，折腾了好一会儿，找到个 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html" rel="bookmark" title="Permalink to Automatically cc/bcc the mail messages">Automatically cc/bcc the mail messages</a>
+                </h2>
+                <p class="post-meta">
+                    2011-07-25 Monday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>用了很长时间的 Thunderbird，随着收件箱里的邮件越来越多，形成了以下的使用习惯：</p>
+<ol>
+<li>按邮件的属性分成多个类别（文件夹）；</li>
+<li>更改设置 …</li></ol>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2011/07/13/os_time_not_correct_in_vm.html" rel="bookmark" title="Permalink to 虚拟机里的时间走慢的问题">虚拟机里的时间走慢的问题</a>
+                </h2>
+                <p class="post-meta">
+                    2011-07-13 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2011/07/13/os_time_not_correct_in_vm.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>使用过程中碰到了这个问题，很麻烦。</p>
+<p>参考了现成的解决方法，基本上可以通过安装 VMwareTools 工具解决。</p>
+            </div>
+        </section>
+    </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index9.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 10/12</li>
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index11.html">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
+
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

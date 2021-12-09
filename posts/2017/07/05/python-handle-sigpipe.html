@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 里处理 SIGPIPE 异常 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2017/07/05/python-handle-sigpipe.html">
+        <meta name="twitter:title" content="Python 里处理 SIGPIPE 异常">
+        <meta name="twitter:description" content="因为项目需要，用 Python 定制了一个小工具。具体功能就不说了，以下记录遇到的 SIGPIPE 问题及解决办法。 问题 工具（以下就称为 app）使 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2017/07/05/python-handle-sigpipe.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 里处理 SIGPIPE 异常">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="因为项目需要，用 Python 定制了一个小工具。具体功能就不说了，以下记录遇到的 SIGPIPE 问题及解决办法。 问题 工具（以下就称为 app）使 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2017/07/05/python-handle-sigpipe.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2017/07/05/python-handle-sigpipe.html" rel="bookmark" title="Permalink to Python 里处理 SIGPIPE 异常">Python 里处理 SIGPIPE 异常</a>
+                </h2>
+                <p class="post-meta">
+                    2017-07-05 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2017/07/05/python-handle-sigpipe.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>因为项目需要，用 Python 定制了一个小工具。具体功能就不说了，以下记录遇到的 SIGPIPE 问题及解决办法。</p>
+<h2>问题</h2>
+<p>工具（以下就称为 app）使用时，需要与其他已有工具通过管道连接，比如 xxx 的输出，app 读入、处理并写到标准输出，后面再通过 head 截取前 10 行：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>xxx<span class="w"> </span>-a<span class="w"> </span>-b<span class="w"> </span>...<span class="w"> </span><span class="p">|</span><span class="w"> </span>app<span class="w"> </span>-c<span class="w"> </span>-d<span class="w"> </span>...<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-10
+</code></pre></div>
+
+<p>现在遇到的问题是，如果没有最后一步的 head 操作，app 运行正常；加上 head 这一步后，app 会有这样的提示：</p>
+<div class="highlight"><pre><span></span><code><span class="go">Exception ignored in: &lt;_io.TextIOWrapper name=&#39;&lt;stdout&gt;&#39; mode=&#39;w&#39; encoding=&#39;utf-8&#39;&gt;</span>
+<span class="go">BrokenPipeError: [Errno 32] Broken pipe</span>
+</code></pre></div>
+
+<p>同时发现，尝试在 app 程序里加了 <code>try ... except BrokenPipeError:</code> 捕捉并进行异常处理后，仍然有这样的错误提示。</p>
+<h2>解决</h2>
+<p>经过搜索后，Python 标准库文档 <a href="https://docs.python.org/3/library/signal.html#note-on-sigpipe">Note on SIGPIPE</a> 里有这样的描述：</p>
+<div class="highlight"><pre><span></span><code>Piping output of your program to tools like head(1) will cause a SIGPIPE signal
+to be sent to your process when the receiver of its standard output closes
+early. This results in an exception like BrokenPipeError: [Errno 32] Broken
+pipe...
+</code></pre></div>
+
+<p>归纳下来，整个过程是这样的：</p>
+<ol>
+<li>当 head 这样的程序运行完成、进程结束时，会关闭输入管道，这会引起 app 里的写操作（app 的输出，对应到 head 的输入）的管道异常 BrokenPipeError：<ul>
+<li>如果不处理这个异常，app 程序崩溃，并结束；</li>
+<li>如果处理了，app 继续运行（然后肯定是尽快结束进程）；</li>
+</ul>
+</li>
+<li>app 进程结束时，Python 会有一次 stdout 的 flush 操作，因为管道已经关闭，这会再次引起 BrokenPipeError；</li>
+</ol>
+<p>文档里提供的解决办法是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="c1"># simulate large output (your code replaces this loop)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+    <span class="c1"># flush output here to force SIGPIPE to be triggered</span>
+    <span class="c1"># while inside this try block.</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">BrokenPipeError</span><span class="p">:</span>
+    <span class="c1"># Python flushes standard streams on exit; redirect remaining output</span>
+    <span class="c1"># to devnull to avoid another BrokenPipeError at shutdown</span>
+    <span class="n">devnull</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">devnull</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Python exits with error code 1 on EPIPE</span>
+</code></pre></div>
+
+<p>即在前一次的异常处理时，把 stdout 重定向到 <code>/dev/null</code>，这样可以避免 app 在进程结束时对已经关闭管道的 flush 操作引起异常。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2017/04/21/python-decorator-function-call.html">
+                &laquo; Python decorator 被装饰函数的调用问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2017/10/01/issue_of_using_kill_to_send_signal.html">
+                使用 Kill 发信号时误杀进程的问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

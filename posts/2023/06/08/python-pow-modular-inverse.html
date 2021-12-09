@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 内置函数 pow 计算逆元 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2023/06/08/python-pow-modular-inverse.html">
+        <meta name="twitter:title" content="Python 内置函数 pow 计算逆元">
+        <meta name="twitter:description" content="pow 是 Python 的内置函数，用来进行幂运行： >>> help(pow) pow(base, exp, mod=None) Equivalent to base**exp with 2 arguments or base**exp % mod with 3 arguments ... >>> pow(5, 3) 125 从 Python 3.8 版本开始，在同 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2023/06/08/python-pow-modular-inverse.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 内置函数 pow 计算逆元">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="pow 是 Python 的内置函数，用来进行幂运行： >>> help(pow) pow(base, exp, mod=None) Equivalent to base**exp with 2 arguments or base**exp % mod with 3 arguments ... >>> pow(5, 3) 125 从 Python 3.8 版本开始，在同 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2023/06/08/python-pow-modular-inverse.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2023/06/08/python-pow-modular-inverse.html" rel="bookmark" title="Permalink to Python 内置函数 pow 计算逆元">Python 内置函数 pow 计算逆元</a>
+                </h2>
+                <p class="post-meta">
+                    2023-06-08 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2023/06/08/python-pow-modular-inverse.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><code>pow</code> 是 Python 的内置函数，用来进行幂运行：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
+<span class="go">pow(base, exp, mod=None)</span>
+<span class="go">    Equivalent to base**exp with 2 arguments or base**exp % mod with 3 arguments</span>
+<span class="go">    ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">pow</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">125</span>
+</code></pre></div>
+
+<p>从 <a href="https://docs.python.org/3/library/functions.html#pow">Python 3.8</a> 版本开始，在同样的接口下，增加了计算逆元的功能：</p>
+<blockquote>
+<p>For int operands base and exp, if mod is present, mod must also be of integer type and mod must be nonzero. If mod is present and exp is negative, base must be relatively prime to mod. In that case, pow(inv_base, -exp, mod) is returned, where inv_base is an inverse to base modulo mod.</p>
+<p>Here’s an example of computing an inverse for 38 modulo 97:</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">pow</span><span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">mod</span><span class="o">=</span><span class="mi">97</span><span class="p">)</span>
+<span class="go">23</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">23</span> <span class="o">*</span> <span class="mi">38</span> <span class="o">%</span> <span class="mi">97</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="go">True</span>
+</code></pre></div>
+
+<p><strong>什么是乘法逆元</strong></p>
+<p>如果 ax ≡ 1 (mod b)，则称 x 为 a mod b 的逆元，记作 a<sup>-1</sup>，所以 a a<sup>-1</sup> ≡ 1 (mod b) 。</p>
+<p>比如上面的 23 和 38 关于模 97 互为逆元。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="https://docs.python.org/3/library/functions.html#pow">https://docs.python.org/3/library/functions.html#pow</a></li>
+<li>乘法逆元 <a href="https://oi-wiki.org/math/number-theory/inverse/">https://oi-wiki.org/math/number-theory/inverse/</a></li>
+<li>中国剩余定理 <a href="https://oi-wiki.org/math/number-theory/crt/">https://oi-wiki.org/math/number-theory/crt/</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">
+                &laquo; Cache 的组织和过程（VIVT、VIPT、PIPT）
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2023/07/28/python-crypt-module.html">
+                Python crypt 模块 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

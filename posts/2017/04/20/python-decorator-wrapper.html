@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python decorator 装饰器的 wrapper 问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2017/04/20/python-decorator-wrapper.html">
+        <meta name="twitter:title" content="Python decorator 装饰器的 wrapper 问题">
+        <meta name="twitter:description" content="问题： def log(func): def wrapper(*args, **kwargs): print('before call %s' % func.__name__) func(*args, **kwargs) print('after call %s' % func.__name__) return wrapper @log def test_func(a, b): print('%d + %d = %d' % (a, b, a + b)) 使用 @log 的 decorator 后，以下的打印 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2017/04/20/python-decorator-wrapper.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python decorator 装饰器的 wrapper 问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题： def log(func): def wrapper(*args, **kwargs): print('before call %s' % func.__name__) func(*args, **kwargs) print('after call %s' % func.__name__) return wrapper @log def test_func(a, b): print('%d + %d = %d' % (a, b, a + b)) 使用 @log 的 decorator 后，以下的打印 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2017/04/20/python-decorator-wrapper.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2017/04/20/python-decorator-wrapper.html" rel="bookmark" title="Permalink to Python decorator 装饰器的 wrapper 问题">Python decorator 装饰器的 wrapper 问题</a>
+                </h2>
+                <p class="post-meta">
+                    2017-04-20 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2017/04/20/python-decorator-wrapper.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;before call </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;after call </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@log</span>
+<span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> + </span><span class="si">%d</span><span class="s1"> = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+</code></pre></div>
+
+<p>使用 <code>@log</code> 的 decorator 后，以下的打印会跟预期的不一致，并不是预期的 <code>test_func</code>，而变成了 <code>wrapper</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;name: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+
+<span class="go">name: wrapper</span>
+</code></pre></div>
+
+<p><strong>原因：</strong></p>
+<p>之所以会这样，是因为在使用 decorator 后，<code>test_func</code> 变成了 <code>log(test_func)</code> 的返回，即 <code>wrapper</code> 函数。</p>
+<p><strong>解决：</strong></p>
+<p>标准库提供了 <code>functools.wraps</code> 这样的 decorator，可以这样使用来装饰上述 wrapper 函数：</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>def log(func):
+<span class="gi">+    @functools.wraps(func)</span>
+<span class="w"> </span>    def wrapper(*args, **kwargs):
+<span class="w"> </span>        print(&#39;before call %s&#39; % func.__name__)
+<span class="w"> </span>        func(*args, **kwargs)
+<span class="w"> </span>        print(&#39;after call %s&#39; % func.__name__)
+
+<span class="w"> </span>    return wrapper
+
+<span class="w"> </span>@log
+<span class="w"> </span>def test_func(a, b):
+<span class="w"> </span>    print(&#39;%d + %d = %d&#39; % (a, b, a + b))
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;name: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+
+<span class="go">name: test_func</span>
+</code></pre></div>
+
+<p>这样就跟预期的结果一致了。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2017/04/19/python-decorator.html">
+                &laquo; Python decorator 装饰器
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2017/04/21/python-decorator-function-call.html">
+                Python decorator 被装饰函数的调用问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

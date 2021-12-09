@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python decorator 装饰器 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2017/04/19/python-decorator.html">
+        <meta name="twitter:title" content="Python decorator 装饰器">
+        <meta name="twitter:description" content="装饰器模式（Decorator Pattern）是设计模式中的一种，主要目的是提供了这样一种操作，可以在不需要改变函数实现代码的情况下，用来 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2017/04/19/python-decorator.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python decorator 装饰器">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="装饰器模式（Decorator Pattern）是设计模式中的一种，主要目的是提供了这样一种操作，可以在不需要改变函数实现代码的情况下，用来 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2017/04/19/python-decorator.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2017/04/19/python-decorator.html" rel="bookmark" title="Permalink to Python decorator 装饰器">Python decorator 装饰器</a>
+                </h2>
+                <p class="post-meta">
+                    2017-04-19 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2017/04/19/python-decorator.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>装饰器模式（Decorator Pattern）是设计模式中的一种，主要目的是提供了这样一种操作，可以在不需要改变函数实现代码的情况下，用来修改或者完善它的功能。</p>
+<p>Python 里的 decorator 也是基于这样的设计，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@log</span>
+<span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<p>原来的 <code>test_func</code> 函数，经过 <code>log</code> 装饰器后，变成了 <code>log(test_func)</code>，所有调用 <code>test_func</code> 的地方，现在都变成了调用 <code>log(test_func)</code>，从而实现了在保持原来 <code>test_func</code> 的实现、以及使用的地方不变的情况下，添加了新的功能。用示意图，大概是这样的：</p>
+<div class="highlight"><pre><span></span><code>                   +----------+
+                   | x x x x x|  &lt;-- log
++----------+       +----------+
+|//////////|  ==&gt;  |//////////|
+|//////////|       |//////////|
++----------+       +----------+
+                   | y y y y y|  &lt;-- log
+                   +----------+
+
+ test_func    ==&gt;  test_func (with decorator)
+   ^                    ^
+   |                    |
+   |                    |
+  Demo -----------------/
+</code></pre></div>
+
+<p><strong>举例</strong></p>
+<p>举例一下代码、以及对它的调用：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> + </span><span class="si">%d</span><span class="s1"> = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+
+<span class="n">test_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+
+<p>会得到这样的输出：</p>
+<div class="highlight"><pre><span></span><code>1 + 2 = 3
+</code></pre></div>
+
+<p><strong>简单的装饰器</strong></p>
+<p>可以这样定义并使用 decorator（以补丁方式突出增加的代码）：</p>
+<div class="highlight"><pre><span></span><code><span class="gi">+def log(func):</span>
+<span class="gi">+    def wrapper(*args, **kwargs):</span>
+<span class="gi">+        print(&#39;before call&#39;)</span>
+<span class="gi">+        func(*args, **kwargs)</span>
+<span class="gi">+        print(&#39;after call&#39;)</span>
+<span class="gi">+    return wrapper</span>
+<span class="gi">+</span>
+<span class="gi">+@log</span>
+<span class="w"> </span>def test_func(a, b):
+<span class="w"> </span>    print(&#39;%d + %d = %d&#39; % (a, b, a + b))
+
+<span class="w"> </span>test_func(1, 2)
+</code></pre></div>
+
+<p>这样，通过一个语法 <code>@log</code> 装饰了 <code>test_func</code>，可以得到这样的结果：</p>
+<div class="highlight"><pre><span></span><code>before call
+1 + 2 = 3
+after call
+</code></pre></div>
+
+<p>可以看到，装饰器可以在调用真正函数的前面和后面，加入代码逻辑实现新的功能。</p>
+<p><strong>test_func 和 wrapper 的关系</strong></p>
+<p>在代码里打印这两个函数的 id：</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>def log(func):
+<span class="w"> </span>    def wrapper(*args, **kwargs):
+<span class="gi">+        print(&#39;id(func) = %r&#39; % (id(func)))</span>
+<span class="gi">+        print(&#39;id(wrapper) = %r&#39; % (id(wrapper)))</span>
+<span class="w"> </span>        print(&#39;before call&#39;)
+<span class="w"> </span>        func(*args, **kwargs)
+<span class="w"> </span>        print(&#39;after call&#39;)
+<span class="w"> </span>    return wrapper
+
+<span class="w"> </span>@log
+<span class="w"> </span>def test_func(a, b):
+<span class="gi">+    print(&#39;id(test_func) = %r&#39; % (id(test_func)))</span>
+<span class="w"> </span>    print(&#39;%d + %d = %d&#39; % (a, b, a + b))
+
+<span class="w"> </span>test_func(1, 2)
+<span class="gi">+print(&#39;id(test_func) = %r&#39; % (id(test_func)))</span>
+</code></pre></div>
+
+<p>可以得到这样的输出（id 取决于实际运行时）：</p>
+<div class="highlight"><pre><span></span><code>id(func) = 140717307679808
+id(wrapper) = 140717307679968
+before call
+id(test_func) = 140717307679968
+1 + 2 = 3
+after call
+id(test_func) = 140717307679968
+</code></pre></div>
+
+<p>可以看到出现了两个不同的 id，其中 <code>func（即原来的 test_func）</code> 是一个 id，而 <code>wrapper</code> 和 <code>装饰过的 test_func</code> 是另一个 id。所以这时的 <code>test_func</code> 实际上是 <code>log(test_func)</code>，或者说是 <code>log(test_func).wrapper</code>。</p>
+<p><strong>带参数的装饰器</strong></p>
+<p>装饰器 decorator 是允许带参数的，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x=</span><span class="si">%r</span><span class="s1">, y=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;before call&#39;</span><span class="p">)</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;after call&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">return</span> <span class="n">decorator</span>
+
+<span class="nd">@log</span><span class="p">(</span><span class="s1">&#39;XXX&#39;</span><span class="p">,</span> <span class="s1">&#39;YYYY&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> + </span><span class="si">%d</span><span class="s1"> = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+
+<span class="n">test_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+
+<p>这里的 <code>test_func</code> 经过装饰器后，实际上是 <code>log(..).decorator(test_func).wrapper</code>，输出是这样的：</p>
+<div class="highlight"><pre><span></span><code>x=&#39;XXX&#39;, y=&#39;YYYY&#39;
+before call
+1 + 2 = 3
+after call
+</code></pre></div>
+
+<p><strong>基于类实现的装饰器</strong></p>
+<p>装饰器可以用类来实现，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">log</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x=</span><span class="si">%r</span><span class="s1">, y=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;before call&#39;</span><span class="p">)</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;after call&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@log</span><span class="p">(</span><span class="s1">&#39;XXX&#39;</span><span class="p">,</span> <span class="s1">&#39;YYYY&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> + </span><span class="si">%d</span><span class="s1"> = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+</code></pre></div>
+
+<p>这里的 <code>test_func</code> 经过装饰器后，实际上是 <code>log(..)(test_func).wrapper</code>。输出同上。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2017/02/15/run_command_with_timeout.html">
+                &laquo; 运行程序时设置 timeout 超时
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2017/04/20/python-decorator-wrapper.html">
+                Python decorator 装饰器的 wrapper 问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

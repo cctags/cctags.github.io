@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 加载模块的搜索路径 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2012/03/03/python-module-path.html">
+        <meta name="twitter:title" content="Python 加载模块的搜索路径">
+        <meta name="twitter:description" content="这里记录一下，在运行 import xxx 语句时，Python 运行时是怎么样查找这个模块的。 Python 会从 sys.modules 里查找，这个 sys.modules 里保存了已经加载过 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2012/03/03/python-module-path.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 加载模块的搜索路径">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="这里记录一下，在运行 import xxx 语句时，Python 运行时是怎么样查找这个模块的。 Python 会从 sys.modules 里查找，这个 sys.modules 里保存了已经加载过 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2012/03/03/python-module-path.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2012/03/03/python-module-path.html" rel="bookmark" title="Permalink to Python 加载模块的搜索路径">Python 加载模块的搜索路径</a>
+                </h2>
+                <p class="post-meta">
+                    2012-03-03 Saturday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2012/03/03/python-module-path.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>这里记录一下，在运行 <code>import xxx</code> 语句时，Python 运行时是怎么样查找这个模块的。</p>
+<ol>
+<li>Python 会从 <code>sys.modules</code> 里查找，这个 <code>sys.modules</code> 里保存了已经加载过的模块；</li>
+<li>如果找不到，Python 会从 <code>sys.path</code> 里查找；<code>sys.path</code> 是一个包含了多个路径字符串的列表，依次包括了当前目录、标准库目录、<code>site-packages</code>、<code>dist-packages</code> 等等安装第三方模块的目录；当然也不仅限于这些，比如还有虚拟环境指定的目录，手动在 <code>sys.path</code> 里指定的目录，等等；</li>
+<li>如果还是找不到，抛出 <code>ModuleNotFoundError</code> 异常。</li>
+</ol>
+<p>在 <code>import xxx</code> 成功后，可以通过 <code>xxx.__name__</code> 和 <code>xxx.__file__</code> 来查看模块的名字和所在路径。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2011/09/05/import_the_bookmarked_items_from_firefox.html">
+                &laquo; chrome 导入 portable firefox 收藏夹
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2012/04/15/information.html">
+                三思而行 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
