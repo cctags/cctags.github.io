@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/08/17/win10_software_window_position_issue.html">
+        <meta name="twitter:title" content="解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题">
+        <meta name="twitter:description" content="问题 Windows 10 经常碰到这样的情况，从睡眠状态唤醒以后，部分运行中的软件，窗口会被缩小，并且窗口也不在原来的位置，而是 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/08/17/win10_software_window_position_issue.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 Windows 10 经常碰到这样的情况，从睡眠状态唤醒以后，部分运行中的软件，窗口会被缩小，并且窗口也不在原来的位置，而是 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/08/17/win10_software_window_position_issue.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/08/17/win10_software_window_position_issue.html" rel="bookmark" title="Permalink to 解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题">解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题</a>
+                </h2>
+                <p class="post-meta">
+                    2022-08-17 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2022/08/17/win10_software_window_position_issue.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题</strong></p>
+<p>Windows 10 经常碰到这样的情况，从睡眠状态唤醒以后，部分运行中的软件，窗口会被缩小，并且窗口也不在原来的位置，而是会偏向桌面的左上角。</p>
+<p><strong>解决</strong></p>
+<p>从搜索到的结果来看，是 Windows 注册表里几个参数的设置与实际分辨率不一致引起的问题。以下是调整步骤：</p>
+<ol>
+<li>打开注册表，cmd 里输入 regedit；</li>
+<li>定位到 <code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\Configuration</code>；</li>
+<li>查看 Configuration 下各个项目（及子项目）里的配置，主要是<ul>
+<li><code>ActiveSize.cx</code>、<code>ActiveSize.cy</code></li>
+<li><code>DwmClipBox....</code></li>
+<li><code>PrimSurfSize.cx</code>、<code>PrimSurfSize.cy</code></li>
+</ul>
+</li>
+<li>相应的项，按实际显示器的分辨率来配置。比如，分辨率是 2560x1440，那么宽度相关的设置成 2560，高度相关的设置在 1440；</li>
+<li>重启 Windows 后生效。</li>
+</ol>
+<p><a href="https://www.cnblogs.com/kingchan/p/10905475.html">【参考来源】</a></p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/microsoft.html">microsoft</a>,                 <a href="../../../../tag/windows.html">windows</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2018/02/02/net_framework_3_5_installation_error.html">.NET Framework 3.5 installation error</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">
+                &laquo; 编译 devicetree source 文件
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/08/23/yt-dlp-cookies-file.html">
+                解决 yt-dlp 使用的 cookies 文件格式的问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

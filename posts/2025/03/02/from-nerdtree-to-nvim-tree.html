@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>从 NERDTree 切换到 nvim-tree &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">
+        <meta name="twitter:title" content="从 NERDTree 切换到 nvim-tree">
+        <meta name="twitter:description" content="0x0 NERDTree 的问题 使用 neovim 时，有时会遇到在启动过程中长时间卡住的问题。通过 vi --startuptime /tmp/1 这样的调试方式启动，发现多数时间开 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="从 NERDTree 切换到 nvim-tree">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0x0 NERDTree 的问题 使用 neovim 时，有时会遇到在启动过程中长时间卡住的问题。通过 vi --startuptime /tmp/1 这样的调试方式启动，发现多数时间开 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html" rel="bookmark" title="Permalink to 从 NERDTree 切换到 nvim-tree">从 NERDTree 切换到 nvim-tree</a>
+                </h2>
+                <p class="post-meta">
+                    2025-03-02 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>0x0 NERDTree 的问题</h2>
+<p>使用 neovim 时，有时会遇到在启动过程中长时间卡住的问题。通过 <code>vi --startuptime /tmp/1</code> 这样的调试方式启动，发现多数时间开销在 NERDTree 插件里。</p>
+<p>考虑到 <a href="https://github.com/preservim/nerdtree">NERDTree 项目</a> 目前已经不再是<a href="https://github.com/preservim/nerdtree/issues/1280">活跃开发状态</a>，所以结合网上搜索到的信息，经过比较后，决定切换到 <a href="https://github.com/nvim-tree/nvim-tree.lua">nvim-tree.lua</a> 插件。</p>
+<h2>0x1 切换过程</h2>
+<p>以下是切换过程中的一些记录。</p>
+<p>按照文档说明，在配置文件 init.lua 的开始位置，先禁用 netrw：</p>
+<div class="highlight"><pre><span></span><code><span class="n">vim</span><span class="p">.</span><span class="n">g</span><span class="p">.</span><span class="n">loaded_netrw</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">vim</span><span class="p">.</span><span class="n">g</span><span class="p">.</span><span class="n">loaded_netrwPlugin</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div>
+
+<p>下载并安装 <a href="https://www.nerdfonts.com/">Nerd Font 字体</a>，比如 DejaVuSansM Nerd Font。</p>
+<p>之后，按照<a href="https://github.com/nvim-tree/nvim-tree.lua?tab=readme-ov-file#setup">文档配默认置</a>即可。</p>
+<p>之前一直通过 <code>&lt;leader&gt;n</code> 来打开 NERDTree，现在要修改：</p>
+<div class="highlight"><pre><span></span><code><span class="n">vim</span><span class="p">.</span><span class="n">api</span><span class="p">.</span><span class="n">nvim_set_keymap</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;leader&gt;n&quot;</span><span class="p">,</span> <span class="s2">&quot;:NvimTreeToggle&lt;CR&gt;&quot;</span><span class="p">,</span> <span class="p">{})</span>
+</code></pre></div>
+
+<p>这样设置后，就可以使用了。</p>
+<h2>0x2 微调</h2>
+<h3>1. 文件夹的图标</h3>
+<p>对于文件夹，nvim-web-devicons 里有专门的图标。考虑到已经习惯了 NERDTree 里使用的箭头图标，所以进行了调整：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;nvim-tree&quot;</span><span class="p">).</span><span class="n">setup</span><span class="p">({</span>
+  <span class="n">renderer</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">icons</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="n">glyphs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="n">arrow_closed</span> <span class="o">=</span> <span class="s2">&quot;⏵&quot;</span><span class="p">,</span>
+          <span class="n">arrow_open</span> <span class="o">=</span> <span class="s2">&quot;⏷&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+      <span class="p">},</span>
+    <span class="p">},</span>
+  <span class="p">},</span>
+<span class="p">})</span>
+</code></pre></div>
+
+<h3>2. 按键</h3>
+<p>在学习 nvim-tree.lua 按键操作的过程中，发现有几处跟原先 NERDTree 不一致的地方。</p>
+<p>之前 NERDTree 的按键，多数与 vim 保持一致，比如 H 是移动到窗口起始行，M 是移动到中间，L 是移动到底部，C-e 是整体向上移动，C-y 向下等等。</p>
+<p>nvim-tree 把这些重新定义了，比如 H 是打开或关闭隐藏文件的显示，M 是切换显示标记的文件，C-e 是原地打开当前选中文件，等等。考虑到目前这些功能并不是最常用，所以重新分配了按键：</p>
+<div class="highlight"><pre><span></span><code><span class="n">on_attach</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">bufnr</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">api</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;nvim-tree.api&quot;</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">opts</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+    <span class="kr">return</span> <span class="p">{</span> <span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;nvim-tree: &quot;</span> <span class="o">..</span> <span class="n">desc</span><span class="p">,</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">bufnr</span><span class="p">,</span> <span class="n">noremap</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="n">silent</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="n">nowait</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">}</span>
+  <span class="kr">end</span>
+  <span class="n">api</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">mappings</span><span class="p">.</span><span class="n">default_on_attach</span><span class="p">(</span><span class="n">bufnr</span><span class="p">)</span>
+  <span class="n">vim</span><span class="p">.</span><span class="n">keymap</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="n">opts</span><span class="p">(</span><span class="s2">&quot;To line [count] from top (Home) of window&quot;</span><span class="p">))</span>
+  <span class="n">vim</span><span class="p">.</span><span class="n">keymap</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">opts</span><span class="p">(</span><span class="s2">&quot;To Middle line of window&quot;</span><span class="p">))</span>
+  <span class="n">vim</span><span class="p">.</span><span class="n">keymap</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="n">opts</span><span class="p">(</span><span class="s2">&quot;To line [count] from bottom of window&quot;</span><span class="p">))</span>
+  <span class="n">vim</span><span class="p">.</span><span class="n">keymap</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;C-e&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;C-e&gt;&quot;</span><span class="p">,</span> <span class="n">opts</span><span class="p">(</span><span class="s2">&quot;Scroll window [count] lines downwards&quot;</span><span class="p">))</span>
+  <span class="n">vim</span><span class="p">.</span><span class="n">keymap</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;C-h&gt;&quot;</span><span class="p">,</span> <span class="n">api</span><span class="p">.</span><span class="n">tree</span><span class="p">.</span><span class="n">toggle_hidden_filter</span><span class="p">,</span> <span class="n">opts</span><span class="p">(</span><span class="s2">&quot;Toggle Filter: Dotfiles&quot;</span><span class="p">))</span>
+  <span class="n">vim</span><span class="p">.</span><span class="n">keymap</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;C-t&gt;&quot;</span><span class="p">,</span> <span class="n">api</span><span class="p">.</span><span class="n">tree</span><span class="p">.</span><span class="n">toggle_no_bookmark_filter</span><span class="p">,</span> <span class="n">opts</span><span class="p">(</span><span class="s2">&quot;Toggle Filter: No Bookmark&quot;</span><span class="p">))</span>
+<span class="kr">end</span><span class="p">,</span>
+</code></pre></div>
+
+<p>这样就恢复到了跟以前相同的操作习惯，并把几个新的功能分配到了其他按键上。</p>
+<p>另外，nvim-tree 按键较多，对于不是那么常用的功能，也不需要额外记忆，使用时通过 <code>g?</code> 来查看即可。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/neovim.html">neovim</a>,                 <a href="../../../../tag/vim.html">vim</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2018/09/20/vim-unicode.html">Vim 里的特殊字符处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/04/02/vim-paste-very-slow-issue.html">往 vim 粘贴大段文本会卡顿的问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html">vim 里打开 file:line</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2013/04/26/vim_insert_numbered_list.html">vim 里插入列表编号</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2025/02/01/from-markdown-to-epub.html">
+                &laquo; 从 markdown 生成 epub 文件
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">
+                Python 代码格式工具 ruff 的配置文件问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 代码格式工具 ruff 的配置文件问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2025/05/01/python-ruff-config-file.html">
+        <meta name="twitter:title" content="Python 代码格式工具 ruff 的配置文件问题">
+        <meta name="twitter:description" content="ruff 类似于 pylint、autopep8。它是一个用于 Python 项目的工具，用于代码的分析以及格式化，它是 uv 项目组开发的另一个工具。 ruff 的项目地址 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2025/05/01/python-ruff-config-file.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 代码格式工具 ruff 的配置文件问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="ruff 类似于 pylint、autopep8。它是一个用于 Python 项目的工具，用于代码的分析以及格式化，它是 uv 项目组开发的另一个工具。 ruff 的项目地址 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2025/05/01/python-ruff-config-file.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html" rel="bookmark" title="Permalink to Python 代码格式工具 ruff 的配置文件问题">Python 代码格式工具 ruff 的配置文件问题</a>
+                </h2>
+                <p class="post-meta">
+                    2025-05-01 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2025/05/01/python-ruff-config-file.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="https://github.com/astral-sh/ruff">ruff</a> 类似于 <code>pylint</code>、<code>autopep8</code>。它是一个用于 Python 项目的工具，用于代码的分析以及格式化，它是 <code>uv</code> 项目组开发的另一个工具。</p>
+<p><code>ruff</code> 的项目地址：<a href="https://github.com/astral-sh/ruff">https://github.com/astral-sh/ruff</a>。项目介绍是 <code>An extremely fast Python linter and code formatter, written in Rust.</code>，简单明确。</p>
+<p>根据 <a href="https://docs.astral.sh/ruff/configuration">ruff 文档</a> 的说明，配置 <code>~/.ruff.toml</code> 文件，使用命令行 <code>ruff format main.py</code>，即可格式化代码。</p>
+<p><strong>问题：</strong></p>
+<p>现在碰到了这样的问题，有时候 <code>ruff format</code> 格式化代码时，并没有使用 <code>~/.ruff.toml</code> 里的自定义设置。</p>
+<p><strong>分析：</strong></p>
+<p>查询了子命令的使用方法，加一个 <code>-v</code> 选项后，<code>ruff format -v main.py</code> 可以看到使用了配置文件的路径。</p>
+<p>出现问题时，实际看到的是：</p>
+<div class="highlight"><pre><span></span><code>[xxxx-xx-xx][xx:xx:xx][ruff::resolve][DEBUG] Using Ruff default settings
+</code></pre></div>
+
+<p>这个说明了，它使用的是工具默认配置，而 <code>~/.ruff.toml</code> 并没有被加载进来。</p>
+<p><strong>原因：</strong></p>
+<p>经过查询文档，在 <code>Tutorial/Configuration</code> <a href="https://docs.astral.sh/ruff/tutorial/#configuration">这篇文档</a>里，有这样的描述：</p>
+<div class="highlight"><pre><span></span><code>To determine the appropriate settings for each Python file, Ruff
+looks for the first pyproject.toml, ruff.toml, or .ruff.toml file
+in the file&#39;s directory or any parent directory.
+
+To configure Ruff, we&#39;ll add the following to the configuration
+file in our project&#39;s root directory:
+
+... ...
+</code></pre></div>
+
+<p>按这个描述，对于 <code>$HOME</code> 以外的 Python 代码文件，如果所在目录（以及上级目录、上上级目录、…）里没有 <code>.ruff.toml</code>，那就只能用 <code>ruff</code> 的工具默认配置，而不会用到 <code>$HOME/.ruff.toml</code>。</p>
+<p>所以对于正式的项目来说，不论本地放在哪里，项目本身都需要管理相应的配置文件，这是开发流程的一部分；对于其他临时用途的文件，放在 <code>$HOME</code> 目录下也更合理一些。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>,                 <a href="../../../../tag/ruff.html">ruff</a>,                 <a href="../../../../tag/uv.html">uv</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">Python Turtle 画圆时的圆心位置问题</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">
+                &laquo; 从 NERDTree 切换到 nvim-tree
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">
+                Python 包管理器 uv 没有 arm64 musl 安装包 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

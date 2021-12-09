@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 海象运算符 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2019/11/08/python-walrus-operator.html">
+        <meta name="twitter:title" content="Python 海象运算符">
+        <meta name="twitter:description" content="新版本 Python 里添加了一个语法 Assignment Expressions :=，使用时可以写成这样（代码来自 What’s New In Python 3.8）： if (n := len(a)) > 10: print(f"List is too long ({n} elements, expected <= 10)") 如 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2019/11/08/python-walrus-operator.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 海象运算符">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="新版本 Python 里添加了一个语法 Assignment Expressions :=，使用时可以写成这样（代码来自 What’s New In Python 3.8）： if (n := len(a)) > 10: print(f"List is too long ({n} elements, expected <= 10)") 如 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2019/11/08/python-walrus-operator.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2019/11/08/python-walrus-operator.html" rel="bookmark" title="Permalink to Python 海象运算符">Python 海象运算符</a>
+                </h2>
+                <p class="post-meta">
+                    2019-11-08 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2019/11/08/python-walrus-operator.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>新版本 Python 里添加了一个语法 Assignment Expressions <code>:=</code>，使用时可以写成这样（代码来自 <a href="https://docs.python.org/3.8/whatsnew/3.8.html#assignment-expressions">What’s New In Python 3.8</a>）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;List is too long (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> elements, expected &lt;= 10)&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>如果用普通的赋值写法 Assignment Statements，需要写成这样：</p>
+<div class="highlight"><pre><span></span><code><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;List is too long (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> elements, expected &lt;= 10)&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>要说两者的区别，除了写法不一样（一个是 <code>:=</code>，一个是 <code>=</code>），主要的还是 <strong>返回值</strong>：</p>
+<ul>
+<li>Assignment Expressions 是有返回值的，所以赋值本身可以被继续使用；</li>
+<li>而 Assignment Statements 没有返回值，所以从第二个例子看到的，需要单独写一行赋值。</li>
+</ul>
+<p>所以，Python 这个新的 Assignment Expressions 和 C 语言里的赋值运算符类似，但不能作为左值（lvalue）使用。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2019/09/04/python_difference_between_str_and_repr.html">
+                &laquo; Difference between __str__ and __repr__ in Python
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2020/04/02/utmp_records_of_tmux.html">
+                utmp records of tmux &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

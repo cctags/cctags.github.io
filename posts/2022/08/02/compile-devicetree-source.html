@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>编译 devicetree source 文件 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/08/02/compile-devicetree-source.html">
+        <meta name="twitter:title" content="编译 devicetree source 文件">
+        <meta name="twitter:description" content="dts, dtb device tree (dts) 是一种树形结构的、用来描述 SoC 设备的组成的文件。有 dts 格式的文本源文件，用 Device Tree Compiler (dtc)，可以把 dts 编译生成 dtb …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/08/02/compile-devicetree-source.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="编译 devicetree source 文件">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="dts, dtb device tree (dts) 是一种树形结构的、用来描述 SoC 设备的组成的文件。有 dts 格式的文本源文件，用 Device Tree Compiler (dtc)，可以把 dts 编译生成 dtb …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/08/02/compile-devicetree-source.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html" rel="bookmark" title="Permalink to 编译 devicetree source 文件">编译 devicetree source 文件</a>
+                </h2>
+                <p class="post-meta">
+                    2022-08-02 Tuesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2022/08/02/compile-devicetree-source.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>dts, dtb</strong></p>
+<p>device tree (dts) 是一种树形结构的、用来描述 SoC 设备的组成的文件。有 dts 格式的文本源文件，用 Device Tree Compiler (dtc)，可以把 dts 编译生成 dtb 二进制文件。</p>
+<p>比如，arch/arm/boot/dts/imx6q-nitrogen6x.dts 文件，从文件名可以看到，是描述 Nitrogen6X 这种型号的开发板。里面还引用到了其他 dtsi 文件，这是 dts 编写时的一种代码复用。编译后会生成 imx6q-nitrogen6x.dtb。</p>
+<div class="highlight"><pre><span></span><code><span class="cp">/dts-v1/</span><span class="p">;</span>
+<span class="cp">#include</span><span class="cm"> </span><span class="cpf">&quot;imx6q.dtsi&quot;</span>
+<span class="cp">#include</span><span class="cm"> </span><span class="cpf">&quot;imx6qdl-nitrogen6x.dtsi&quot;</span>
+
+<span class="nf">/</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kr">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Boundary Devices i.MX6 Quad Nitrogen6x Board&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kr">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;boundary,imx6q-nitrogen6x&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fsl,imx6q&quot;</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="o">&amp;</span><span class="nf">sata</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kr">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;okay&quot;</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p><strong>编译</strong></p>
+<p>(1) in-tree</p>
+<p>找到 linux/arch/arm/boot/dts 或者其他目录里对应的 Makefile，添加 dts 文件后，即可编译。</p>
+<p>(2) out-of-tree</p>
+<div class="highlight"><pre><span></span><code><span class="nf">a.dtb</span><span class="o">:</span><span class="w"> </span><span class="n">a</span>.<span class="n">dts</span>
+<span class="w">    </span>dtc<span class="w"> </span>-O<span class="w"> </span>dtb<span class="w"> </span>-o<span class="w"> </span><span class="nv">$@</span><span class="w"> </span>$&lt;
+</code></pre></div>
+
+<p>如果不放在 linux 源码目录里，对于一些简单的 dts，这样的 Makefile 已经够用了。编译生成的 dtb，跟内核放在一起使用即可。</p>
+<p>对于用到 dt-bindings 或者其他一些 C 语言头文件的情况，这样的配置就不够用了，因为编译器找不到符号。对于这种情况，可以先让 cpp 编译器进行符号替换，再用 dtc 编译。比如：</p>
+<div class="highlight"><pre><span></span><code><span class="nf">a.dtb</span><span class="o">:</span><span class="w"> </span><span class="n">a</span>.<span class="n">dts</span>.<span class="n">tmp</span>
+<span class="w">    </span>dtc<span class="w"> </span>-O<span class="w"> </span>dtb<span class="w"> </span>-o<span class="w"> </span><span class="nv">$@</span><span class="w"> </span>$&lt;
+
+<span class="nf">a.dts.tmp</span><span class="o">:</span><span class="w"> </span><span class="n">a</span>.<span class="n">dts</span>
+<span class="w">    </span>cpp<span class="w"> </span>-nostdinc<span class="w"> </span>-I<span class="w"> </span>&lt;PATH&gt;<span class="w"> </span>-undef<span class="w"> </span>-x<span class="w"> </span>assembler-with-cpp<span class="w"> </span>$&lt;<span class="w"> </span>-o<span class="w"> </span><span class="nv">$@</span>
+</code></pre></div>
+
+<p><strong>fdtdump</strong></p>
+<p>Ubuntu 环境里，dtc 编译器在 device-tree-compiler 包里。用 dpkg 工具，可以看到这个包里还有其他一些工具：</p>
+<div class="highlight"><pre><span></span><code>/usr/bin/convert-dtsv0
+/usr/bin/dtc
+/usr/bin/dtdiff
+/usr/bin/fdtdump
+/usr/bin/fdtget
+/usr/bin/fdtoverlay
+/usr/bin/fdtput
+</code></pre></div>
+
+<p>如果想看一下 dtb 对应的 dts 信息，可以用里面 fdtdump 工具来 “ 反编译 ”，比如：</p>
+<div class="highlight"><pre><span></span><code>fdtdump<span class="w"> </span>a.dtb
+</code></pre></div>
+
+<p><strong>参考资料</strong></p>
+<ul>
+<li>arch/arm64/boot/dts/*</li>
+<li><a href="https://www.devicetree.org/specifications/">https://www.devicetree.org/specifications/</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">Linux Kernel pr_debug(), dev_dbg() 以及动态调试</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">
+                &laquo; Linux PWM 驱动的实现
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/08/17/win10_software_window_position_issue.html">
+                解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

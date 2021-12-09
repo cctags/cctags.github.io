@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python Turtle 画圆时的圆心位置问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">
+        <meta name="twitter:title" content="Python Turtle 画圆时的圆心位置问题">
+        <meta name="twitter:description" content="问题：在使用 turtle.circle() 画圆时，发现圆心在 turtle 的正上方。 这个 API 的参数里没有指定圆心，也不是以当前位置 turtle.position() 为圆心。turtle.circle() 是这 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python Turtle 画圆时的圆心位置问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题：在使用 turtle.circle() 画圆时，发现圆心在 turtle 的正上方。 这个 API 的参数里没有指定圆心，也不是以当前位置 turtle.position() 为圆心。turtle.circle() 是这 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html" rel="bookmark" title="Permalink to Python Turtle 画圆时的圆心位置问题">Python Turtle 画圆时的圆心位置问题</a>
+                </h2>
+                <p class="post-meta">
+                    2023-08-18 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题：</strong>在使用 <a href="https://docs.python.org/2.7/library/turtle.html#turtle.circle"><code>turtle.circle()</code></a> 画圆时，发现圆心在 turtle 的正上方。</p>
+<p>这个 API 的参数里没有指定圆心，也不是以当前位置 <code>turtle.position()</code> 为圆心。<code>turtle.circle()</code> 是这样定义的：</p>
+<div class="highlight"><pre><span></span><code>turtle.circle(radius, extent=None, steps=None)
+
+Parameters
+    radius – a number
+    extent – a number (or None)
+    steps – an integer (or None)
+</code></pre></div>
+
+<blockquote>
+<p>Draw a circle with given radius. The center is radius units left of the turtle; extent – an angle – determines which part of the circle is drawn. If extent is not given, draw the entire circle. If extent is not a full circle, one endpoint of the arc is the current pen position. Draw the arc in counterclockwise direction if radius is positive, otherwise in clockwise direction. Finally the direction of the turtle is changed by the amount of extent.</p>
+</blockquote>
+<p>也就是说，圆心在 turtle 的左侧、半径远处。这跟实际调试中的圆心在 turtle 的正上方、半径远处的现象就不一致了。</p>
+<p><strong>调试过程及解决：</strong></p>
+<p>在 Turtle graphics 编程里，turtle 是有<strong>状态</strong>的，包括位置 <code>position() | pos()</code> 和方向 <code>heading()</code>。所以正确的理解是，圆心在当前方向 heading 下、左侧半径远处（<strong>注意：</strong>这是 radius 大于 0 的情况下；如果小于 0，就是在右侧了）；turtle 从当前 position 出发，绕圆心以指定半径画一个圆，期间 heading 一直会改变，最终回到起始位置，并恢复到出发时的 heading。当然，如果 extent 不为 360 度时，按实际情况决定。仔细想一下，这样的设计，符合从 turtle 的状态和发生动作的视角。</p>
+<p>之前发生的问题，是因为这一时刻的方向问题，因为初始方向是向东（0 度），所以圆心就在正上方了。正确设置方向，问题可以解决。</p>
+<p>另外，为什么不以当前位置 position() 为圆心？如果是这样，那么就有从<strong>当前位置跳到半径远处</strong>的动作，但这个动作跟<strong>画一个圆</strong>本身并没有关系，如果作为 <code>turtle.circle()</code> 的一部分，是不合理的。</p>
+<p>所以 Turtle graphics 里要时刻注意当前的状态，以及每一个 API 会改变哪些状态。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="https://docs.python.org/2.7/library/turtle.html#turtle.circle">https://docs.python.org/2.7/library/turtle.html#turtle.circle</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2023/07/28/python-crypt-module.html">
+                &laquo; Python crypt 模块
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">
+                Python 函数的位置参数（positional argument）和关键字参数（keyword argument） &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

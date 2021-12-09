@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Vim 里的特殊字符处理 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2018/09/20/vim-unicode.html">
+        <meta name="twitter:title" content="Vim 里的特殊字符处理">
+        <meta name="twitter:description" content="问题 在处理某个文件时，发现里面有一些类似 <200b> 这样的特殊字符，需要清理掉。 处理办法 经过搜索，在 Vim 里处理这些特殊字 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2018/09/20/vim-unicode.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Vim 里的特殊字符处理">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 在处理某个文件时，发现里面有一些类似 <200b> 这样的特殊字符，需要清理掉。 处理办法 经过搜索，在 Vim 里处理这些特殊字 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2018/09/20/vim-unicode.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2018/09/20/vim-unicode.html" rel="bookmark" title="Permalink to Vim 里的特殊字符处理">Vim 里的特殊字符处理</a>
+                </h2>
+                <p class="post-meta">
+                    2018-09-20 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2018/09/20/vim-unicode.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>在处理某个文件时，发现里面有一些类似 <code>&lt;200b&gt;</code> 这样的特殊字符，需要清理掉。</p>
+<h2>处理办法</h2>
+<p>经过搜索，在 Vim 里处理这些特殊字符时，可以使用类似这样的规则来匹配： <code>\%u200b</code>。</p>
+<p>这个规则，可以这样来理解和记忆：</p>
+<ul>
+<li><code>\</code> 是转义字符；</li>
+<li><code>%u</code> 是匹配双字节的字符；</li>
+<li><code>200b</code> 是对应的编码，按实际输入即可；</li>
+</ul>
+<p>通过查找手册 <code>:h pattern.txt</code> 以及 <code>:h E678</code> 发现，除了 <code>%u</code>，还有 <code>%d</code>、<code>%o</code>、<code>%x</code> 以及 <code>%U</code>，分别以十进制、八进制、单字节十六进制以及四字节十六进制，来匹配各种字符。</p>
+<h2>如何输入这样的字符</h2>
+<p>在 <code>insert</code> 模式下，按 <code>C-v</code>、<code>u</code>，再 <code>200b</code> 即可。</p>
+<p>可以查找手册 <code>utf-8-typing</code>。</p>
+<h2>特殊字符</h2>
+<p>对于经常用到、但又无法直接输入的 non-ascii 字符，Vim 提供了输入上的优化。</p>
+<p>比如 <code>C-k 1c</code> 是输入 <code>㈠</code>。</p>
+<p>光标停留在 <code>㈠</code>，按 <code>ascii</code> 可以查询到 <code>&lt;㈠&gt; 12832, Hex 3220, Oct 31040, Digr 1c</code>。</p>
+<p>所以按之前的方式 <code>C-v u 3220</code> 也可以同样地输入。</p>
+<p>使用过程中，可以直接 <code>:digraphs</code> 来查看所有字符，以及对应的输入键。对应的手册可以从 <code>:h digraph.txt</code> 得到。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/neovim.html">neovim</a>,                 <a href="../../../../tag/vim.html">vim</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">从 NERDTree 切换到 nvim-tree</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/04/02/vim-paste-very-slow-issue.html">往 vim 粘贴大段文本会卡顿的问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html">vim 里打开 file:line</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2013/04/26/vim_insert_numbered_list.html">vim 里插入列表编号</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2018/09/17/gettid_build_issue.html">
+                &laquo; gettid() 编译问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2018/10/08/chinse_document_style_guide.html">
+                中文技术文档的写作规范 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 命令行里显示十六进制 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2021/11/19/python_console_hex_display.html">
+        <meta name="twitter:title" content="Python 命令行里显示十六进制">
+        <meta name="twitter:description" content="0x0 问题 Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2021/11/19/python_console_hex_display.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 命令行里显示十六进制">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0x0 问题 Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2021/11/19/python_console_hex_display.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2021/11/19/python_console_hex_display.html" rel="bookmark" title="Permalink to Python 命令行里显示十六进制">Python 命令行里显示十六进制</a>
+                </h2>
+                <p class="post-meta">
+                    2021-11-19 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2021/11/19/python_console_hex_display.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>0x0 问题</h2>
+<p>Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式来显示运算的结果，这时，通常需要额外调用 <code>hex()</code> 函数，或者按 <code>{:x}.format(123)</code> 格式打印出来。</p>
+<p>这些操作多了以后，就会觉得很麻烦。所以有必要让 Python 命令行能默认地输出十六进制的结果。</p>
+<h2>0x1 解决办法</h2>
+<p>其实，Python 的 sys 标准模块里，提供了 <code>displayhook</code>，对于数字如何显示，可以添加自定义的操作。</p>
+<p>比如添加 hex.py 文件如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_displayhook</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;long&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+<span class="w">    </span><span class="k">else</span><span class="p">:</span>
+<span class="w">        </span><span class="n">sys</span><span class="o">.</span><span class="n">__displayhook__</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">hexon</span><span class="p">():</span>
+<span class="w">    </span><span class="n">sys</span><span class="o">.</span><span class="n">displayhook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_displayhook</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">hexoff</span><span class="p">():</span>
+<span class="w">    </span><span class="n">sys</span><span class="o">.</span><span class="n">displayhook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sys</span><span class="o">.</span><span class="n">__displayhook__</span>
+</code></pre></div>
+
+<p>然后运行 <code>python3 -i hex.py</code> 进入命令行。这时，如果需要以十六进制方式显示数字，只需要在执行 <code>hexon()</code> 即可开启。</p>
+<h2>0x2 参考资料</h2>
+<ul>
+<li>https://docs.python.org/3/library/sys.html#sys.displayhook</li>
+<li>Python console default hex display @ https://stackoverflow.com/questions/6307433/python-console-default-hex-display</li>
+<li>Digit grouping in python hexadecimal number formatting @　https://stackoverflow.com/questions/56132859/digit-grouping-in-python-hexadecimal-number-formatting</li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/hexdump.html">hexdump</a>,                 <a href="../../../../tag/linux.html">linux</a>,                 <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/07/28/python-crypt-module.html">Python crypt 模块</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2011/01/11/file-transfer.html">终端与远程之间的文件传递</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html">
+                &laquo; Boot With Small Pages on RISC-V
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html">
+                RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

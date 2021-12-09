@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Go 语言里的 slice 切片 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2019/04/28/golang_slice.html">
+        <meta name="twitter:title" content="Go 语言里的 slice 切片">
+        <meta name="twitter:description" content="变量的 pass-by-value Go 语言里的切片 slice，主要是针对数组类型不够灵活的问题。比如，a [50]int 和 b [80]int 是不同的类型，但同一个 slice s []int …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2019/04/28/golang_slice.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Go 语言里的 slice 切片">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="变量的 pass-by-value Go 语言里的切片 slice，主要是针对数组类型不够灵活的问题。比如，a [50]int 和 b [80]int 是不同的类型，但同一个 slice s []int …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2019/04/28/golang_slice.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2019/04/28/golang_slice.html" rel="bookmark" title="Permalink to Go 语言里的 slice 切片">Go 语言里的 slice 切片</a>
+                </h2>
+                <p class="post-meta">
+                    2019-04-28 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2019/04/28/golang_slice.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>变量的 pass-by-value</strong></p>
+<p>Go 语言里的切片 slice，主要是针对数组类型不够灵活的问题。比如，<code>a [50]int</code> 和 <code>b [80]int</code> 是不同的类型，但同一个 slice <code>s []int</code> 可以指向这些不同的类型，所以在参数设计时更灵活；比如 <code>var a [50]int</code>，在传值的时候，在 64 位 CPU 的架构上整个数组的 400 个字节都会被拷贝，通常这是没有必要的。</p>
+<p>slice 结构，有三个成员变量，包括指向底层数组某个偏移位置的指针 <code>array</code>、切片元素的个数 <code>len</code>、切片可以存放的元素个数的上限 <code>cap</code>（都是小写字母开头，所以看看就好了 :D）：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">slice</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">array</span><span class="w"> </span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="w">    </span><span class="nx">len</span><span class="w">   </span><span class="kt">int</span>
+<span class="w">    </span><span class="nx">cap</span><span class="w">   </span><span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><a href="https://go.dev/doc/effective_go#slices">&lt;&lt; Effective Go &gt;&gt;</a> 里有一句话是：<code>..., the slice itself (the run-time data structure holding the pointer, length, and capacity) is passed by value.</code> 所以每次 slice 在传递的时候都是传值的，从定义的结构可以看到，会拷贝 24 个字节。</p>
+<p><strong>slice 指向的内容</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="p">[</span><span class="mi">50</span><span class="p">]</span><span class="kt">int</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">s</span><span class="w"> </span><span class="p">[]</span><span class="kt">int</span>
+
+<span class="nx">s</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">a</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">35</span><span class="p">]</span><span class="w"> </span><span class="c1">// 指向了数组的一个区间，范围包括第 20、21、……、34 个元素</span>
+
+<span class="c1">// 检查 len 和 cap</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;sizeof(s) = %d, len:%d, cap:%d\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Sizeof</span><span class="p">(</span><span class="nx">s</span><span class="p">),</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">),</span><span class="w"> </span><span class="nb">cap</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+
+<span class="c1">// output:</span>
+<span class="c1">// sizeof(s) = 24, len:15, cap:30</span>
+</code></pre></div>
+
+<p><strong>slice 的传递</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="p">[</span><span class="mi">50</span><span class="p">]</span><span class="kt">int</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">s1</span><span class="p">,</span><span class="w"> </span><span class="nx">s2</span><span class="w"> </span><span class="p">[]</span><span class="kt">int</span>
+
+<span class="nx">s1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">a</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">35</span><span class="p">]</span>
+<span class="nx">s2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">s1</span>
+</code></pre></div>
+
+<p>考虑两个 slice，s0 赋值给 s1。这时，它们指向了相同的底层数组，并且有相同的 len 和 cap。可以这样理解，目前 s1 和 s2 看底层数组的角度是一样的。</p>
+<p>通过 s1 进行的操作，对 s2 是否可见呢？这要取决于这个操作是否在 s2 的角度范围内，比如：</p>
+<ul>
+<li>通过 s1 作用在第 0、1、len-1 个元素上，那么对于 s2 是可见的；</li>
+<li>给 s1 追加一个元素，那对 s2 是不可见的，因为在 s2 的 len 范围之外了；</li>
+<li>s1 指向了（比如追加若干元素后，或者显式地更新指向）新的底层数组，那对 s2 肯定是不可见的，因为 s2 看到的仍然是旧的底层数组；</li>
+<li>……</li>
+</ul>
+<p>所以，caller 在向 callee 在传递 slice 时，一定要考虑 callee 的实现里对 slice 操作，如果有影响，可能需要 callee 把更新过的 slice 返回给 caller。比如，<code>append</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">s1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="nx">s1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="nx">s1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+
+<p>如果底层数组还有空间，那么 apped 返回后的 s1 相比原来只更新了 len；如果底层数组不够用了，也就是 <code>len(s1)</code> 达到 <code>cap(s1)</code> 了，那么 go 运行时会重新分配一个更大的底层数组、拷贝原有数据、并返回，这样 s1 的 array、len、cap 都会更新。当然，对于旧的底层数组，如果不再被使用到，就会交给 gc 处理。</p>
+<p><strong>slice 的深拷贝</strong></p>
+<p>以上的传值过程，可以理解成是浅拷贝。类似于 C 语言里的指针或者字符串的传递，拷贝的是地址，而不是地址所指向的一片内存的数据。</p>
+<p>对于深拷贝，一种办法是 <code>copy</code>，即分配新的内存，并拷贝数据进去：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">s1</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">}</span>
+
+<span class="nx">s2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">s1</span><span class="p">))</span>
+<span class="nb">copy</span><span class="p">(</span><span class="nx">s2</span><span class="p">,</span><span class="w"> </span><span class="nx">s1</span><span class="p">)</span>
+</code></pre></div>
+
+<p>还有一种是 <code>append</code>，把 s1 里的内容，往一个空的 slice 里追加，返回新分配的结果：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">s1</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">}</span>
+<span class="nx">s2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">([]</span><span class="nb">int</span><span class="p">(</span><span class="kc">nil</span><span class="p">),</span><span class="w"> </span><span class="nx">s1</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/golang.html">golang</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">Go 语言里 Kong 命令行解析工具的参数验证问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/20/golang_interface.html">Go 语言里的接口赋值问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/10/golang_errors.html">Go 语言里的 errors 错误包装处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/03/golang_panic_position.html">Go 语言里的 panic 状态位置问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/01/golang_unittest_cover.html">Go 语言里的单元测试覆盖率</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2019/04/26/golang_range_gotcha.html">
+                &laquo; Go 语言里的 range 问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2019/04/30/golang_defer_named_return_values.html">
+                Go 语言里 defer, panic 和 named return values &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux PWM 驱动的实现 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/07/15/linux-pwm-driver.html">
+        <meta name="twitter:title" content="Linux PWM 驱动的实现">
+        <meta name="twitter:description" content="0. PWM 概念 PWM 指的是脉冲宽度调制技术。 PWM 频率，指 1 秒的时间里 PWM 运行的次数。 PWM 周期，指一次完整的 PWM 输出所使用的时间 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/07/15/linux-pwm-driver.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux PWM 驱动的实现">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0. PWM 概念 PWM 指的是脉冲宽度调制技术。 PWM 频率，指 1 秒的时间里 PWM 运行的次数。 PWM 周期，指一次完整的 PWM 输出所使用的时间 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/07/15/linux-pwm-driver.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html" rel="bookmark" title="Permalink to Linux PWM 驱动的实现">Linux PWM 驱动的实现</a>
+                </h2>
+                <p class="post-meta">
+                    2022-07-15 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2022/07/15/linux-pwm-driver.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>0. PWM 概念</strong></p>
+<p>PWM 指的是脉冲宽度调制技术。 PWM 频率，指 1 秒的时间里 PWM 运行的次数。 PWM 周期，指一次完整的 PWM 输出所使用的时间。 占空比，指一个周期里输出高的时间所占的比例。</p>
+<p>Linux 里已经有了完整的 PWM 驱动接口、用户操作接口。对于一个 PWM 控制器，它的驱动需要在 Linux 定义好的接口下，实现操作。</p>
+<p><strong>1. 定义驱动入口</strong></p>
+<p>在驱动入口处，定义了驱动能匹配的名字，然后注册驱动，把名字和 probe() 函数关联起来。</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/* 定义了驱动能匹配的名字 */</span>
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">of_device_id</span><span class="w"> </span><span class="n">pwm_xxx_of_match</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="p">.</span><span class="n">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;xxx,pwm0&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{},</span>
+<span class="p">};</span>
+<span class="n">MODULE_DEVICE_TABLE</span><span class="p">(</span><span class="n">of</span><span class="p">,</span><span class="w"> </span><span class="n">pwm_xxx_of_match</span><span class="p">);</span>
+
+<span class="cm">/* 注册驱动，关联名字和 probe() 函数 */</span>
+<span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">platform_driver</span><span class="w"> </span><span class="n">pwm_xxx_driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">probe</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pwm_xxx_probe</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">remove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pwm_xxx_remove</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;pwm-xxx&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="p">.</span><span class="n">of_match_table</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pwm_xxx_of_match</span><span class="p">,</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="n">module_platform_driver</span><span class="p">(</span><span class="n">pwm_xxx_driver</span><span class="p">);</span>
+</code></pre></div>
+
+<p><strong>2. probe() 函数</strong></p>
+<ol>
+<li>在 dts 里定义 PWM 驱动时，会配置 compatible, reg, clocks 等等参数，这些参数需要由驱动来解析后使用到实现代码里；</li>
+<li>安装 pwm_ops 回调函数，这些函数是用来驱动控制器；</li>
+<li>向系统注册控制器驱动；</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">pwm_xxx_probe</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">platform_device</span><span class="w"> </span><span class="o">*</span><span class="n">pdev</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="n">chip</span><span class="o">-&gt;</span><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pwm_xxx_ops</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pwmchip_add</span><span class="p">(</span><span class="n">chip</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>3. pwm_ops 接口</strong></p>
+<p>pwm_ops 定义了 PWM 控制器的操作，定义在文件 include/linux/pwm.h 里：</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/**</span>
+<span class="cm"> * struct pwm_ops - PWM controller operations</span>
+<span class="cm"> * @request: optional hook for requesting a PWM</span>
+<span class="cm"> * @free: optional hook for freeing a PWM</span>
+<span class="cm"> * @capture: capture and report PWM signal</span>
+<span class="cm"> * @apply: atomically apply a new PWM config</span>
+<span class="cm"> * @get_state: get the current PWM state. This function is only</span>
+<span class="cm"> *             called once per PWM device when the PWM chip is</span>
+<span class="cm"> *             registered.</span>
+<span class="cm"> */</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">pwm_ops</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">request</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_chip</span><span class="w"> </span><span class="o">*</span><span class="n">chip</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_device</span><span class="w"> </span><span class="o">*</span><span class="n">pwm</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">free</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_chip</span><span class="w"> </span><span class="o">*</span><span class="n">chip</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_device</span><span class="w"> </span><span class="o">*</span><span class="n">pwm</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">capture</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_chip</span><span class="w"> </span><span class="o">*</span><span class="n">chip</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_device</span><span class="w"> </span><span class="o">*</span><span class="n">pwm</span><span class="p">,</span>
+<span class="w">                       </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_capture</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">timeout</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">apply</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_chip</span><span class="w"> </span><span class="o">*</span><span class="n">chip</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_device</span><span class="w"> </span><span class="o">*</span><span class="n">pwm</span><span class="p">,</span>
+<span class="w">                     </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_state</span><span class="w"> </span><span class="o">*</span><span class="n">state</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">get_state</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_chip</span><span class="w"> </span><span class="o">*</span><span class="n">chip</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_device</span><span class="w"> </span><span class="o">*</span><span class="n">pwm</span><span class="p">,</span>
+<span class="w">                          </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_state</span><span class="w"> </span><span class="o">*</span><span class="n">state</span><span class="p">);</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p>其中，最需要关心的是实现 apply() 函数，和 <code>pwm_state</code> 结构。</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/*</span>
+<span class="cm"> * struct pwm_state - state of a PWM channel</span>
+<span class="cm"> * @period: PWM period (in nanoseconds)</span>
+<span class="cm"> * @duty_cycle: PWM duty cycle (in nanoseconds)</span>
+<span class="cm"> * @polarity: PWM polarity</span>
+<span class="cm"> * @enabled: PWM enabled status</span>
+<span class="cm"> * @usage_power: If set, the PWM driver is only required to maintain the power</span>
+<span class="cm"> *               output but has more freedom regarding signal form.</span>
+<span class="cm"> *               If supported, the signal can be optimized, for example to</span>
+<span class="cm"> *               improve EMI by phase shifting individual channels.</span>
+<span class="cm"> */</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">pwm_state</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">u64</span><span class="w"> </span><span class="n">period</span><span class="p">;</span>
+<span class="w">        </span><span class="n">u64</span><span class="w"> </span><span class="n">duty_cycle</span><span class="p">;</span>
+<span class="w">        </span><span class="k">enum</span><span class="w"> </span><span class="n">pwm_polarity</span><span class="w"> </span><span class="n">polarity</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">usage_power</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">pwm_xxx_apply</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_chip</span><span class="w"> </span><span class="o">*</span><span class="n">chip</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_device</span><span class="w"> </span><span class="o">*</span><span class="n">pwm</span><span class="p">,</span>
+<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pwm_state</span><span class="w"> </span><span class="o">*</span><span class="n">state</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>apply() 函数，就是把 pwm_state 里的内容，设置到控制器里去。大概是这样的实现过程：</p>
+<ul>
+<li>解析 pwm_state 里的参数：<ul>
+<li>判断 pwm_state-&gt;enabled，如果 False，关闭 PWM 控制器；</li>
+<li>否则，开启 PWM：<ul>
+<li>判断 pwm_state-&gt;period 和 pwm_state-&gt;duty_cycle，这两个单位都是纳秒，再结合初始化时的 clock 输入，可以计算控制器寄存器的值；</li>
+<li>判断 pwm_state-&gt;polarity，如果是 NORMAL，duty-cycle 是高有效，如果是 INVERSED，duty-cycle 是低有效。控制器寄存器的值要相应调整；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>把计算好的值写入控制器寄存器，实现 PWM 状态的更新。</li>
+</ul>
+<p><strong>4. devicetree 的配置</strong></p>
+<p>在 devicetree 里通过名字来匹配 pwm 驱动（各个字段按实际情况填写）：</p>
+<div class="highlight"><pre><span></span><code><span class="nl">pwm0</span><span class="p">:</span><span class="w"> </span><span class="nf">pwm</span><span class="o">@</span><span class="mi">12345678</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kr">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;xxx,pwm0&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kr">reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x12345678</span><span class="w"> </span><span class="mh">0x12</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">clocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="kr">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;okay&quot;</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p><strong>5. sysfs 用户操作接口</strong></p>
+<p>用户操作接口在 /sys/class/pwm/ 目录下，有 export、unexport 等文件，可以把 PWM 导出或者取消。</p>
+<p>已经 export 过的，可以看到有以下一些文件：</p>
+<ul>
+<li><strong>period</strong>: 周期，纳秒，可读可写；</li>
+<li><strong>duty_cycle</strong>: 也是纳秒，可读可写；</li>
+<li><strong>polarity</strong>: 用来设置极性，可以写入 normal 或者 inversed；</li>
+<li><strong>enable</strong>: 使能控制，可读可写，0 或者 1。</li>
+</ul>
+<p>比如：</p>
+<div class="highlight"><pre><span></span><code>echo 45600000 &gt; period
+echo 12300000 &gt; duty_cycle
+echo 1 &gt; enable
+</code></pre></div>
+
+<p><strong>参考资料</strong></p>
+<ul>
+<li>linux/drivers/pwm/*.c</li>
+<li>Documentation/driver-api/pwm.rst</li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">Linux Kernel pr_debug(), dev_dbg() 以及动态调试</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/07/03/linux-clock-tree.html">
+                &laquo; Linux clock tree 的实现
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">
+                编译 devicetree source 文件 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

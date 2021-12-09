@@ -1,17 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>Gang Up</title><link>https://cctags.github.io/</link><description>Random notes from a random developer</description><lastBuildDate>Thu, 16 Apr 2020 10:08:00 +0800</lastBuildDate><item><title>Ubuntu 无法更新 psutil 的问题</title><link>https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
-&lt;p&gt;编写 &lt;a href="https://github.com/cctags/tmux-system-info"&gt;tmux-system-info&lt;/a&gt; 的时候，有依赖到高版本 &lt;a href="https://pypi.org/project/psutil"&gt;psutil&lt;/a&gt; 里的接口功能。&lt;/p&gt;
-&lt;p&gt;因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo pip3 install --upgrade psutil
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>技术笔记</title><link>https://cctags.github.io/</link><description>Random notes from a random developer</description><atom:link href="https://cctags.github.io/feeds/all.rss.xml" rel="self"/><lastBuildDate>Thu, 15 May 2025 10:08:00 +0800</lastBuildDate><item><title>Python 包管理器 uv 没有 arm64 musl 安装包</title><link>https://cctags.github.io/posts/2025/05/15/python-uv-missing-arm64-musl.html</link><description>&lt;p&gt;项目里要在嵌入式设备上面跑起某个工具，因为工具本身需要高版本的 Python，而系统里自带的只是 Python 3.7，所以准备通过 uv …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 15 May 2025 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2025-05-15:/posts/2025/05/15/python-uv-missing-arm64-musl.html</guid><category>Programming</category><category>Python</category><category>uv</category></item><item><title>Python 代码格式工具 ruff 的配置文件问题</title><link>https://cctags.github.io/posts/2025/05/01/python-ruff-config-file.html</link><description>&lt;p&gt;&lt;a href="https://github.com/astral-sh/ruff"&gt;ruff&lt;/a&gt; 类似于 &lt;code&gt;pylint&lt;/code&gt;、&lt;code&gt;autopep8&lt;/code&gt;。它是一个用于 Python 项目的工具，用于代码的分析以及格式化，它是 &lt;code&gt;uv&lt;/code&gt; 项目组开发的另一个工具。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ruff&lt;/code&gt; 的项目地址 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 01 May 2025 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2025-05-01:/posts/2025/05/01/python-ruff-config-file.html</guid><category>Tools</category><category>python</category><category>uv</category><category>ruff</category></item><item><title>从 NERDTree 切换到 nvim-tree</title><link>https://cctags.github.io/posts/2025/03/02/from-nerdtree-to-nvim-tree.html</link><description>&lt;h2&gt;0x0 NERDTree 的问题&lt;/h2&gt;
+&lt;p&gt;使用 neovim 时，有时会遇到在启动过程中长时间卡住的问题。通过 &lt;code&gt;vi --startuptime /tmp/1&lt;/code&gt; 这样的调试方式启动，发现多数时间开 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 02 Mar 2025 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2025-03-02:/posts/2025/03/02/from-nerdtree-to-nvim-tree.html</guid><category>Tools</category><category>vim</category><category>neovim</category></item><item><title>从 markdown 生成 epub 文件</title><link>https://cctags.github.io/posts/2025/02/01/from-markdown-to-epub.html</link><description>&lt;h2&gt;0x0 从 markdown 生成 epub 文件&lt;/h2&gt;
+&lt;p&gt;手机端电子阅读 APP，是可以导入 epub 格式的文件，所以会有这样的实际需求，即把一些文档资料、笔记都导 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sat, 01 Feb 2025 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2025-02-01:/posts/2025/02/01/from-markdown-to-epub.html</guid><category>Tools</category><category>markdown</category><category>epub</category><category>pandoc</category></item><item><title>Python 包管理器 uv</title><link>https://cctags.github.io/posts/2025/01/02/python-package-manager-uv.html</link><description>&lt;h2&gt;0. Why uv?&lt;/h2&gt;
+&lt;p&gt;一直在用 &lt;a href="https://www.anaconda.com/docs/getting-started/miniconda/main"&gt;Miniconda&lt;/a&gt; 作为 Python 项目的虚拟环境管理工具。但实际上，Miniconda 文档里有这样的 &lt;a href="https://www.anaconda.com/docs/getting-started/miniconda/main#is-miniconda-free-for-me"&gt;声明：Is Anaconda still free?&lt;/a&gt;，其中对使用场景有了限 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 02 Jan 2025 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2025-01-02:/posts/2025/01/02/python-package-manager-uv.html</guid><category>Programming</category><category>Python</category><category>uv</category></item><item><title>Go 语言里 Kong 命令行解析工具的参数验证问题</title><link>https://cctags.github.io/posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html</link><description>&lt;p&gt;&lt;a href="https://github.com/alecthomas/kong"&gt;Kong&lt;/a&gt; 是一个用于 go 语言项目的命令行参数解析工具。（其实，可以找到不少用于 go 语言的命令行参数解析工具的开源实现，主 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 15 Dec 2024 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2024-12-15:/posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html</guid><category>Programming</category><category>golang</category><category>kong</category><category>argparse</category></item><item><title>解码 PDF 文档</title><link>https://cctags.github.io/posts/2024/12/01/decrypt_pdf_file.html</link><description>&lt;p&gt;&lt;strong&gt;问题：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;供应商提供的产品手册是设置了密码的 PDF 文件，每次在打开时都需要输入密码。&lt;/p&gt;
+&lt;p&gt;现在的问题是能否清除密码。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;查 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 01 Dec 2024 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2024-12-01:/posts/2024/12/01/decrypt_pdf_file.html</guid><category>Tools</category><category>PDF</category></item><item><title>使用 OCR 识别扫描文件的一些记录</title><link>https://cctags.github.io/posts/2024/10/21/use-ocr.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;/*
+ * 这个记录有多次更新。
+ */
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
+&lt;h2&gt;0. 问题&lt;/h2&gt;
+&lt;p&gt;需要对一篇扫描件里的内容进行识别和提取，以下是一些记录。&lt;/p&gt;
+&lt;h2&gt;1. PDF 转换成图片&lt;/h2&gt;
+&lt;p&gt;文档资料是 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 21 Oct 2024 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2024-10-21:/posts/2024/10/21/use-ocr.html</guid><category>Tools</category><category>ocr</category></item><item><title>往 vim 粘贴大段文本会卡顿的问题</title><link>https://cctags.github.io/posts/2024/04/02/vim-paste-very-slow-issue.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;用 vim 编辑文件时，发现粘贴大段文本时会变得很卡，有时候几百行的文本，需要花几十秒甚至更长时间。&lt;/p&gt;
+&lt;h2&gt;0x1 解决办法 …&lt;/h2&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 02 Apr 2024 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2024-04-02:/posts/2024/04/02/vim-paste-very-slow-issue.html</guid><category>Tools</category><category>vim</category></item><item><title>Linux 添加 memory block</title><link>https://cctags.github.io/posts/2024/02/07/linux-add-memory-block.html</link><description>&lt;p&gt;&lt;strong&gt;需求&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;现在是这么一个情况，手头的一块开发板，在增加了内存后，需要在 Linux 系统里识别到、并能使用起来。&lt;/p&gt;
+&lt;p&gt;正常情况下，一般是 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 07 Feb 2024 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2024-02-07:/posts/2024/02/07/linux-add-memory-block.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>SeaweedFS ec decode missing shard 的问题及解决</title><link>https://cctags.github.io/posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html</link><description>&lt;p&gt;这里记录了使用 &lt;strong&gt;SeaweedFS&lt;/strong&gt; 过程中，对于有时出现的 &lt;code&gt;ec.decode volume&lt;/code&gt; 失败的情况，所进行的问题重现、分析和解决办法。&lt;/p&gt;
+&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;在使用 SeaweedFS 过程中 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 12 Nov 2023 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2023-11-12:/posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html</guid><category>programming</category><category>python</category></item><item><title>Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</title><link>https://cctags.github.io/posts/2023/08/25/python-positional-and-keyword-argument.html</link><description>&lt;p&gt;在 Python 里，函数的参数默认是 &lt;code&gt;positional-or-keyword&lt;/code&gt;，就是说即可以是位置参数，也可以是关键字参数。文档里是这样描述的：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;positional-or-keyword: specifies an argument that can be passed either …&lt;/p&gt;&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 25 Aug 2023 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2023-08-25:/posts/2023/08/25/python-positional-and-keyword-argument.html</guid><category>programming</category><category>python</category></item><item><title>Python Turtle 画圆时的圆心位置问题</title><link>https://cctags.github.io/posts/2023/08/18/python-turtle-circle-center-position.html</link><description>&lt;p&gt;&lt;strong&gt;问题：&lt;/strong&gt;在使用 &lt;a href="https://docs.python.org/2.7/library/turtle.html#turtle.circle"&gt;&lt;code&gt;turtle.circle()&lt;/code&gt;&lt;/a&gt; 画圆时，发现圆心在 turtle 的正上方。&lt;/p&gt;
+&lt;p&gt;这个 API 的参数里没有指定圆心，也不是以当前位置 &lt;code&gt;turtle.position()&lt;/code&gt; 为圆心。&lt;code&gt;turtle.circle()&lt;/code&gt; 是这 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 18 Aug 2023 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2023-08-18:/posts/2023/08/18/python-turtle-circle-center-position.html</guid><category>programming</category><category>python</category></item><item><title>Python crypt 模块</title><link>https://cctags.github.io/posts/2023/07/28/python-crypt-module.html</link><description>&lt;p&gt;Linux 下的用户名和密码是加盐哈希后保存在 &lt;code&gt;/etc/shadow&lt;/code&gt; 文件里的。&lt;a href="https://www.cyberciti.biz/faq/understanding-etcshadow-file/"&gt;这里&lt;/a&gt; 有文件格式的介绍。&lt;/p&gt;
+&lt;p&gt;Python 标准库里，有一个 crypt 模块，可以用来生 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 28 Jul 2023 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2023-07-28:/posts/2023/07/28/python-crypt-module.html</guid><category>programming</category><category>Linux</category><category>python</category></item><item><title>Python 内置函数 pow 计算逆元</title><link>https://cctags.github.io/posts/2023/06/08/python-pow-modular-inverse.html</link><description>&lt;p&gt;&lt;code&gt;pow&lt;/code&gt; 是 Python 的内置函数，用来进行幂运行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;pow&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="go"&gt;pow(base, exp, mod=None)&lt;/span&gt;
+&lt;span class="go"&gt;    Equivalent to base**exp with 2 arguments or base**exp % mod with 3 arguments&lt;/span&gt;
+&lt;span class="go"&gt;    ...&lt;/span&gt;
+&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="nb"&gt;pow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="go"&gt;125&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;没想到，升级遇到了以下问题：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Collecting psutil
-  Downloading psutil-5.7.0.tar.gz (449 kB)
-     |████████████████████████████████| 449 kB 1.3 MB/s
-Building wheels for collected packages: psutil
-  Building wheel for psutil (setup.py) ... done …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 16 Apr 2020 10:08:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2020-04-16:/posts/2020/04/16/issue_of_upgrade_psutil.html</guid><category>Programming</category><category>Python</category><category>psutil</category><category>ubuntu</category></item><item><title>Use Google Analytics With Pelican</title><link>https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html</link><description>&lt;P&gt;
+&lt;p&gt;从 &lt;a href="https://docs.python.org/3/library/functions.html#pow"&gt;Python 3.8&lt;/a&gt; 版本开始，在同 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 08 Jun 2023 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2023-06-08:/posts/2023/06/08/python-pow-modular-inverse.html</guid><category>programming</category><category>python</category></item><item><title>Cache 的组织和过程（VIVT、VIPT、PIPT）</title><link>https://cctags.github.io/posts/2023/04/08/memory-cache-index-tag.html</link><description>&lt;p&gt;&lt;strong&gt;1. VIVT&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;VA&lt;span class="w"&gt; &lt;/span&gt;里的&lt;span class="w"&gt; &lt;/span&gt;index&lt;span class="w"&gt; &lt;/span&gt;🡲&lt;span class="w"&gt; &lt;/span&gt;查找到&lt;span class="w"&gt; &lt;/span&gt;cache-line&lt;span class="w"&gt; &lt;/span&gt;🡲&lt;span class="w"&gt; &lt;/span&gt;跟&lt;span class="w"&gt; &lt;/span&gt;VA&lt;span class="w"&gt; &lt;/span&gt;里的&lt;span class="w"&gt; &lt;/span&gt;tag&lt;span class="w"&gt; &lt;/span&gt;比较 :
+*&lt;span class="w"&gt; &lt;/span&gt;hit&lt;span class="w"&gt; &lt;/span&gt;🡲&lt;span class="w"&gt; &lt;/span&gt;返回（不经过&lt;span class="w"&gt; &lt;/span&gt;MMU）
+*&lt;span class="w"&gt; &lt;/span&gt;miss&lt;span class="w"&gt; &lt;/span&gt;🡲&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;VA-&amp;gt;MMU-&amp;gt;&lt;span class="o"&gt;]&lt;/span&gt;PA&lt;span class="w"&gt; &lt;/span&gt;访存，写回&lt;span class="w"&gt; &lt;/span&gt;cache-line；VA&lt;span class="w"&gt; &lt;/span&gt;里的&lt;span class="w"&gt; &lt;/span&gt;tag&lt;span class="w"&gt; &lt;/span&gt;更新到&lt;span class="w"&gt; &lt;/span&gt;cache-line&lt;span class="w"&gt; &lt;/span&gt;🡲&lt;span class="w"&gt; &lt;/span&gt;返回
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;有别名问题。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. VIPT …&lt;/strong&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sat, 08 Apr 2023 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2023-04-08:/posts/2023/04/08/memory-cache-index-tag.html</guid><category>programming</category><category>Linux</category><category>kernel</category></item><item><title>椭圆曲线和蒙哥马利算法的一些记录</title><link>https://cctags.github.io/posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html</link><description>&lt;h2&gt;0. 数论知识&lt;/h2&gt;
+&lt;p&gt;以下有些地方的同余符号用了等号代替，或者省略了 &lt;span class="math"&gt;\(\pmod{m}\)&lt;/span&gt; 的写法。另外，除非特别说明，代码都是用 Python 实现。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;0.1 …&lt;/strong&gt;&lt;/p&gt;&lt;script type='text/javascript'&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "left",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: false," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: '#09408e ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 30 Dec 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-12-30:/posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html</guid><category>Programming</category><category>hash</category></item><item><title>一次性密码算法 One-Time Password (OTP)</title><link>https://cctags.github.io/posts/2022/11/02/one-time-password.html</link><description>&lt;p&gt;很多在线服务出于用户账号安全的考虑，通常要求启用两步验证，即除了密码外，还需要一个实时生成的验证码（比如通过 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 02 Nov 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-11-02:/posts/2022/11/02/one-time-password.html</guid><category>Programming</category><category>hash</category></item><item><title>U-Boot SPL 加载后续程序过程中的内存泄漏问题</title><link>https://cctags.github.io/posts/2022/10/16/u-boot-spl-memory-leak.html</link><description>&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;项目里是这样设计的 U-Boot SPL 加载过程：SPL 会从多种启动设备尝试加载 uImage。加载的顺序是由板卡支持代码里指定的：&lt;/p&gt;
+&lt;p&gt;文件 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 16 Oct 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-10-16:/posts/2022/10/16/u-boot-spl-memory-leak.html</guid><category>programming</category><category>u-boot</category><category>soc</category></item><item><title>解决 yt-dlp 使用的 cookies 文件格式的问题</title><link>https://cctags.github.io/posts/2022/08/23/yt-dlp-cookies-file.html</link><description>&lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;使用 &lt;code&gt;yt-dlp&lt;/code&gt; 下载时遇到了这样的问题：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gp"&gt;$ &lt;/span&gt;yt-dlp&lt;span class="w"&gt; &lt;/span&gt;http://xxx
+
+&lt;span class="go"&gt;[xxx] Extracting URL: xxx xxx&lt;/span&gt;
+&lt;span class="go"&gt;[xxx] xxx: Downloading webpage&lt;/span&gt;
+&lt;span class="go"&gt;ERROR: [xxx] xxx: Unable to download webpage: HTTP Error 412: Precondition Failed&lt;/span&gt;
+&lt;span class="gp gp-VirtualEnv"&gt;(caused by &amp;lt;HTTPError 412: Precondition Failed&amp;gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;经过搜索 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 23 Aug 2022 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2022-08-23:/posts/2022/08/23/yt-dlp-cookies-file.html</guid><category>Tools</category><category>yt-dlp</category></item><item><title>解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题</title><link>https://cctags.github.io/posts/2022/08/17/win10_software_window_position_issue.html</link><description>&lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Windows 10 经常碰到这样的情况，从睡眠状态唤醒以后，部分运行中的软件，窗口会被缩小，并且窗口也不在原来的位置，而是 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 17 Aug 2022 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2022-08-17:/posts/2022/08/17/win10_software_window_position_issue.html</guid><category>Tools</category><category>microsoft</category><category>Windows</category></item><item><title>编译 devicetree source 文件</title><link>https://cctags.github.io/posts/2022/08/02/compile-devicetree-source.html</link><description>&lt;p&gt;&lt;strong&gt;dts, dtb&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;device tree (dts) 是一种树形结构的、用来描述 SoC 设备的组成的文件。有 dts 格式的文本源文件，用 Device Tree Compiler (dtc)，可以把 dts 编译生成 dtb …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 02 Aug 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-08-02:/posts/2022/08/02/compile-devicetree-source.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>Linux PWM 驱动的实现</title><link>https://cctags.github.io/posts/2022/07/15/linux-pwm-driver.html</link><description>&lt;p&gt;&lt;strong&gt;0. PWM 概念&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;PWM 指的是脉冲宽度调制技术。 PWM 频率，指 1 秒的时间里 PWM 运行的次数。 PWM 周期，指一次完整的 PWM 输出所使用的时间 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 15 Jul 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-07-15:/posts/2022/07/15/linux-pwm-driver.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>Linux clock tree 的实现</title><link>https://cctags.github.io/posts/2022/07/03/linux-clock-tree.html</link><description>&lt;p&gt;&lt;strong&gt;1. Linux 里已经预定义了几种 clock&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;clk-fixed-rate&lt;/strong&gt;: basic fixed-rate clock that cannot gate, 比如固定频率的 oscillator&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;clk-fixed-factor&lt;/strong&gt;: basic fixed multiplier and divider clock that cannot gate，比如从上一级按固定比例分频 …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 03 Jul 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-07-03:/posts/2022/07/03/linux-clock-tree.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>定制 SoC 的 U-Boot SPL image type 类型</title><link>https://cctags.github.io/posts/2022/06/30/u-boot-spl-image-type-for-soc.html</link><description>&lt;p&gt;开发板 SoC 系统上电启动时，从 &lt;code&gt;boot rom&lt;/code&gt; 开始运行、并加载后续程序；被加载的通常是 &lt;code&gt;U-Boot SPL&lt;/code&gt;，它运行并加载其他后续的程序。按先后 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 30 Jun 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-06-30:/posts/2022/06/30/u-boot-spl-image-type-for-soc.html</guid><category>programming</category><category>u-boot</category><category>soc</category></item><item><title>ARM Watch Point 寄存器</title><link>https://cctags.github.io/posts/2022/04/09/ram-watch-point-register.html</link><description>&lt;p&gt;Watch Point (WP) 有 6 个寄存器：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Address Value / Mask Register&lt;/li&gt;
+&lt;li&gt;Data Value / Mask Register&lt;/li&gt;
+&lt;li&gt;Control Value / Mask Register&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其中，WP Address Value / Mask 是监控地址总线，WP Data Value / Mask 是监控数据总线。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;断点&lt;/strong&gt;用来标 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sat, 09 Apr 2022 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2022-04-09:/posts/2022/04/09/ram-watch-point-register.html</guid><category>programming</category><category>hardware</category></item><item><title>Linux Kernel pr_debug(), dev_dbg() 以及动态调试</title><link>https://cctags.github.io/posts/2021/12/09/linux-kernel-dynamic-debug.html</link><description>&lt;p&gt;pr_err(), pr_info(), ... / dev_err(), dev_info(), ... 系列函数，在 pr_fmt / dev_fmt 的基础上，调用 vprintk_emit() 实现打印输出。但 pr_debug() / dev_dbg() 比较特殊，有不一样的代码路径。&lt;/p&gt;
+&lt;p&gt;文件：include/linux/printk.h&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="cm"&gt;/* If you are writing …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 09 Dec 2021 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2021-12-09:/posts/2021/12/09/linux-kernel-dynamic-debug.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>Linux kernel printk 占位符 %p 和 %px</title><link>https://cctags.github.io/posts/2021/12/07/linux-kernel-printk-specifiers.html</link><description>&lt;p&gt;&lt;strong&gt;1. %p&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Linux 内核里的 printk 可以打印指针地址，这和 printf() 是一样的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mh"&gt;0x1234&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;printk&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;p = %p&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;这里是想打印所指向的地址。实际运行起来后 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 07 Dec 2021 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2021-12-07:/posts/2021/12/07/linux-kernel-printk-specifiers.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>Linux kernel printk 以及 pr_err, dev_err 等包装函数</title><link>https://cctags.github.io/posts/2021/12/05/linux-kernel-printk-alias-function.html</link><description>&lt;p&gt;&lt;strong&gt;pr_err() 等包装函数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;在 Linux 内核里打印信息，除了使用 printk，还可以用 pr_err() 等包装函数，比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;pr_err&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;page allocation failed&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;这个调用相当于 &lt;code&gt;printk(KERN_ERR "page allocation failed\n …&lt;/code&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 05 Dec 2021 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2021-12-05:/posts/2021/12/05/linux-kernel-printk-alias-function.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>Linux kernel printk log level</title><link>https://cctags.github.io/posts/2021/12/03/linux-kernel-printk-log-level.html</link><description>&lt;p&gt;&lt;strong&gt;1. Log level 的定义&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;在 Linux 内核里，printk 经常用来格式化输出，类似于常见的 printf。需要注意的是，printk 有一个 log level 的参数，使用的时候经常 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 03 Dec 2021 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2021-12-03:/posts/2021/12/03/linux-kernel-printk-log-level.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20</title><link>https://cctags.github.io/posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html</link><description>&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;在一个基于 RISC-V 架构的项目里，遇到了如下的链接问题：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;xxx/file:xxx:(.text.startup+0x74): relocation truncated to fit: R_RISCV_PCREL_HI20 against symbol xxx ...
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:xx: xxx.elf …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 25 Nov 2021 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2021-11-25:/posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html</guid><category>programming</category><category>Linux</category><category>risc-v</category></item><item><title>Python 命令行里显示十六进制</title><link>https://cctags.github.io/posts/2021/11/19/python_console_hex_display.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;Python 命令行经常被拿来当作计算器，进行数字或者逻辑运算。很多时候，特别是在编程时，往往需要以十六进制的方式 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 19 Nov 2021 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2021-11-19:/posts/2021/11/19/python_console_hex_display.html</guid><category>Tools</category><category>Python</category><category>Linux</category><category>hexdump</category></item><item><title>Boot With Small Pages on RISC-V</title><link>https://cctags.github.io/posts/2021/10/14/boot-with-small-pages-on-risc-v.html</link><description>&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;在 RISC-V 上启动 Linux Kernel 时，内核本身占用的内存页面使用的是大页模式（其中，32 位 CPU 用的是 4MB 模式，64 位 CPU 用的是 2MB 模式，这 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 14 Oct 2021 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2021-10-14:/posts/2021/10/14/boot-with-small-pages-on-risc-v.html</guid><category>Programming</category><category>Linux</category><category>Kernel</category><category>risc-v</category><category>mm</category></item><item><title>Linux 内核 KASAN 内存检查工具</title><link>https://cctags.github.io/posts/2020/06/15/linux-kernel-kasan-tool.html</link><description>&lt;p&gt;开启了 kasan 功能以后，每次分配内存，会有额外的 shadow memory，大小为 1/8，用来标记内存分配的信息。每连续 8 个字节，如果都可以访 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 15 Jun 2020 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2020-06-15:/posts/2020/06/15/linux-kernel-kasan-tool.html</guid><category>programming</category><category>Linux</category><category>Kernel</category></item><item><title>Ubuntu 无法更新 psutil 的问题</title><link>https://cctags.github.io/posts/2020/04/16/issue_of_upgrade_psutil.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;编写 &lt;a href="https://github.com/cctags/tmux-system-info"&gt;tmux-system-info&lt;/a&gt; 的时候，有依赖到高版本 &lt;a href="https://pypi.org/project/psutil"&gt;psutil&lt;/a&gt; 里的接口功能。&lt;/p&gt;
+&lt;p&gt;因为发现 Ubuntu 系统里已经安装的 psutil 版本太低，所以准备升级一下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 16 Apr 2020 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2020-04-16:/posts/2020/04/16/issue_of_upgrade_psutil.html</guid><category>Programming</category><category>Python</category><category>psutil</category><category>ubuntu</category></item><item><title>Use Google Analytics With Pelican</title><link>https://cctags.github.io/posts/2020/04/13/use_google_analytics_with_pelican.html</link><description>&lt;P&gt;
 基于 &lt;A HREF="https://getpelican.com"&gt;Pelican&lt;/A&gt; 生成的静态页面，可以使用 &lt;A HREF="https://analytics.google.com/analytics/web/"&gt;Google Analytics&lt;/A&gt; 来统计访问数据。
 &lt;/P&gt;
 &lt;P&gt;
@@ -20,236 +161,123 @@ Building wheels for collected packages: psutil
 
 &lt;OL&gt;
 &lt;LI&gt;登录到 Google Analytics，创建账号；
-&lt;LI&gt;添加需要统计的 URL；
-&lt;LI&gt;获取 Tracking ID；
-&lt;LI&gt;把 Tracking ID 添加到 &lt;CODE&gt;publishconf.py&lt;/CODE&gt; 里：
-&lt;P&gt;&lt;/P&gt;
+&lt;LI&gt;添加需要 …&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 13 Apr 2020 14:05:00 +0800</pubDate><guid>tag:cctags.github.io,2020-04-13:/posts/2020/04/13/use_google_analytics_with_pelican.html</guid><category>Tools</category><category>Pelican</category></item><item><title>utmp records of tmux</title><link>https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html</link><description>&lt;h2&gt;0x0&lt;/h2&gt;
+&lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 02 Apr 2020 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</guid><category>Tools</category><category>tmux</category><category>ubuntu</category></item><item><title>Python 海象运算符</title><link>https://cctags.github.io/posts/2019/11/08/python-walrus-operator.html</link><description>&lt;p&gt;新版本 Python 里添加了一个语法 Assignment Expressions &lt;code&gt;:=&lt;/code&gt;，使用时可以写成这样（代码来自 &lt;a href="https://docs.python.org/3.8/whatsnew/3.8.html#assignment-expressions"&gt;What’s New In Python 3.8&lt;/a&gt;）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;List is too long (&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; elements, expected &amp;lt;= 10)&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;PRE&gt;
-  GOOGLE_ANALYTICS = 'UA-XXXXXX-Y'
-&lt;/PRE&gt;
-
-&lt;P&gt;&lt;/P&gt;
-&lt;LI&gt;重新编译并发布即可。
-&lt;/OL&gt;
-
-&lt;P&gt;
-参考：&lt;A HREF="https://matthewdevaney.com/posts/2019/03/17/google-analytics-with-pelican/"&gt;Google Analytics With Pelican&lt;/A&gt;
-&lt;/P&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 13 Apr 2020 14:05:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2020-04-13:/posts/2020/04/13/use_google_analytics_with_pelican.html</guid><category>Tools</category><category>Pelican</category></item><item><title>utmp records of tmux</title><link>https://cctags.github.io/posts/2020/04/02/utmp_records_of_tmux.html</link><description>&lt;h2&gt;0x0&lt;/h2&gt;
-&lt;p&gt;在 Ubuntu 19.04 (Disco Dingo) 上使用 tmux 的时候，观察到一个问题，在 &lt;code&gt;w&lt;/code&gt; 或者 &lt;code&gt;who&lt;/code&gt; 的输出里，会有好多条登录信息；如果 &lt;code&gt;pane&lt;/code&gt; 开得多，甚至会满屏都是，影响显示效果。在另一台 Ubuntu 16.04.4 LTS (Xenial Xerus) 上，却没有遇到这样的问题。&lt;/p&gt;
-&lt;h2&gt;0x1&lt;/h2&gt;
-&lt;p&gt;感觉上是不同的软件版本、或者是操作系统版本引起的问题。根据搜索到的信息，比如这篇 &lt;a href="https://github.com/tmux/tmux/issues/1260"&gt;utmp records are potentially dangerous&lt;/a&gt;，基本确认应该是对 utmp 信息的处理不一致。&lt;/p&gt;
-&lt;h2&gt;0x2&lt;/h2&gt;
-&lt;p&gt;查看并对比了 tmux 对应的依赖库：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ldd …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 02 Apr 2020 18:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2020-04-02:/posts/2020/04/02/utmp_records_of_tmux.html</guid><category>Tools</category><category>tmux</category><category>ubuntu</category></item><item><title>Difference between __str__ and __repr__ in Python</title><link>https://cctags.github.io/posts/2019/09/04/python_difference_between_str_and_repr.html</link><description>&lt;p&gt;在 Python 里，__str__ 和 __repr__ 的功能类似，但又有区别，经常容易搞混。以下列举了它们在使用上的注意点。&lt;/p&gt;
+&lt;p&gt;如 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 08 Nov 2019 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2019-11-08:/posts/2019/11/08/python-walrus-operator.html</guid><category>programming</category><category>python</category></item><item><title>Difference between __str__ and __repr__ in Python</title><link>https://cctags.github.io/posts/2019/09/04/python_difference_between_str_and_repr.html</link><description>&lt;p&gt;在 Python 里，__str__ 和 __repr__ 的功能类似，但又有区别，经常容易搞混。以下列举了它们在使用上的注意点。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;__repr__&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;__repr__ goal is to be unambiguous&lt;/li&gt;
 &lt;li&gt;__repr__ is for developers&lt;/li&gt;
-&lt;li&gt;__repr__ representation of python object usually eval will convert it back to that object&lt;/li&gt;
-&lt;li&gt;正式的字符串，多数情况下是一个有效的 python 表达式，用于 &lt;a href="https://docs.python.org/3.8/library/functions.html#repr"&gt;repr()&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;__str__&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;__str__ goal is to be readable&lt;/li&gt;
-&lt;li&gt;__str__ is …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 04 Sep 2019 18:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2019-09-04:/posts/2019/09/04/python_difference_between_str_and_repr.html</guid><category>Programming</category><category>Python</category></item><item><title>使用 pthread 时遇到的资源不足的问题</title><link>https://cctags.github.io/posts/2019/06/20/pthread_memory_leak_issue.html</link><description>&lt;p&gt;项目里遇到了一个 &lt;code&gt;pthread_create&lt;/code&gt; 调用失败、返回资源不足的问题。&lt;/p&gt;
-&lt;p&gt;走读了代码，发现代码里反复调用了 &lt;code&gt;pthread_create&lt;/code&gt; 创建了很多短任务；但主线程里并没有等待，而是任由其运行到退出。&lt;/p&gt;
-&lt;p&gt;查阅了 pthread 手册，对于新创建的 thread，它必须被 join 或者被 detach，这样才能避免 thread 相关的内部数据结构的泄漏。&lt;/p&gt;
-&lt;p&gt;针对项目实际情况，因为不需要 join，所以在调用 &lt;code&gt;pthread_create&lt;/code&gt; 创建线程之后，添加了 &lt;code&gt;pthread_detach&lt;/code&gt; 的调用，解决资源泄漏的问题。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 20 Jun 2019 18:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2019-06-20:/posts/2019/06/20/pthread_memory_leak_issue.html</guid><category>Programming</category><category>pthread</category></item><item><title>Golang 里的 range 问题</title><link>https://cctags.github.io/posts/2019/04/26/golang_range_gotcha.html</link><description>&lt;p&gt;Golang 类似于 C/C++，同时又从其他语言（比如 Python）里借鉴了一些语法，比如 range。&lt;/p&gt;
-&lt;p&gt;在使用上，range 有一些特性，如果不注意的话，很容易引起误解。比如以下这段代码，会不会一直循环下去？&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;func&lt;/span&gt; &lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="k"&gt;range&lt;/span&gt; &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-        &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;li&gt;__repr__ representation …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 04 Sep 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-09-04:/posts/2019/09/04/python_difference_between_str_and_repr.html</guid><category>Programming</category><category>Python</category></item><item><title>使用 pthread 时遇到的资源不足的问题</title><link>https://cctags.github.io/posts/2019/06/20/pthread_memory_leak_issue.html</link><description>&lt;p&gt;项目里遇到了一个 &lt;code&gt;pthread_create&lt;/code&gt; 调用失败、返回资源不足的问题。&lt;/p&gt;
+&lt;p&gt;走读了代码，发现代码里反复调用了 &lt;code&gt;pthread_create&lt;/code&gt; 创建了很多短任务；但主线程 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 20 Jun 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-06-20:/posts/2019/06/20/pthread_memory_leak_issue.html</guid><category>Programming</category><category>pthread</category></item><item><title>Litecoin (LTC) 算法</title><link>https://cctags.github.io/posts/2019/06/18/ltc-algorithm.html</link><description>&lt;p&gt;跟之前分析过的 BTC 算法类似，Litecon (LTC) 的算法也是寻找一个整数（nonce），以满足某个要求。它使用了 Scrypt 哈希算法，而不再是两次 sha256。以 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 18 Jun 2019 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2019-06-18:/posts/2019/06/18/ltc-algorithm.html</guid><category>Programming</category><category>hash</category></item><item><title>Go 语言里的接口赋值问题</title><link>https://cctags.github.io/posts/2019/05/20/golang_interface.html</link><description>&lt;p&gt;Go 语言里的接口，先看定义：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;iface&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;struct&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;tab&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;itab&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;unsafe&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Pointer&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kd"&gt;type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;eface&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;struct&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;_type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;_type&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="nx"&gt;unsafe&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Pointer&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
+&lt;p&gt;其中 &lt;code&gt;iface&lt;/code&gt; 描述接口变量（比如 &lt;code&gt;var x IA&lt;/code&gt;）的内容及布局，变量大 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 20 May 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-05-20:/posts/2019/05/20/golang_interface.html</guid><category>Programming</category><category>golang</category></item><item><title>Go 语言里的 errors 错误包装处理</title><link>https://cctags.github.io/posts/2019/05/10/golang_errors.html</link><description>&lt;p&gt;Go 语言在返回错误时，允许进行 &lt;code&gt;Wrap&lt;/code&gt; 包装。比如，函数 &lt;code&gt;f()&lt;/code&gt; 调用函数 &lt;code&gt;g()&lt;/code&gt;，在遇到错误、但处理不了时，可以这样：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;:=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;f&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;!=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;nil&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="nx"&gt;fmt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Printf …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 10 May 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-05-10:/posts/2019/05/10/golang_errors.html</guid><category>Programming</category><category>golang</category></item><item><title>Go 语言里的 panic 状态位置问题</title><link>https://cctags.github.io/posts/2019/05/03/golang_panic_position.html</link><description>&lt;p&gt;这里记录一下 Go 语言里 panic 的状态信息的变化和处理。用几个例子进行对比，后面是结论。&lt;/p&gt;
+&lt;h2&gt;0x0 先看一个常见情况&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;defer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="nx"&gt;fmt …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 03 May 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-05-03:/posts/2019/05/03/golang_panic_position.html</guid><category>Programming</category><category>golang</category></item><item><title>Go 语言里的单元测试覆盖率</title><link>https://cctags.github.io/posts/2019/05/01/golang_unittest_cover.html</link><description>&lt;p&gt;Go 语言的项目里，单元测试一般这样写：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;Test_Xxx&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;testing&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;:=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;Xxx&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;!=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;nil&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Errorf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;bad&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Logf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;以下是一些参考文章，里面提到的内容，对于深入理解 range 的实现及应用很有帮助：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href="https://my.oschina.net/u/2612999/blog/908114"&gt;聊聊 Golang 中的 range 关键字&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="http://newt0n.github.io/2016/11/07/%E5%A6%82%E4%BD%95%E9%81%BF%E5%BC%80-Go-%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E9%99%B7%E9%98%B1/"&gt;如何避开 Go 中的各种陷阱&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://newt0n.github.io/2017/04/06/Go-Range-%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0/"&gt;Go Range 内部实现&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 26 Apr 2019 18:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2019-04-26:/posts/2019/04/26/golang_range_gotcha.html</guid><category>Programming</category><category>golang</category></item><item><title>Zynq USB Drive Issue</title><link>https://cctags.github.io/posts/2019/03/31/zynq_usb_drive_issue.html</link><description>&lt;h3&gt;※ 问题&lt;/h3&gt;
+&lt;p&gt;输入命令 &lt;code&gt;go test -v&lt;/code&gt; 运行测试，并观察结果。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="go"&gt;PASS …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 01 May 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-05-01:/posts/2019/05/01/golang_unittest_cover.html</guid><category>Programming</category><category>golang</category></item><item><title>Go 语言里 defer, panic 和 named return values</title><link>https://cctags.github.io/posts/2019/04/30/golang_defer_named_return_values.html</link><description>&lt;p&gt;Go 语言里，函数过程中通过 defer 注册的回调，会在函数结束前、按 LIFO 的顺序调用执行。有名返回值（named return value）在编程时，恰当的变量 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 30 Apr 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-04-30:/posts/2019/04/30/golang_defer_named_return_values.html</guid><category>Programming</category><category>golang</category></item><item><title>Go 语言里的 slice 切片</title><link>https://cctags.github.io/posts/2019/04/28/golang_slice.html</link><description>&lt;p&gt;&lt;strong&gt;变量的 pass-by-value&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Go 语言里的切片 slice，主要是针对数组类型不够灵活的问题。比如，&lt;code&gt;a [50]int&lt;/code&gt; 和 &lt;code&gt;b [80]int&lt;/code&gt; 是不同的类型，但同一个 slice &lt;code&gt;s []int …&lt;/code&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 28 Apr 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-04-28:/posts/2019/04/28/golang_slice.html</guid><category>Programming</category><category>golang</category></item><item><title>Go 语言里的 range 问题</title><link>https://cctags.github.io/posts/2019/04/26/golang_range_gotcha.html</link><description>&lt;p&gt;Golang 类似于 C/C++，同时又从其他语言（比如 Python）里借鉴了一些语法，比如 range。&lt;/p&gt;
+&lt;p&gt;在使用上，range 有一些特性，如果不注意的话，很容易引起 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 26 Apr 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-04-26:/posts/2019/04/26/golang_range_gotcha.html</guid><category>Programming</category><category>golang</category></item><item><title>Go 语言里的 defer 参数传值问题</title><link>https://cctags.github.io/posts/2019/04/18/golang_defer_value.html</link><description>&lt;p&gt;使用 &lt;code&gt;defer&lt;/code&gt; 时遇到的一些问题，专门记录一下。&lt;/p&gt;
+&lt;p&gt;先说结论，&lt;code&gt;defer&lt;/code&gt; 函数时，所有变量是按值（Go 语言都是传值）来暂存，等到作用域结束前 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 18 Apr 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-04-18:/posts/2019/04/18/golang_defer_value.html</guid><category>Programming</category><category>golang</category></item><item><title>Zynq USB Drive Issue</title><link>https://cctags.github.io/posts/2019/03/31/zynq_usb_drive_issue.html</link><description>&lt;h3&gt;※ 问题&lt;/h3&gt;
 &lt;p&gt;Zynq 开发板，操作系统有时无法识别到优盘。&lt;/p&gt;
 &lt;h3&gt;※ 调试&lt;/h3&gt;
-&lt;p&gt;检查 Linux 里的 USB 驱动及配置。对比 Xilinx 的参考文档和示例，调试用的 kernel config、device tree 等都没有发现问题。&lt;/p&gt;
-&lt;p&gt;检查 uboot 里的相关配置。最后定位到是 &lt;code&gt;usb reset pin&lt;/code&gt; 没有配置。原来，Xilinx 的内核驱动会依赖并假定 uboot 已经配置了这个 reset pin。如果 uboot 没有配置，那么在运行时，pin 的状态不确定，会导致有时无法识别到优盘的现象。&lt;/p&gt;
-&lt;p&gt;找到问题并修改后，问题解决。&lt;/p&gt;
-&lt;h3&gt;※ 参考&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href="https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842272/Zynq+Linux+USB+Device+Driver"&gt;Zynq Linux USB Device Driver&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://forums.xilinx.com/t5/Embedded-Linux/Zynq-USB-phy-communication-issues/td-p/690653"&gt;Zynq …&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 31 Mar 2019 18:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2019-03-31:/posts/2019/03/31/zynq_usb_drive_issue.html</guid><category>Programming</category><category>Linux</category><category>xilinx</category><category>kernel</category></item><item><title>Using env in the Shebang of a Python Script</title><link>https://cctags.github.io/posts/2018/12/12/using_env_in_the_shebang_of_a_python_script.html</link><description>&lt;p&gt;在 Linux 里，通常会在 script 的最开始，加上一行称为 &lt;a href="https://en.wikipedia.org/wiki/Shebang_(Unix)"&gt;sha-bang&lt;/a&gt; 的内容，用来指定运行当前 script 的解释器程序以及参数。&lt;/p&gt;
-&lt;p&gt;通常，Python 程序总以这样一行开始：&lt;code&gt;#!/usr/bin/python3&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;但事实上，很多地方都推荐使用 &lt;code&gt;env&lt;/code&gt; 这种更为通用的方式：&lt;code&gt;#!/usr/bin/env python3&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;除了 &lt;code&gt;env&lt;/code&gt; 本身的通用性之外，考虑到 Python 虚拟环境（比如 &lt;code&gt;virtualenv&lt;/code&gt;），这也确实是更加合理的方式：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Using &lt;code&gt;/usr/bin/env/&lt;/code&gt; in python serves one more purpose. As python supports virtual environments …&lt;/p&gt;&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 12 Dec 2018 18:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2018-12-12:/posts/2018/12/12/using_env_in_the_shebang_of_a_python_script.html</guid><category>Programming</category><category>Python</category></item><item><title>Zynqmp Linux Freezes When Loaded via JTAG</title><link>https://cctags.github.io/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
+&lt;p&gt;检查 Linux 里的 USB 驱动及配置。对比 Xilinx 的参考文档和示例，调试用的 kernel config、device …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 31 Mar 2019 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2019-03-31:/posts/2019/03/31/zynq_usb_drive_issue.html</guid><category>Programming</category><category>Linux</category><category>xilinx</category><category>kernel</category></item><item><title>Using env in the Shebang of a Python Script</title><link>https://cctags.github.io/posts/2018/12/12/using_env_in_the_shebang_of_a_python_script.html</link><description>&lt;p&gt;在 Linux 里，通常会在 script 的最开始，加上一行称为 &lt;a href="https://en.wikipedia.org/wiki/Shebang_(Unix)"&gt;sha-bang&lt;/a&gt; 的内容，用来指定运行当前 script 的解释器程序以及参数。&lt;/p&gt;
+&lt;p&gt;通常，Python 程序总以这样 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 12 Dec 2018 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2018-12-12:/posts/2018/12/12/using_env_in_the_shebang_of_a_python_script.html</guid><category>Programming</category><category>Python</category></item><item><title>Zynqmp Linux Freezes When Loaded via JTAG</title><link>https://cctags.github.io/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
 &lt;p&gt;连接 JTAG 调试 Xilinx 板子的时候，板子上的 Linux 系统有时会挂住，失去响应。&lt;/p&gt;
 &lt;p&gt;对于这个问题，这里是一些有用的链接：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Petalinux on Ultrascale+ freezes when loaded via XVC JTAG interface @ &lt;a href="https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-on-Ultrascale-freezes-when-loaded-via-XVC-JTAG/td-p/833985"&gt;https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-on-Ultrascale-freezes-when-loaded-via-XVC-JTAG/td-p/833985&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;zcu102 linux hung after jtag scan @ &lt;a href="https://forums.xilinx.com/t5/Evaluation-Boards/zcu102-linux-hung-after-jtag-scan/td-p/829604"&gt;https://forums.xilinx.com/t5/Evaluation-Boards/zcu102-linux-hung-after-jtag-scan/td-p/829604&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;总结下来，这个问题的原因，是因为 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 11 Oct 2018 18:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2018-10-11:/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html</guid><category>Programming</category><category>Linux</category><category>xilinx</category><category>kernel</category><category>jtag</category></item><item><title>中文技术文档的写作规范</title><link>https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html</link><description>&lt;p&gt;这里是一份开源的《中文技术文档的写作规范》， &lt;a href="https://github.com/ruanyf/document-style-guide"&gt;https://github.com/ruanyf/document-style-guide&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;这份写作规范，对文档的标题、文本、段落、数值甚至标点符号，都给出了具体的建议。另外，它还附录了一些知名公司的写作规范。&lt;/p&gt;
-&lt;p&gt;目前的 Star 数大概有 6.2k，应该说是相当高的，说明已经得到了很多人的认可。&lt;/p&gt;
-&lt;p&gt;对于我们来说，每次写文档之前，都值得拿来读一读，作为学习和参考。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 08 Oct 2018 08:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2018-10-08:/posts/2018/10/08/chinse_document_style_guide.html</guid><category>misc</category><category>spec</category></item><item><title>gettid() 编译问题</title><link>https://cctags.github.io/posts/2018/09/17/gettid_build_issue.html</link><description>&lt;p&gt;代码里用到的 &lt;code&gt;gettid()&lt;/code&gt;，编译时有报错，说找不到对应的头文件。&lt;/p&gt;
+&lt;li&gt;Petalinux on Ultrascale+ freezes …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 11 Oct 2018 18:18:00 +0800</pubDate><guid>tag:cctags.github.io,2018-10-11:/posts/2018/10/11/zynqmp_linux_freezes_when_loaded_via_jtag.html</guid><category>Programming</category><category>Linux</category><category>xilinx</category><category>kernel</category><category>jtag</category></item><item><title>中文技术文档的写作规范</title><link>https://cctags.github.io/posts/2018/10/08/chinse_document_style_guide.html</link><description>&lt;p&gt;这里是一份开源的《中文技术文档的写作规范》， &lt;a href="https://github.com/ruanyf/document-style-guide"&gt;https://github.com/ruanyf/document-style-guide&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这份写作规范，对文档的标题、文本、段落、数值甚至标点符号，都给 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 08 Oct 2018 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2018-10-08:/posts/2018/10/08/chinse_document_style_guide.html</guid><category>misc</category><category>spec</category></item><item><title>Vim 里的特殊字符处理</title><link>https://cctags.github.io/posts/2018/09/20/vim-unicode.html</link><description>&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;在处理某个文件时，发现里面有一些类似 &lt;code&gt;&amp;lt;200b&amp;gt;&lt;/code&gt; 这样的特殊字符，需要清理掉。&lt;/p&gt;
+&lt;h2&gt;处理办法&lt;/h2&gt;
+&lt;p&gt;经过搜索，在 Vim 里处理这些特殊字 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 20 Sep 2018 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2018-09-20:/posts/2018/09/20/vim-unicode.html</guid><category>Tools</category><category>vim</category><category>neovim</category></item><item><title>gettid() 编译问题</title><link>https://cctags.github.io/posts/2018/09/17/gettid_build_issue.html</link><description>&lt;p&gt;代码里用到的 &lt;code&gt;gettid()&lt;/code&gt;，编译时有报错，说找不到对应的头文件。&lt;/p&gt;
 &lt;p&gt;根据 &lt;a href="http://man7.org/linux/man-pages/man2/gettid.2.html#NOTES"&gt;man gettid&lt;/a&gt; 里的说法，libc 并没有提供这个系统调用的包装：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;NOTES
-    Glibc does not provide a wrapper for this system call; call it using syscall(2).
-
-    ...
+    Glibc does not …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 17 Sep 2018 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2018-09-17:/posts/2018/09/17/gettid_build_issue.html</guid><category>Programming</category><category>pthread</category></item><item><title>Python 打包工具 zipapp</title><link>https://cctags.github.io/posts/2018/07/03/python-archive-zipapp.html</link><description>&lt;p&gt;Python 标准库里提供了一个项目打包压缩的工具 zipapp，可以把项目打包到一个可执行文件里，从而方便地发布或者分享出去；收 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 03 Jul 2018 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2018-07-03:/posts/2018/07/03/python-archive-zipapp.html</guid><category>programming</category><category>python</category></item><item><title>生成 cuda 的 tags 文件</title><link>https://cctags.github.io/posts/2018/03/07/ctags_for_cuda_file.html</link><description>&lt;p&gt;&lt;strong&gt;问题：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;项目开发过程中，遇到这样的问题：使用 &lt;a href="https://github.com/universal-ctags/ctags"&gt;ctags universal&lt;/a&gt; 生成 cuda 代码文件的 tags 时，总是有一些函数及其他符号无法生成，影响开发 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 07 Mar 2018 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2018-03-07:/posts/2018/03/07/ctags_for_cuda_file.html</guid><category>Tools</category><category>ctags</category></item><item><title>.NET Framework 3.5 installation error</title><link>https://cctags.github.io/posts/2018/02/02/net_framework_3_5_installation_error.html</link><description>&lt;p&gt;安装某软件时，它提示有对 .NET 3.5 的依赖，因为本地没有安装对应的版本。但 Windows 在自动安装 .NET 3.5 失败了，返回了错误号：0x800F081F …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 02 Feb 2018 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2018-02-02:/posts/2018/02/02/net_framework_3_5_installation_error.html</guid><category>Tools</category><category>microsoft</category><category>Windows</category><category>dotnet</category></item><item><title>Pelican 编译问题</title><link>https://cctags.github.io/posts/2017/12/22/build_issue_of_pelican_without_markdown.html</link><description>&lt;p&gt;今天遇到了一个问题：重新编译 pelican 项目时，发现编译生成的 articles 数量要比正常的少很多，而且没有任何出错信息。&lt;/p&gt;
+&lt;p&gt;经过研究，找 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 22 Dec 2017 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2017-12-22:/posts/2017/12/22/build_issue_of_pelican_without_markdown.html</guid><category>Tools</category><category>Pelican</category><category>Python</category></item><item><title>使用 Kill 发信号时误杀进程的问题</title><link>https://cctags.github.io/posts/2017/10/01/issue_of_using_kill_to_send_signal.html</link><description>&lt;p&gt;程序里会使用 Kill 发送 SIGTERM 信号，要求某进程组结束：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;kill&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;-15&lt;span class="w"&gt; &lt;/span&gt;-&amp;lt;pgid&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
+&lt;p&gt;实际运行时发现一个问题，除了这个目标进程组之外，有时候其他 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 01 Oct 2017 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2017-10-01:/posts/2017/10/01/issue_of_using_kill_to_send_signal.html</guid><category>Programming</category><category>procps</category><category>shell</category><category>Linux</category></item><item><title>Python 里处理 SIGPIPE 异常</title><link>https://cctags.github.io/posts/2017/07/05/python-handle-sigpipe.html</link><description>&lt;p&gt;因为项目需要，用 Python 定制了一个小工具。具体功能就不说了，以下记录遇到的 SIGPIPE 问题及解决办法。&lt;/p&gt;
+&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;工具（以下就称为 app）使 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 05 Jul 2017 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2017-07-05:/posts/2017/07/05/python-handle-sigpipe.html</guid><category>programming</category><category>python</category></item><item><title>Python decorator 被装饰函数的调用问题</title><link>https://cctags.github.io/posts/2017/04/21/python-decorator-function-call.html</link><description>&lt;p&gt;装饰器模式（Decorator Pattern）可以在不需要改变函数实现的情况下，修改或者完善它的功能。多数情况下是在被装饰函数调用的之前 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 21 Apr 2017 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2017-04-21:/posts/2017/04/21/python-decorator-function-call.html</guid><category>programming</category><category>python</category></item><item><title>Python decorator 装饰器的 wrapper 问题</title><link>https://cctags.github.io/posts/2017/04/20/python-decorator-wrapper.html</link><description>&lt;p&gt;&lt;strong&gt;问题：&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;before call &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;after call &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;p&gt;所以在实际使用时，需要添加以下声明：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;sys/syscall.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
-&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt;
 
-&lt;span class="cp"&gt;#define gettid() syscall(SYS_gettid)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 17 Sep 2018 08:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2018-09-17:/posts/2018/09/17/gettid_build_issue.html</guid><category>Programming</category><category>pthread</category></item><item><title>.NET Framework 3.5 installation error</title><link>https://cctags.github.io/posts/2018/02/02/net_framework_3_5_installation_error.html</link><description>&lt;p&gt;安装某软件时，它提示有对 .NET 3.5 的依赖，因为本地没有安装对应的版本。但 Windows 在自动安装 .NET 3.5 失败了，返回了错误号：0x800F081F。查看了微软文档，对这个错误号的解释是：&lt;a href="https://support.microsoft.com/en-us/help/2734782/net-framework-3-5-installation-error-0x800f0906-0x800f081f-0x800f0907"&gt;0x800F081F - CBS_E_SOURCE_MISSING&lt;/a&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;The source files could not be found.&lt;/p&gt;
-&lt;p&gt;Use the "Source" option to specify the location of the files that are required to restore the feature. For more information on specifying …&lt;/p&gt;&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 02 Feb 2018 08:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2018-02-02:/posts/2018/02/02/net_framework_3_5_installation_error.html</guid><category>Tools</category><category>microsoft</category><category>window</category><category>dotnet</category></item><item><title>Pelican 编译问题</title><link>https://cctags.github.io/posts/2017/12/22/build_issue_of_pelican_without_markdown.html</link><description>&lt;p&gt;今天遇到了一个问题：重新编译 pelican 项目时，发现编译生成的 articles 数量要比正常的少很多，而且没有任何出错信息。&lt;/p&gt;
-&lt;p&gt;经过研究，找到了原因。前段时间更新了 Python 2.7 到最新版本，并且安装了第三方的库，当然包括了 pelican。但 markdown 并没有安装，这导致在编译时 markdown 文件时无法解析。&lt;/p&gt;
-&lt;p&gt;解决方案很简单，安装 markdown，然后重新编译即可。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;pip install markdown
+&lt;span class="nd"&gt;@log&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;test_func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="si"&gt;%d&lt;/span&gt;&lt;span class="s1"&gt; + &lt;/span&gt;&lt;span class="si"&gt;%d&lt;/span&gt;&lt;span class="s1"&gt; = &lt;/span&gt;&lt;span class="si"&gt;%d&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;p&gt;之后又重新看了一遍 pelican 安装说明，明确了 &lt;a href="http://docs.getpelican.com/en/stable/install.html#optional-packages"&gt;markdown 只属于 optional packages&lt;/a&gt;，而不是必选的依赖项。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 22 Dec 2017 08:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2017-12-22:/posts/2017/12/22/build_issue_of_pelican_without_markdown.html</guid><category>Tools</category><category>Pelican</category><category>Python</category></item><item><title>使用 Kill 发信号时误杀进程的问题</title><link>https://cctags.github.io/posts/2017/10/01/issue_of_using_kill_to_send_signal.html</link><description>&lt;p&gt;程序里会使用 Kill 发送 SIGTERM 信号，要求某进程组结束：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;kill&lt;/span&gt; -15 -&amp;lt;pgid&amp;gt;
+&lt;p&gt;使用 &lt;code&gt;@log&lt;/code&gt; 的 decorator 后，以下的打印 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 20 Apr 2017 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2017-04-20:/posts/2017/04/20/python-decorator-wrapper.html</guid><category>programming</category><category>python</category></item><item><title>Python decorator 装饰器</title><link>https://cctags.github.io/posts/2017/04/19/python-decorator.html</link><description>&lt;p&gt;装饰器模式（Decorator Pattern）是设计模式中的一种，主要目的是提供了这样一种操作，可以在不需要改变函数实现代码的情况下，用来 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 19 Apr 2017 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2017-04-19:/posts/2017/04/19/python-decorator.html</guid><category>programming</category><category>python</category></item><item><title>运行程序时设置 timeout 超时</title><link>https://cctags.github.io/posts/2017/02/15/run_command_with_timeout.html</link><description>&lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;因为有个临时的需求，所以开了服务并监听在某个公网端口上，然后忘了关了 …… 直到很久才想起 ……&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;对于类似的使用 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 15 Feb 2017 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2017-02-15:/posts/2017/02/15/run_command_with_timeout.html</guid><category>Tools</category><category>Linux</category></item><item><title>vim 里打开 file:line</title><link>https://cctags.github.io/posts/2017/01/18/vim_open_with_file_line.html</link><description>&lt;p&gt;&lt;strong&gt;0x00&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Linux 里，很多工具都会按&lt;strong&gt;文件加行号&lt;/strong&gt;（&lt;code&gt;file:line&lt;/code&gt;）的格式输出，比如 &lt;code&gt;grep&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$&lt;span class="w"&gt; &lt;/span&gt;grep&lt;span class="w"&gt; &lt;/span&gt;-nr&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Sanitize in progress...&amp;quot;&lt;/span&gt;
+drivers/mmc/core/mmc_ops.c:1008:&lt;span class="w"&gt;     &lt;/span&gt;pr_debug&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%s: Sanitize in progress...\n&amp;quot;&lt;/span&gt;,&lt;span class="w"&gt; &lt;/span&gt;mmc_hostname&lt;span class="o"&gt;(&lt;/span&gt;host&lt;span class="o"&gt;))&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;p&gt;实际运行时发现一个问题，除了这个目标进程组之外，有时候其他一些进程也会被强行结束。但是，如果在 shell 里执行类似的命令，问题不会出现。&lt;/p&gt;
-&lt;p&gt;经过反复试验，定位到 Kill 有两个入口：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;/bin/kill&lt;/code&gt;，这是个二进程程序，是 &lt;a href="https://gitlab.com/procps-ng/procps"&gt;procps&lt;/a&gt; 的一部分。在处理上述命令的时候，如果第二个参数是 &lt;code&gt;-1xy..&lt;/code&gt; 的形式，它会解析成 &lt;code&gt;-1&lt;/code&gt;，而 &lt;code&gt;-1&lt;/code&gt; 表示把信号发给所有的在操作权限范围内的进程。这就是某些用户进程被意外结束的原因。&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;builtin 命令&lt;/code&gt;，是 &lt;a href="https://linux.die.net/man/1/bash"&gt;shell&lt;/a&gt; 的一部分。研究了 shell 里的 builtin kill 的实现代码，没有这个问题。这是 …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 01 Oct 2017 08:18:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2017-10-01:/posts/2017/10/01/issue_of_using_kill_to_send_signal.html</guid><category>Programming</category><category>procps</category><category>shell</category><category>Linux</category></item><item><title>Using RCS Keywords in Perforce</title><link>https://cctags.github.io/posts/2016/03/28/using_rcs_keywords_in_perforce.html</link><description>&lt;p&gt;使用 svn 时，有时会把版本管理系统的信息嵌入到代码里，比如版本号、最近修改时间，等等。在软件调试时，这会很有帮助。因为清晰的版本信息，可以避免很多不必要的版本不一致的问题。这里是 &lt;a href="http://svnbook.red-bean.com/en/1.7/svn.advanced.props.special.keywords.html"&gt;Subversion Keyword Substitution&lt;/a&gt; 的文档。&lt;/p&gt;
-&lt;p&gt;最近开始使用 Perforce，所以也专门研究了一下是否有类似的功能。&lt;/p&gt;
-&lt;p&gt;从文档来看，Perforce 提供了一些关键字，可以自动地展开和更新，比如：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;$Id$&lt;/li&gt;
-&lt;li&gt;$Header$&lt;/li&gt;
-&lt;li&gt;$Date$&lt;/li&gt;
-&lt;li&gt;$DateTime$&lt;/li&gt;
-&lt;li&gt;$Change$&lt;/li&gt;
-&lt;li&gt;$File$&lt;/li&gt;
-&lt;li&gt;$Revision$&lt;/li&gt;
-&lt;li&gt;$Author$&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这个功能默认时并没有开启，需要修改文件本身的类型（"+k"），比如：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;p4 edit -t +k main.c
+&lt;p&gt;又比如 Linux 动态 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 18 Jan 2017 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2017-01-18:/posts/2017/01/18/vim_open_with_file_line.html</guid><category>Tools</category><category>vim</category><category>Linux</category></item><item><title>Linux Virtual Memory Split with 3.5G/0.5G</title><link>https://cctags.github.io/posts/2016/09/09/linux-virtual-memory-split-with-35-05.html</link><description>&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;项目里用到的一款开发板，配置的是 32 位 ARM 处理器。因为业务程序相关方面的实际开销，需要在用户态虚拟地址空间 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 09 Sep 2016 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2016-09-09:/posts/2016/09/09/linux-virtual-memory-split-with-35-05.html</guid><category>Programming</category><category>Linux</category><category>Kernel</category><category>mm</category></item><item><title>Bitcoin (BTC) 算法</title><link>https://cctags.github.io/posts/2016/06/18/btc-algorithm.html</link><description>&lt;p&gt;Bitcoin (BTC) 的算法，是求解（也可以说是寻找）一个整数（nonce），它被用于在区块链上产生新高度的区块。算法的输入是前一个区块的哈 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sat, 18 Jun 2016 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2016-06-18:/posts/2016/06/18/btc-algorithm.html</guid><category>Programming</category><category>hash</category></item><item><title>Base64, Base58 等算法的编码和解码过程</title><link>https://cctags.github.io/posts/2016/06/16/base-encode-decode-algorithm.html</link><description>&lt;p&gt;这里记录一下字节流在表示和传输中使用到的 Base 编码，即把二进制字节流编码成某种格式 ASCII 文本字符。&lt;/p&gt;
+&lt;h1&gt;Base16&lt;/h1&gt;
+&lt;p&gt;最简单的是平 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 16 Jun 2016 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2016-06-16:/posts/2016/06/16/base-encode-decode-algorithm.html</guid><category>Programming</category><category>hash</category><category>base64</category><category>base58</category></item><item><title>Using RCS Keywords in Perforce</title><link>https://cctags.github.io/posts/2016/03/28/using_rcs_keywords_in_perforce.html</link><description>&lt;p&gt;使用 svn 时，有时会把版本管理系统的信息嵌入到代码里，比如版本号、最近修改时间，等等。在软件调试时，这会很有帮助。因为 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 28 Mar 2016 13:01:00 +0800</pubDate><guid>tag:cctags.github.io,2016-03-28:/posts/2016/03/28/using_rcs_keywords_in_perforce.html</guid><category>VCS</category><category>p4</category><category>svn</category></item><item><title>混用不同版本的 libc 造成程序崩溃</title><link>https://cctags.github.io/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html</link><description>&lt;p&gt;程序发生崩溃，调试器提示崩溃发生在 libc 的 free() 函数里面：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Debug&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Assertion&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Failed&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;_CrtIsValidHeapPointer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pUserData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;以下是 Perforce 的官方文档，可以参考：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Using RCS Keywords @ &lt;a href="http://answers.perforce.com/articles/KB/3482"&gt;http …&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 28 Mar 2016 13:01:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2016-03-28:/posts/2016/03/28/using_rcs_keywords_in_perforce.html</guid><category>VCS</category><category>p4</category><category>svn</category></item><item><title>混用不同版本的 libc 造成程序崩溃</title><link>https://cctags.github.io/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html</link><description>&lt;p&gt;程序发生崩溃，调试器提示崩溃发生在 libc 的 free() 函数里面：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Debug&lt;/span&gt; &lt;span class="n"&gt;Assertion&lt;/span&gt; &lt;span class="nl"&gt;Failed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;_CrtIsValidHeapPointer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pUserData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;初步判断，可能是堆（Heap）被写坏了。&lt;/p&gt;
-&lt;p&gt;于是修改代码，在程序初始化的地方，调用了 &lt;code&gt;_CrtSetDbgFlag&lt;/code&gt; 来设置一些调试的开关，希望调试器能够捕获到堆被写坏的操作。以下是这个 API 的原型，更多信息可以参考文档 &lt;a href="https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx"&gt;https://msdn.microsoft.com/en-us/library/5at7yxcs(v=vs.110).aspx&lt;/a&gt;。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;_CrtSetDbgFlag&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-   &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;newFlag&lt;/span&gt;
-&lt;span class="p"&gt;);&lt;/span&gt;
-
-&lt;span class="nl"&gt;Flags&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_ALLOC_MEM_DF&lt;/span&gt;
-  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_CHECK_ALWAYS_DF&lt;/span&gt;
-  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_CHECK_CRT_DF&lt;/span&gt;
-  &lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;_CRTDBG_DELAY_FREE_MEM_DF&lt;/span&gt;
-  &lt;span class="n"&gt;o …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 25 Mar 2016 16:28:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2016-03-25:/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html</guid><category>Programming</category><category>linker</category></item><item><title>Highlight All Occurrences of Selected Word</title><link>https://cctags.github.io/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html</link><description>&lt;p&gt;在选中某个单词（比如变量、函数、自定义类型，等等）时，如果能把屏幕上所有出现这个单词的地方，都高亮显示出来，对于程序开发来说，是非常方便和直观的。&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://visualstudio.microsoft.com/"&gt;Visual Studio&lt;/a&gt; 插件库里有好多插件都实现了这个功能，这个&lt;a href="http://stackoverflow.com/questions/9435642/how-to-get-visual-studio-2010-to-highlight-instances-of-a-variable"&gt;贴子&lt;/a&gt;里说得很详细了。&lt;/p&gt;
-&lt;p&gt;经过比较，最后下载并安装了 &lt;code&gt;Productivity Power Tools 2012&lt;/code&gt; @ &lt;a href="https://visualstudiogallery.msdn.microsoft.com/3a96a4dc-ba9c-4589-92c5-640e07332afd"&gt;https://visualstudiogallery.msdn.microsoft.com/3a96a4dc-ba9c-4589-92c5-640e07332afd&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;这个插件是微软发布的，功能十分强大，并且 Free。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 26 Feb 2016 16:55:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2016-02-26:/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html</guid><category>Tools</category><category>VisualStudio</category></item><item><title>Remove Trailing Whitespace in Visual Studio</title><link>https://cctags.github.io/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html</link><description>&lt;p&gt;编程习惯里通常会建议删除行尾的空格。在 Visual Studio 里，可以通过 &lt;code&gt;Ctrl+K, Ctrl+\&lt;/code&gt; 的按键操作来实现。&lt;/p&gt;
-&lt;p&gt;不过每次通过手动的方式，未免有些麻烦，最好还是在保存文件时自动完成。网上找了一下，有个&lt;a href="http://stackoverflow.com/questions/12122846/how-to-trim-trailing-whitespace-in-visual-studio-2012"&gt;讨论贴子&lt;/a&gt;里推荐了 &lt;code&gt;Trailing Whitespace Visualizer&lt;/code&gt;，这是个 Visual Studio 的免费插件，可以实现这个功能。&lt;/p&gt;
-&lt;p&gt;这里是插件的地址：&lt;a href="https://visualstudiogallery.msdn.microsoft.com/a204e29b-1778-4dae-affd-209bea658a59"&gt;https://visualstudiogallery.msdn.microsoft.com/a204e29b-1778-4dae-affd-209bea658a59&lt;/a&gt;。下载后点击安装并重启 Visual Studio 即可。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 24 Feb 2016 12:25:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2016-02-24:/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html</guid><category>Tools</category><category>VisualStudio</category></item><item><title>What is ULP?</title><link>https://cctags.github.io/posts/2016/01/28/what_is_ulp.html</link><description>&lt;p&gt;The maximum relative error is defined as ulp (units in the last place).&lt;/p&gt;
+&lt;p&gt;于是修改代码，在程序 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 25 Mar 2016 16:28:00 +0800</pubDate><guid>tag:cctags.github.io,2016-03-25:/posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html</guid><category>Programming</category><category>linker</category></item><item><title>Highlight All Occurrences of Selected Word</title><link>https://cctags.github.io/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html</link><description>&lt;p&gt;在选中某个单词（比如变量、函数、自定义类型，等等）时，如果能把屏幕上所有出现这个单词的地方，都高亮显示出来，对于程序 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 26 Feb 2016 16:55:00 +0800</pubDate><guid>tag:cctags.github.io,2016-02-26:/posts/2016/02/26/highlight_all_occurrences_of_selected_word.html</guid><category>Tools</category><category>VisualStudio</category></item><item><title>Remove Trailing Whitespace in Visual Studio</title><link>https://cctags.github.io/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html</link><description>&lt;p&gt;编程习惯里通常会建议删除行尾的空格。在 Visual Studio 里，可以通过 &lt;code&gt;Ctrl+K, Ctrl+\&lt;/code&gt; 的按键操作来实现。&lt;/p&gt;
+&lt;p&gt;不过每次通过手动的方式，未免有 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 24 Feb 2016 12:25:00 +0800</pubDate><guid>tag:cctags.github.io,2016-02-24:/posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html</guid><category>Tools</category><category>VisualStudio</category></item><item><title>What is ULP?</title><link>https://cctags.github.io/posts/2016/01/28/what_is_ulp.html</link><description>&lt;p&gt;The maximum relative error is defined as ulp (units in the last place).&lt;/p&gt;
 &lt;p&gt;The ULP is defined as follows:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;If x is a real number that lies between two finite consecutive
 floating-point numbers a and b, without being equal to one of them,
-then ulp(x) = |b - a|, otherwise ulp …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 28 Jan 2016 16:44:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2016-01-28:/posts/2016/01/28/what_is_ulp.html</guid><category>Programming</category><category>OpenCL</category></item><item><title>Find the file by inode number</title><link>https://cctags.github.io/posts/2016/01/22/find_the_file_by_inode_number.html</link><description>&lt;P&gt;
-在命令行下会遇到一些文件名里包含有中文、符号或者某些奇怪字符的文件，如果命令的自动补全不完整，键盘操作起来还是有些麻烦的。这时候，可以考虑利用 inode 来定位这样的文件：
-&lt;/P&gt;
-&lt;P&gt;
-1. 使用 &lt;CODE&gt;ls&lt;/CODE&gt; 显示其对应的 inode 号：
-&lt;/P&gt;
-
-&lt;PRE&gt;
-  ls -i
-&lt;/PRE&gt;
-
-&lt;P&gt;
-2. 使用 &lt;CODE&gt;find&lt;/CODE&gt; 显示其文件名：
-&lt;/P&gt;
-
-&lt;PRE&gt;
-  find . -inum &amp;lt;inode-number&amp;gt;
-&lt;/PRE&gt;
-
-&lt;P&gt;
-好吧，拿到文件名了。
-&lt;/P&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 22 Jan 2016 12:27:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2016-01-22:/posts/2016/01/22/find_the_file_by_inode_number.html</guid><category>Tools</category><category>shell</category></item><item><title>Set Event Callback in OpenCL</title><link>https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html</link><description>&lt;p&gt;这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下是原型：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;clSetEventCallback&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-    &lt;span class="n"&gt;cl_event&lt;/span&gt; &lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-    &lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;command_exec_callback_type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-    &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;CL_CALLBACK&lt;/span&gt;  &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pfn_event_notify&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cl_event&lt;/span&gt; &lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                                           &lt;span class="n"&gt;cl_int&lt;/span&gt; &lt;span class="n"&gt;event_command_exec_status&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                                           &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;user_data&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-    &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;user_data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;其中 &lt;code&gt;command_exec_callback_type&lt;/code&gt; 参数在不同版本里有 &lt;strong&gt;差异&lt;/strong&gt;：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clSetEventCallback.html"&gt;OpenCL 1.1&lt;/a&gt;: The command execution callback value for which a callback can be registered is …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 30 Dec 2015 10:10:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-12-30:/posts/2015/12/30/cl_set_event_callback_in_ocl.html</guid><category>Programming</category><category>OpenCL</category></item><item><title>iPhone Photo Library "Ghost" Space</title><link>https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html</link><description>&lt;p&gt;最近 iPhone 手机遇到个问题：照片拍了很多了，想清理一下，结果发现即使是删掉了绝大部分照片，照片图库仍然占用了大量的系统存储空间。尝试了好几次，都无法解决。&lt;/p&gt;
-&lt;p&gt;后来发现，这其实是 iPhone 的一个 Bug。网上已经有了一个临时的解决办法，请参考这个官方论坛里的帖子：&lt;a href="https://discussions.apple.com/thread/6560594?tstart=0"&gt;https://discussions.apple.com/thread/6560594?tstart=0&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;以下是解决步骤：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;把手机系统时间改回很久以前；&lt;/li&gt;
-&lt;li&gt;切换到照片图库，在 “ 最近删除 ” 里面，会看到很多照片；&lt;/li&gt;
-&lt;li&gt;删除这些照片；&lt;/li&gt;
-&lt;li&gt;切换到系统设置里，查看系统存储空间变化；&lt;/li&gt;
-&lt;li&gt;恢复系统时间；&lt;/li&gt;
-&lt;li&gt;OK!&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这个 Bug 很奇怪，这个解决办法更奇怪。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 25 Dec 2015 09:17:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-12-25:/posts/2015/12/25/iphone_photo_library_ghost_space.html</guid><category>Tools</category><category>iOS</category></item><item><title>Merging the upstream repository into the fork</title><link>https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html</link><description>&lt;p&gt;如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， &lt;a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/"&gt;https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/&lt;/a&gt;，关于对 &lt;code&gt;fork&lt;/code&gt; 进行更新。&lt;/p&gt;
+then ulp(x) = |b - a|, otherwise ulp …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 28 Jan 2016 16:44:00 +0800</pubDate><guid>tag:cctags.github.io,2016-01-28:/posts/2016/01/28/what_is_ulp.html</guid><category>Programming</category><category>OpenCL</category></item><item><title>Find the file by inode number</title><link>https://cctags.github.io/posts/2016/01/22/find_the_file_by_inode_number.html</link><description>&lt;P&gt;
+在命令行下会遇到一些文件名里包含有中文、符号或者某些奇怪字符的文件，如果命令的自动补全不完整，键盘操作起来 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 22 Jan 2016 12:27:00 +0800</pubDate><guid>tag:cctags.github.io,2016-01-22:/posts/2016/01/22/find_the_file_by_inode_number.html</guid><category>Tools</category><category>shell</category></item><item><title>Set Event Callback in OpenCL</title><link>https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html</link><description>&lt;p&gt;这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 30 Dec 2015 10:10:00 +0800</pubDate><guid>tag:cctags.github.io,2015-12-30:/posts/2015/12/30/cl_set_event_callback_in_ocl.html</guid><category>Programming</category><category>OpenCL</category></item><item><title>iPhone Photo Library "Ghost" Space</title><link>https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html</link><description>&lt;p&gt;最近 iPhone 手机遇到个问题：照片拍了很多了，想清理一下，结果发现即使是删掉了绝大部分照片，照片图库仍然占用了大量的 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 25 Dec 2015 09:17:00 +0800</pubDate><guid>tag:cctags.github.io,2015-12-25:/posts/2015/12/25/iphone_photo_library_ghost_space.html</guid><category>Tools</category><category>iOS</category></item><item><title>Merging the upstream repository into the fork</title><link>https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html</link><description>&lt;p&gt;如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， &lt;a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/"&gt;https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/&lt;/a&gt;，关于对 &lt;code&gt;fork&lt;/code&gt; 进行更新。&lt;/p&gt;
 &lt;p&gt;记录一下，备忘。&lt;/p&gt;
-&lt;p&gt;o 切换到 &lt;code&gt;master&lt;/code&gt; 分支：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git checkout master
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;o 从 upstream repository 更新下来：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;o 更新远程 repository：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git push origin master
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;更新后，对于 bugfix 或者 new …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 15 Dec 2015 12:45:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-12-15:/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html</guid><category>VCS</category><category>git</category></item><item><title>Dial Toll Free Numbers in Skype</title><link>https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html</link><description>&lt;p&gt;电话会议，一般是用电话拨进去参加的会议，其中有些号码是免费的，有些则是付费的。&lt;/p&gt;
+&lt;p&gt;o 切换到 &lt;code&gt;master&lt;/code&gt; 分支 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 15 Dec 2015 12:45:00 +0800</pubDate><guid>tag:cctags.github.io,2015-12-15:/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html</guid><category>VCS</category><category>git</category></item><item><title>Dial Toll Free Numbers in Skype</title><link>https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html</link><description>&lt;p&gt;电话会议，一般是用电话拨进去参加的会议，其中有些号码是免费的，有些则是付费的。&lt;/p&gt;
 &lt;p&gt;当然，如果 Dial-In Number 里包括了以下这些：&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;USA: +1 800, +1 866, +1 877, +1 888&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;那也可以用 Skype 直接打过去。这里有使用说明：&lt;a href="https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series"&gt;https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series&lt;/a&gt;。 即使没有 Skype Credit，也可以使用。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 08 Dec 2015 08:49:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-12-08:/posts/2015/12/08/dial_toll_free_numbers_in_skype.html</guid><category>Tools</category><category>Skype</category></item><item><title>Global and Local Work Size in OpenCL</title><link>https://cctags.github.io/posts/2015/11/17/global_and_local_work_size.html</link><description>&lt;p&gt;The work-items in a given work-group execute concurrently on the processing elements of a single compute unit. This is a critical point in understanding the concurrency in OpenCL. ... OpenCL only assures that the workitems within a work-group execute concurrently (and share processor resources on the device).&lt;/p&gt;
+&lt;p&gt;USA …&lt;/p&gt;&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 08 Dec 2015 08:49:00 +0800</pubDate><guid>tag:cctags.github.io,2015-12-08:/posts/2015/12/08/dial_toll_free_numbers_in_skype.html</guid><category>Tools</category><category>Skype</category></item><item><title>Global and Local Work Size in OpenCL</title><link>https://cctags.github.io/posts/2015/11/17/global_and_local_work_size.html</link><description>&lt;p&gt;The work-items in a given work-group execute concurrently on the processing elements of a single compute unit. This is a critical point in understanding the concurrency in OpenCL. ... OpenCL only assures that the workitems within a work-group execute concurrently (and share processor resources on the device).&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;global work offset&lt;/strong&gt;: what …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 17 Nov 2015 16:53:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-11-17:/posts/2015/11/17/global_and_local_work_size.html</guid><category>Programming</category><category>OpenCL</category></item><item><title>Change the Background Color in PDF Reader</title><link>https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html</link><description>&lt;p&gt;以 Adobe Reader 为例，从主菜单选择：编辑 ∕ 首选项 ∕ 辅助工具 ∕ 自定义颜色 ∕ 页面背景 ∕ 其它颜色，比如色调 45、饱和度 35、亮度 165。&lt;/p&gt;
+&lt;li&gt;&lt;strong&gt;global work offset&lt;/strong&gt;: what …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 17 Nov 2015 16:53:00 +0800</pubDate><guid>tag:cctags.github.io,2015-11-17:/posts/2015/11/17/global_and_local_work_size.html</guid><category>Programming</category><category>OpenCL</category></item><item><title>Change the Background Color in PDF Reader</title><link>https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html</link><description>&lt;p&gt;以 Adobe Reader 为例，从主菜单选择：编辑 ∕ 首选项 ∕ 辅助工具 ∕ 自定义颜色 ∕ 页面背景 ∕ 其它颜色，比如色调 45、饱和度 35、亮度 165。&lt;/p&gt;
 &lt;p&gt;参考：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2"&gt;http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast"&gt;http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 28 Oct 2015 14:32:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-10-28:/posts/2015/10/28/change_the_background_color_in_pdf_reader.html</guid><category>Tools</category><category>PDF</category></item><item><title>Git-P4 Submit Error</title><link>https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html</link><description>&lt;P&gt;
+&lt;li&gt;&lt;a href="http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2"&gt;http://jingyan.baidu …&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 28 Oct 2015 14:32:00 +0800</pubDate><guid>tag:cctags.github.io,2015-10-28:/posts/2015/10/28/change_the_background_color_in_pdf_reader.html</guid><category>Tools</category><category>PDF</category></item><item><title>Git-P4 Submit Error</title><link>https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html</link><description>&lt;P&gt;
 提交代码时遇到了这样的错误：
 &lt;/P&gt;
 
@@ -262,69 +290,18 @@ then ulp(x) = |b - a|, otherwise ulp …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</d
 一下子还真没想明白是哪里不对。
 &lt;/P&gt;
 &lt;P&gt;
-后来想明白了，需要重新登录一下 Perfoce：
-&lt;/P&gt;
-
-&lt;PRE&gt;
-  $ p4 login
-  ...
-&lt;/PRE&gt;
-
-&lt;P&gt;
-解决。
-&lt;/P&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 30 Sep 2015 14:23:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-09-30:/posts/2015/09/30/git_p4_submit_error.html</guid><category>VCS</category><category>git</category><category>p4</category></item><item><title>Setup Comments with Disqus in Pelican</title><link>https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html</link><description>&lt;p&gt;&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt; 是一个外挂的评论系统，对于像 GitHub Pages 这种静态网页来说，非常实用。&lt;/p&gt;
-&lt;p&gt;找到一个文档 &lt;a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html"&gt;http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html&lt;/a&gt;，把&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt;的使用步骤写得很清楚了。&lt;/p&gt;
-&lt;p&gt;以下是主要的配置说明，记录在这里，备忘。&lt;/p&gt;
-&lt;p&gt;注册 Disqus 账号：通过链接：http://&amp;lt;YOUR_DOMAINE&gt;.disqus.com/admin/settings，进行设置。&lt;/p&gt;
-&lt;p&gt;配置 Pelican：在 &lt;code&gt;pelicanconfig.py&lt;/code&gt; 文件里，添加如下配置：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;DISQUS_SITENAME = &amp;quot;&amp;lt;YOUR_DOMAINE&amp;gt;&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 18 Sep 2015 09:33:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-09-18:/posts/2015/09/18/setup_comments_with_disqus.html</guid><category>Tools</category><category>Pelican</category><category>Disqus</category></item><item><title>Limit CPU Usage</title><link>https://cctags.github.io/posts/2015/09/16/limit_cpu_usage.html</link><description>&lt;p&gt;这里有一些网页，描述了如何限制 CPU 的使用：&lt;/p&gt;
+后来想明白了，需要 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 30 Sep 2015 14:23:00 +0800</pubDate><guid>tag:cctags.github.io,2015-09-30:/posts/2015/09/30/git_p4_submit_error.html</guid><category>VCS</category><category>git</category><category>p4</category></item><item><title>Setup Comments with Disqus in Pelican</title><link>https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html</link><description>&lt;p&gt;&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt; 是一个外挂的评论系统，对于像 GitHub Pages 这种静态网页来说，非常实用。&lt;/p&gt;
+&lt;p&gt;找到一个文档 &lt;a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html"&gt;http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html&lt;/a&gt;，把&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt;的使用步骤写得很清 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 18 Sep 2015 09:33:00 +0800</pubDate><guid>tag:cctags.github.io,2015-09-18:/posts/2015/09/18/setup_comments_with_disqus.html</guid><category>Tools</category><category>Pelican</category><category>Disqus</category></item><item><title>Limit CPU Usage</title><link>https://cctags.github.io/posts/2015/09/16/limit_cpu_usage.html</link><description>&lt;p&gt;这里有一些网页，描述了如何限制 CPU 的使用：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Restricting process CPU usage using nice, cpulimit, and cgroups &lt;a href="http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups"&gt;http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;CPU Usage Limiter for Linux &lt;a href="http://cpulimit.sourceforge.net/"&gt;http://cpulimit.sourceforge.net/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/opsengine/cpulimit"&gt;https://github.com/opsengine/cpulimit&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Two great signals: SIGSTOP and SIGCONT &lt;a href="https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/"&gt;https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;概括地讲 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 16 Sep 2015 17:01:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-09-16:/posts/2015/09/16/limit_cpu_usage.html</guid><category>Programming</category><category>Linux</category></item><item><title>What is the Linux CPU Load</title><link>https://cctags.github.io/posts/2015/09/15/the_linux_cpu_load.html</link><description>&lt;p&gt;The &lt;strong&gt;load average&lt;/strong&gt; represents the &lt;strong&gt;average&lt;/strong&gt; system load over a period of time. It conventionally appears in the form of three numbers which represent the system load during the last one-, five-, and fifteen-minute periods. &lt;a href="https://en.wikipedia.org/wiki/Load_(computing)"&gt;https://en.wikipedia.org/wiki/Load_(computing)&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;按照网上看到的一种很形象的说法，假设我们的系统是单 CPU 单内核的，把它比喻成是一条单向马路，把任务比作汽车。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;当车不多的时候，load …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 15 Sep 2015 09:15:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-09-15:/posts/2015/09/15/the_linux_cpu_load.html</guid><category>Programming</category><category>Linux</category></item><item><title>Using Git-P4</title><link>https://cctags.github.io/posts/2015/07/23/using_git_p4.html</link><description>&lt;P&gt;
+&lt;li&gt;&lt;a href="https://github.com/opsengine/cpulimit"&gt;https://github.com/opsengine/cpulimit …&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 16 Sep 2015 17:01:00 +0800</pubDate><guid>tag:cctags.github.io,2015-09-16:/posts/2015/09/16/limit_cpu_usage.html</guid><category>Programming</category><category>Linux</category></item><item><title>What is the Linux CPU Load</title><link>https://cctags.github.io/posts/2015/09/15/the_linux_cpu_load.html</link><description>&lt;p&gt;The &lt;strong&gt;load average&lt;/strong&gt; represents the &lt;strong&gt;average&lt;/strong&gt; system load over a period of time. It conventionally appears in the form of three numbers which represent the system load during the last one-, five-, and fifteen-minute periods. &lt;a href="https://en.wikipedia.org/wiki/Load_(computing)"&gt;https://en.wikipedia.org/wiki/Load_(computing)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;按照网上看到的一 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 15 Sep 2015 09:15:00 +0800</pubDate><guid>tag:cctags.github.io,2015-09-15:/posts/2015/09/15/the_linux_cpu_load.html</guid><category>Programming</category><category>Linux</category></item><item><title>Using Git-P4</title><link>https://cctags.github.io/posts/2015/07/23/using_git_p4.html</link><description>&lt;P&gt;
 平时一直使用 &lt;A HREF="https://git-scm.com/"&gt;git&lt;/A&gt;，习惯了各种离线操作和强大的分支功能，所以总觉得要比 &lt;A HREF="http://www.perforce.com/"&gt;Perforce / p4&lt;/A&gt; 好用太多。
 &lt;/P&gt;
 &lt;P&gt;
-对于目前项目里用到的 p4 仓库，找到了一个 &lt;A HREF="http://answers.perforce.com/articles/KB/2790"&gt;Git-P4&lt;/A&gt; 的插件，可以在本地通过 git 来操作 p4 代码仓库。这样除了更新和提交代码，其他的操作都在 git 里完成。
-&lt;/P&gt;
-&lt;P&gt;
-以下是一些关键操作，记录在这里备忘。
-&lt;/P&gt;
-
-&lt;OL&gt;
-&lt;LI&gt;Create a directory for the client workspace root; for example:
-&lt;P&gt;&lt;/P&gt;
-
-&lt;PRE&gt;
-  $ mkdir gp4-area
-&lt;/PRE&gt;
-
-&lt;LI&gt;Create a P4CONFIG file
-&lt;P&gt;&lt;/P&gt;
-
-&lt;PRE&gt;
-  $ cd gp4-area
-  $ vi p4config
-  $ ...
-&lt;/PRE&gt;
-
-&lt;P&gt;&lt;/P&gt;
-&lt;LI&gt;Create the client workspace
-&lt;P&gt;&lt;/P&gt;
-
-&lt;PRE&gt;
-  $ p4 client …&lt;/pre&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 23 Jul 2015 15:09:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-07-23:/posts/2015/07/23/using_git_p4.html</guid><category>VCS</category><category>git</category><category>p4</category></item><item><title>Sysfs</title><link>https://cctags.github.io/posts/2015/07/15/sysfs.html</link><description>&lt;p&gt;在 linux 里，&lt;a href="https://en.wikipedia.org/wiki/Sysfs"&gt;sysfs&lt;/a&gt; 和 &lt;a href="https://en.wikipedia.org/wiki/Procfs"&gt;procfs&lt;/a&gt; 都是没有存储介质的虚拟文件系统，用于内核与用户态的交互。以下是摘自《Professional Linux Kernel Architecture》的一段话，对两者在概念上的区别进行了描述。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Sysfs is one particularly important example of another virtual filesystem that serves a similar purpose to procfs on the one hand, but is rather different on the other hand. Sysfs is, per convention, always mounted …&lt;/p&gt;&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 15 Jul 2015 12:02:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-07-15:/posts/2015/07/15/sysfs.html</guid><category>Programming</category><category>Linux</category><category>filesystem</category></item><item><title>More Use of Pelican</title><link>https://cctags.github.io/posts/2015/07/10/linuxtoy_uses_pelican.html</link><description>&lt;p&gt;经常会去 &lt;a href="https://linuxtoy.org/"&gt;LinuxTOY&lt;/a&gt;, 看看有哪些新的 Linux 相关的信息。&lt;/p&gt;
-&lt;p&gt;好吧，最近它也已经 &lt;a href="https://linuxtoy.org/archives/moving-to-pelican.html"&gt;从 WordPress 迁移到 Pelican&lt;/a&gt;，现在访问速度快了不是一点点。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 10 Jul 2015 09:46:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-07-10:/posts/2015/07/10/linuxtoy_uses_pelican.html</guid><category>Tools</category><category>Pelican</category></item><item><title>Upgrade to Pelican 3.6</title><link>https://cctags.github.io/posts/2015/06/18/upgrade_to_pelican_3_6.html</link><description>&lt;p&gt;&lt;a href="http://blog.getpelican.com/pelican-3.6-released.html"&gt;Pelican 3.6&lt;/a&gt; 发布了。&lt;/p&gt;
+对于目前项目里用到的 p4 仓库 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 23 Jul 2015 15:09:00 +0800</pubDate><guid>tag:cctags.github.io,2015-07-23:/posts/2015/07/23/using_git_p4.html</guid><category>VCS</category><category>git</category><category>p4</category></item><item><title>Sysfs</title><link>https://cctags.github.io/posts/2015/07/15/sysfs.html</link><description>&lt;p&gt;在 linux 里，&lt;a href="https://en.wikipedia.org/wiki/Sysfs"&gt;sysfs&lt;/a&gt; 和 &lt;a href="https://en.wikipedia.org/wiki/Procfs"&gt;procfs&lt;/a&gt; 都是没有存储介质的虚拟文件系统，用于内核与用户态的交互。以下是摘自《Professional Linux Kernel Architecture》的一段话，对两者在概 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 15 Jul 2015 12:02:00 +0800</pubDate><guid>tag:cctags.github.io,2015-07-15:/posts/2015/07/15/sysfs.html</guid><category>Programming</category><category>Linux</category><category>filesystem</category></item><item><title>More Use of Pelican</title><link>https://cctags.github.io/posts/2015/07/10/linuxtoy_uses_pelican.html</link><description>&lt;p&gt;经常会去 &lt;a href="https://linuxtoy.org/"&gt;LinuxTOY&lt;/a&gt;, 看看有哪些新的 Linux 相关的信息。&lt;/p&gt;
+&lt;p&gt;好吧，最近它也已经 &lt;a href="https://linuxtoy.org/archives/moving-to-pelican.html"&gt;从 WordPress 迁移到 Pelican&lt;/a&gt;，现在访问速度快了不是一点点。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 10 Jul 2015 09:46:00 +0800</pubDate><guid>tag:cctags.github.io,2015-07-10:/posts/2015/07/10/linuxtoy_uses_pelican.html</guid><category>Tools</category><category>Pelican</category></item><item><title>Upgrade to Pelican 3.6</title><link>https://cctags.github.io/posts/2015/06/18/upgrade_to_pelican_3_6.html</link><description>&lt;p&gt;&lt;a href="http://blog.getpelican.com/pelican-3.6-released.html"&gt;Pelican 3.6&lt;/a&gt; 发布了。&lt;/p&gt;
 &lt;p&gt;可以使用万能的 &lt;code&gt;easy_install&lt;/code&gt; 来更新：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ easy_install --upgrade pelican
 Searching for pelican
@@ -337,20 +314,7 @@ $ pelican --version
 3.6.0
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;p&gt;浏览了这个版本的变化，其中较大的一个变化是在默认情况下不再缓存编译内容，从而可以规避下次编译时的潜在冲突。当然也可以按照&lt;a href="http://docs.getpelican.com/en/latest/settings.html#reading-only-modified-content"&gt;这里的文档&lt;/a&gt;，重新打开这个功能。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 18 Jun 2015 11:12:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-06-18:/posts/2015/06/18/upgrade_to_pelican_3_6.html</guid><category>Tools</category><category>Pelican</category></item><item><title>Use subprocess.Popen class in Python</title><link>https://cctags.github.io/posts/2015/06/10/subprocess_popen_use.html</link><description>&lt;p&gt;&lt;a href="https://docs.python.org/2/library/subprocess.html#popen-constructor"&gt;subprocess.Popen&lt;/a&gt; 是 Python 标准库提供的一个类，用于进程的创建、管理以及数据交互。在实现上，它尽可能地屏蔽了操作系统之间相关语义的差异，提供了统一的使用接口。&lt;/p&gt;
-&lt;p&gt;其原型是：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;bufsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;executable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                       &lt;span class="n"&gt;stdin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stdout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                       &lt;span class="n"&gt;preexec_fn&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;close_fds&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                       &lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cwd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                       &lt;span class="n"&gt;universal_newlines&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                       &lt;span class="n"&gt;startupinfo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;creationflags&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;对于 args 参数，使用时遇到了这样的问题：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;r&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ls …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 10 Jun 2015 09:07:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-06-10:/posts/2015/06/10/subprocess_popen_use.html</guid><category>Programming</category><category>Python</category></item><item><title>Use txt2tags in Pelican</title><link>https://cctags.github.io/posts/2015/06/07/use_txt2tags_in_pelican.html</link><description>
+&lt;p&gt;浏览了 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 18 Jun 2015 11:12:00 +0800</pubDate><guid>tag:cctags.github.io,2015-06-18:/posts/2015/06/18/upgrade_to_pelican_3_6.html</guid><category>Tools</category><category>Pelican</category></item><item><title>Use subprocess.Popen class in Python</title><link>https://cctags.github.io/posts/2015/06/10/subprocess_popen_use.html</link><description>&lt;p&gt;&lt;a href="https://docs.python.org/2/library/subprocess.html#popen-constructor"&gt;subprocess.Popen&lt;/a&gt; 是 Python 标准库提供的一个类，用于进程的创建、管理以及数据交互。在实现上，它尽可能地屏蔽了操作系统之间相关语义 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 10 Jun 2015 09:07:00 +0800</pubDate><guid>tag:cctags.github.io,2015-06-10:/posts/2015/06/10/subprocess_popen_use.html</guid><category>Programming</category><category>Python</category></item><item><title>Use txt2tags in Pelican</title><link>https://cctags.github.io/posts/2015/06/07/use_txt2tags_in_pelican.html</link><description>
 &lt;H1&gt;1. txt2tags&lt;/H1&gt;
 
 &lt;P&gt;
@@ -361,39 +325,7 @@ $ pelican --version
 &lt;/P&gt;
 
 &lt;PRE&gt;
-  Txt2tags is a text formatting and conversion tool.
-&lt;/PRE&gt;
-
-&lt;P&gt;
-相比于 Markdown：
-&lt;/P&gt;
-
-&lt;UL&gt;
-&lt;LI&gt;txt2tags 包括了以下这些有用的功能：
-    &lt;UL&gt;
-    &lt;LI&gt;可以指定生成目录，比如 &lt;CODE&gt;%!options: -n --toc&lt;/CODE&gt;
-    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/TitleNumberedTitle.html"&gt;Numbered Title&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="http://txt2tags.org/userguide/Table.html"&gt;Table&lt;/A&gt;
-    &lt;LI&gt;Macros
-    &lt;P&gt;&lt;/P&gt;
-    &lt;/UL&gt;
-&lt;LI&gt;当然也有一些不足：
-    &lt;UL&gt;
-    &lt;LI&gt;Verbatim line 没有语法高亮
-    &lt;/UL&gt;
-&lt;/UL&gt;
-
-&lt;P&gt;
-更多功能，请参考&lt;A HREF="http://txt2tags.org/userguide/"&gt;用户手册&lt;/A&gt;。
-&lt;/P&gt;
-&lt;P&gt;
-总的来说，txt2tags 的这些功能，可以使得内容更加清晰，有条理。
-&lt;/P&gt;
-
-&lt;H1&gt;2. txt2tags reader plugin&lt;/H1&gt;
-
-&lt;P&gt;
-浏览了 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 07 Jun 2015 07:53:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-06-07:/posts/2015/06/07/use_txt2tags_in_pelican.html</guid><category>Tools</category><category>Pelican</category><category>txt2tags</category></item><item><title>Pelican 使用记录</title><link>https://cctags.github.io/posts/2015/06/02/use_pelican.html</link><description>&lt;P&gt;&lt;/P&gt;
+  Txt2tags is …&lt;/pre&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 07 Jun 2015 07:53:00 +0800</pubDate><guid>tag:cctags.github.io,2015-06-07:/posts/2015/06/07/use_txt2tags_in_pelican.html</guid><category>Tools</category><category>Pelican</category><category>txt2tags</category></item><item><title>Pelican 使用记录</title><link>https://cctags.github.io/posts/2015/06/02/use_pelican.html</link><description>&lt;P&gt;&lt;/P&gt;
 &lt;HR NOSHADE SIZE=1&gt;
 &lt;P&gt;&lt;/P&gt;
 
@@ -423,269 +355,35 @@ $ pelican --version
 &lt;H1&gt;1. Why Here?&lt;/H1&gt;
 
 &lt;P&gt;
-之前博客搭在 &lt;A HREF="http://hi.baidu.com/"&gt;Baidu Hi&lt;/A&gt; 上面，前后也用了好长时间了。直到最近，Baidu Hi 要下线了。。
-&lt;/P&gt;
-&lt;P&gt;
-所以把原有的内容整理了一下，准备放到 &lt;A HREF="https://pages.github.com/"&gt;GitHub …&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 02 Jun 2015 09:52:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-06-02:/posts/2015/06/02/use_pelican.html</guid><category>Tools</category><category>Pelican</category><category>Python</category></item><item><title>GCC Linker Order</title><link>https://cctags.github.io/posts/2015/05/29/gcc_linker_order.html</link><description>&lt;h3&gt;※ 问题&lt;/h3&gt;
+之前博客搭在 &lt;A HREF="http://hi.baidu.com/"&gt;Baidu Hi&lt;/A&gt; 上面，前后 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 02 Jun 2015 09:52:00 +0800</pubDate><guid>tag:cctags.github.io,2015-06-02:/posts/2015/06/02/use_pelican.html</guid><category>Tools</category><category>Pelican</category><category>Python</category></item><item><title>GCC Linker Order</title><link>https://cctags.github.io/posts/2015/05/29/gcc_linker_order.html</link><description>&lt;h3&gt;※ 问题&lt;/h3&gt;
 &lt;p&gt;在程序开发过程中遇到了这样的问题：&lt;/p&gt;
 &lt;p&gt;程序比较大，因而拆分成了若干个静态库：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;编译：OK!&lt;/li&gt;
-&lt;li&gt;链接：把静态库链接到可执行文件时，出现了 “… undefined reference to …” 的错误提示。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;※ 调试&lt;/h3&gt;
-&lt;p&gt;逐个地检查这些静态库文件：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;nm -C xxxS.a &lt;span class="p"&gt;|&lt;/span&gt; grep &amp;lt;symbol&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;检查结果显示，错误提示里找不到的 symbol 其实已经包含在了某个静态库里面。&lt;/p&gt;
-&lt;h3&gt;※ 解决&lt;/h3&gt;
-&lt;p&gt;参考 &lt;a href="http://stackoverflow.com/questions/45135/linker-order-gcc"&gt;http://stackoverflow.com/questions/45135/linker-order-gcc&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;调整 Makefile 里的静态库文件的顺序，链接 OK!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 29 May 2015 13:35:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2015-05-29:/posts/2015/05/29/gcc_linker_order.html</guid><category>Programming</category><category>Linker</category></item><item><title>同名全局变量造成的冲突</title><link>https://cctags.github.io/posts/2014/12/12/global_variable_name_conflict.html</link><description>&lt;h3&gt;0x0 问题&lt;/h3&gt;
+&lt;li&gt;链接：把静态库链接到可执行 …&lt;/li&gt;&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 29 May 2015 13:35:00 +0800</pubDate><guid>tag:cctags.github.io,2015-05-29:/posts/2015/05/29/gcc_linker_order.html</guid><category>Programming</category><category>Linker</category></item><item><title>同名全局变量造成的冲突</title><link>https://cctags.github.io/posts/2014/12/12/global_variable_name_conflict.html</link><description>&lt;h3&gt;0x0 问题&lt;/h3&gt;
 &lt;p&gt;程序运行时崩溃。&lt;/p&gt;
 &lt;h3&gt;0x1 调试&lt;/h3&gt;
 &lt;p&gt;经过调试发现，程序本身、和它所依赖的动态库里，有同名的全局变量，Loader 表示很凌乱。。&lt;/p&gt;
-&lt;h3&gt;0x2 解决&lt;/h3&gt;
-&lt;p&gt;默认链接生成动态库时，所有符号都会导出。对于这里的情况，只需要把导出符号定义清楚，就可以避免运行时的冲突。&lt;/p&gt;
-&lt;h4&gt;Linux&lt;/h4&gt;
-&lt;p&gt;使用 &lt;code&gt;LD Version Scripts&lt;/code&gt;（&lt;a href="https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_node/ld_25.html"&gt;链接 1&lt;/a&gt;, &lt;a href="https://www.gnu.org/software/gnulib/manual/html_node/LD-Version-Scripts.html"&gt;链接 2&lt;/a&gt;），在编译和链接生成动态库时，指定哪些是全局导出的符号，哪些是局部符号，比如：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="nl"&gt;global&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;func_a&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-        &lt;span class="n"&gt;func_b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-    &lt;span class="nl"&gt;local&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="p"&gt;};&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;然后在链接时添加类似于 &lt;code&gt;LFLAGS += -Wl,--version-script=xxx.map&lt;/code&gt; 的参数。&lt;/p&gt;
-&lt;h4&gt;Windows&lt;/h4&gt;
-&lt;p&gt;对于 Windows 环境，可以定义类似功能的 def 文件，比如 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 12 Dec 2014 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2014-12-12:/posts/2014/12/12/global_variable_name_conflict.html</guid><category>Programming</category><category>Linker</category><category>Loader</category></item><item><title>redefinition of typedef error</title><link>https://cctags.github.io/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html</link><description>&lt;p&gt;又是一个坑。。啥也别说了。。&lt;/p&gt;
-&lt;p&gt;&lt;a href="http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6"&gt;http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 30 Oct 2014 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2014-10-30:/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html</guid><category>Programming</category></item><item><title>gcc reverse_iterator comparison operators missing?</title><link>https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html</link><description>&lt;p&gt;I get a compile error of the iterator when porting an application which is based on the C++ standard library. Someone get the same issue before, and there is already an answer at &lt;a href="http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing"&gt;http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing&lt;/a&gt;.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 22 Oct 2014 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2014-10-22:/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html</guid><category>Programming</category></item><item><title>栈溢出的调试及解决办法</title><link>https://cctags.github.io/posts/2014/10/17/debug_the_stack_overflow.html</link><description>&lt;h3&gt;※ 问题：&lt;/h3&gt;
+&lt;h3&gt;0x2 解决 …&lt;/h3&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 12 Dec 2014 06:00:00 +0800</pubDate><guid>tag:cctags.github.io,2014-12-12:/posts/2014/12/12/global_variable_name_conflict.html</guid><category>Programming</category><category>Linker</category><category>Loader</category></item><item><title>redefinition of typedef error</title><link>https://cctags.github.io/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html</link><description>&lt;p&gt;又是一个坑。。啥也别说了。。&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6"&gt;http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 30 Oct 2014 06:00:00 +0800</pubDate><guid>tag:cctags.github.io,2014-10-30:/posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html</guid><category>Programming</category></item><item><title>gcc reverse_iterator comparison operators missing?</title><link>https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html</link><description>&lt;p&gt;I get a compile error of the iterator when porting an application which is based on the C++ standard library. Someone get the same issue before, and there is already an answer at &lt;a href="http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing"&gt;http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing&lt;/a&gt;.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 22 Oct 2014 06:00:00 +0800</pubDate><guid>tag:cctags.github.io,2014-10-22:/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html</guid><category>Programming</category></item><item><title>栈溢出的调试及解决办法</title><link>https://cctags.github.io/posts/2014/10/17/debug_the_stack_overflow.html</link><description>&lt;h3&gt;※ 问题：&lt;/h3&gt;
 &lt;p&gt;栈上消耗的内存太多，导致溢出，程序崩溃。&lt;/p&gt;
 &lt;h3&gt;※ 程序崩溃的过程是怎样的？&lt;/h3&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;1. CPU 执行代码时，反复地压栈；
-2. 访问栈上内存时缺页， CPU 抛异常，操作系统内核接管；
-3. 操作系统内核计算出异常地址已经低于栈的低地址，所以拒绝补页，同时抛出软件异常；
-4. 程序崩溃，调试器接管，或者提示错误并退出。
+2. 访问栈上内存时 …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 17 Oct 2014 06:00:00 +0800</pubDate><guid>tag:cctags.github.io,2014-10-17:/posts/2014/10/17/debug_the_stack_overflow.html</guid><category>Programming</category></item><item><title>保持 grep 的输出重定向到 less 时的颜色高亮</title><link>https://cctags.github.io/posts/2013/09/11/grep-less-with-highlight-color.html</link><description>&lt;h2&gt;问题&lt;/h2&gt;
+&lt;p&gt;使用 &lt;code&gt;grep&lt;/code&gt; 搜索，比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gp"&gt;$ &lt;/span&gt;cat&lt;span class="w"&gt; &lt;/span&gt;a.txt&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;grep&lt;span class="w"&gt; &lt;/span&gt;-a&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;word&amp;quot;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;h3&gt;※ 如何知道栈的大小？&lt;/h3&gt;
-&lt;p&gt;一个简单的办法是，程序崩溃后，在调试器里，对比函数调用栈最高和最低处的栈指针即可。&lt;/p&gt;
-&lt;h3&gt;※ 如何调整栈的大小？&lt;/h3&gt;
-&lt;p&gt;设置全局配置、修改可执行文件内部属性、创建线程前指定栈大小等等。比如：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;1. 主线程： ldrel -S 10M -L &amp;lt;program&amp;gt;   /* 10M + Lazy */
-2. 子线程： pthread_attr_setstacksize() + pthread_attr_setstacklazy()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 17 Oct 2014 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2014-10-17:/posts/2014/10/17/debug_the_stack_overflow.html</guid><category>Programming</category></item><item><title>如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键</title><link>https://cctags.github.io/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html</link><description>&lt;p&gt;使用 vim 的时候，经常会用到 Ctrl-Fn 及 Shift-Fn 这样的组合键，无奈 PuTTY 不支持。&lt;/p&gt;
-&lt;p&gt;从网上找到的解决办法：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href="http://www.newsmth.net/nForum/#!article/PHP/88598"&gt;http://www.newsmth.net/nForum/#!article/PHP/88598&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="http://www.newsmth.net/nForum/#!article/LinuxApp/859371"&gt;http://www.newsmth.net/nForum/#!article/LinuxApp/859371&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html"&gt;http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;出于安全，小心使用。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 07 Aug 2012 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2012-08-07:/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html</guid><category>Tools</category><category>PuTTY</category><category>ssh</category></item><item><title>以前的一个帖子</title><link>https://cctags.github.io/posts/2012/04/16/baidu_and_google.html</link><description>&lt;p&gt;&lt;a href="http://topic.csdn.net/t/20040616/15/3097196.html"&gt;这是&lt;/a&gt; 很久以前的一个夏天，在 csdn 论坛里的帖子，讨论一段不太优雅的 Python 代码。&lt;/p&gt;
-&lt;p&gt;很久以后，我在 Baidu 里找了好久，不过这个帖子后来找不到了，挺可惜的。&lt;/p&gt;
-&lt;p&gt;然后 Google 了一下，很快就找到了 -__-!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 16 Apr 2012 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2012-04-16:/posts/2012/04/16/baidu_and_google.html</guid><category>misc</category><category>Python</category></item><item><title>三思而行</title><link>https://cctags.github.io/posts/2012/04/15/information.html</link><description>&lt;p&gt;今天在 python-chinese 的邮件列表里看到一段话：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;All of the messages you send to these mailing lists will be archived. If you include sensitive information in your message it will be viewable by anyone. That includes email addresses, phone numbers, addresses, etc.  Site policy is to not edit the archives except, possibly to remove …&lt;/p&gt;&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sun, 15 Apr 2012 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2012-04-15:/posts/2012/04/15/information.html</guid><category>misc</category></item><item><title>chrome 导入 portable firefox 收藏夹</title><link>https://cctags.github.io/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html</link><description>&lt;p&gt;之前用的是 portable firefox，现在慢慢地转到 chrome 了。
-在导入收藏夹时遇到了问题。chrome 不知道 portable firefox 收藏夹的位置，折腾了好一会儿，找到个办法：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;将 firefox 的收藏夹导出为 bookmarks.html；&lt;/li&gt;
-&lt;li&gt;将 bookmarks.html 导入 IE；&lt;/li&gt;
-&lt;li&gt;在 chrome 里，导入 IE Favorites；&lt;/li&gt;
-&lt;li&gt;OK!&lt;/li&gt;
-&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 05 Sep 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-09-05:/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html</guid><category>Tools</category><category>Chrome</category><category>Firefox</category></item><item><title>Automatically cc/bcc the mail messages</title><link>https://cctags.github.io/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html</link><description>&lt;p&gt;用了很长时间的 Thunderbird，随着收件箱里的邮件越来越多，形成了以下的使用习惯：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;按邮件的属性分成多个类别（文件夹）；&lt;/li&gt;
-&lt;li&gt;更改设置，在发送一封邮件的同时，将其 bcc 给自己；&lt;/li&gt;
-&lt;li&gt;在一个分类下，按索引（会话）方式罗列邮件；&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;这样，邮箱里显示的是一个个的索引（会话），而不再是单独的邮件。其实用性不用多说，好多人也是这样用的。&lt;/p&gt;
-&lt;p&gt;由于工作原因，目前使用的是 Outlook。在 Outlook 里，1 和 3 基本上不是问题，但 2 却无法直接搞定。&lt;/p&gt;
-&lt;p&gt;还好有网络，花了点时间，找到了一些免费的解决方案：&lt;a href="http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html"&gt;http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html&lt;/a&gt;，&lt;a href="http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw"&gt;http://www.slipstick.com/mail1/always_bcc …&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 25 Jul 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-07-25:/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html</guid><category>Tools</category><category>Outlook</category></item><item><title>虚拟机里的时间走慢的问题</title><link>https://cctags.github.io/posts/2011/07/13/os_time_not_correct_in_vm.html</link><description>&lt;p&gt;使用过程中碰到了这个问题，很麻烦。&lt;/p&gt;
-&lt;p&gt;参考了现成的解决方法，基本上可以通过安装 VMwareTools 工具解决。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 13 Jul 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-07-13:/posts/2011/07/13/os_time_not_correct_in_vm.html</guid><category>Tools</category><category>VM</category></item><item><title>How to undo "clear offline items"</title><link>https://cctags.github.io/posts/2011/07/08/how_to_undo_clear_offline_items.html</link><description>&lt;p&gt;在 Outlook 里浏览邮件分类目录时，点了 “clear offline items” 按钮，这下邮件全没了。。那叫一个紧张呀。&lt;/p&gt;
-&lt;p&gt;赶紧搜索一下，找到了几个：&lt;a href="http://www.pcreview.co.uk/forums/do-undo-clear-offline-items-and-regain-my-calendar-t2961229.html"&gt;how do i undo "clear offline items"&lt;/a&gt;，&lt;a href="http://www.office-outlook.com/outlook-forum/index.php/m/511008/"&gt;how do i recoover "clear offline items"&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;按着罗列的方法，邮件终于回来了。有惊无险。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 08 Jul 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-07-08:/posts/2011/07/08/how_to_undo_clear_offline_items.html</guid><category>Tools</category><category>Outlook</category></item><item><title>使用 pthread tls destructor 时遇到的问题</title><link>https://cctags.github.io/posts/2011/07/06/pthread_tls_destructor_issue.html</link><description>&lt;p&gt;使用 pthread 线程时，可以通过 pthread_key_create() 这个 API，给新创建的线程添加一个回调函数，在线程退出时会被系统调用到，通常用于线程相关资源的清理，等等。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;pthread_key_create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-    &lt;span class="n"&gt;pthread_key_t&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;destructor&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;p&gt;在输出结果里，匹配到的字符会通过颜色高亮显示，方便定位；&lt;/p&gt;
+&lt;p&gt;但如果输出结果比较多 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 11 Sep 2013 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2013-09-11:/posts/2013/09/11/grep-less-with-highlight-color.html</guid><category>Tools</category><category>grep</category><category>less</category></item><item><title>读写锁 rwlock 实现里的避免写锁饥饿问题</title><link>https://cctags.github.io/posts/2013/09/11/pthread-rwlock-writer-starvation.html</link><description>&lt;p&gt;使用读写锁时，同一时刻可以有多个读锁占用，但只能有一个写锁占用。&lt;/p&gt;
+&lt;p&gt;使用 pthread 多线程时，需要考虑如果持续地有多个线程 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 11 Sep 2013 10:08:00 +0800</pubDate><guid>tag:cctags.github.io,2013-09-11:/posts/2013/09/11/pthread-rwlock-writer-starvation.html</guid><category>programming</category><category>pthread</category></item><item><title>vim 里插入列表编号</title><link>https://cctags.github.io/posts/2013/04/26/vim_insert_numbered_list.html</link><description>&lt;p&gt;&lt;strong&gt;0x00&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;markdown 里的 Ordered Lists 语法是这样的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;1.&lt;/span&gt; First item
+&lt;span class="k"&gt;2.&lt;/span&gt; Second item
+&lt;span class="k"&gt;3.&lt;/span&gt; Third item
+&lt;span class="k"&gt;4.&lt;/span&gt; Fourth item
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;p&gt;特别要注意的是，在 destructor 被回调时，其参数肯定不为空，但此时 &lt;strong&gt;对应的 tls 已经被清空！&lt;/strong&gt; 所以，如果 destructor 里有依赖 tls 的，其运行结果肯定跟预期的不一样。&lt;/p&gt;
-&lt;p&gt;写代码的时候没注意，出了问题也没有头绪，仔细看了 &lt;a href="https://linux.die.net/man/3/pthread_key_create"&gt;pthread_key_create 的文档&lt;/a&gt; 才清楚：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;An optional destructor function may be associated with each key …&lt;/p&gt;&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 06 Jul 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-07-06:/posts/2011/07/06/pthread_tls_destructor_issue.html</guid><category>Programming</category><category>pthread</category></item><item><title>UltraEdit 函数列表错位的问题</title><link>https://cctags.github.io/posts/2011/06/09/the_function_list_issue_in_ultraedit.html</link><description>&lt;h2&gt;0x0 问题&lt;/h2&gt;
-&lt;p&gt;在 UltraEdit 里遇到一个问题：通过函数列表跳转到函数实现的时候，会出现定位不准、有错位的情况。&lt;/p&gt;
-&lt;h2&gt;0x1 解决方法&lt;/h2&gt;
-&lt;p&gt;问题的解决方法，请参考以下链接：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href="http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html"&gt;http://topic.csdn.net/u/20090711/11/a37b513f-0c82-4b68-a04e-d39ec1fba625.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078"&gt;http://forums.ultraedit.com/viewtopic.php?f=9&amp;amp;t=8078&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这里把解决方法记录一下，备忘：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;As workaround you can modify the first function string in c_cplusplus.uew from
-
-/Function String = &amp;quot;%^([a-zA-Z_0-9^[^]*]+^)[ ^t …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 09 Jun 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-06-09:/posts/2011/06/09/the_function_list_issue_in_ultraedit.html</guid><category>Tools</category><category>UltraEdit</category></item><item><title>Use ExamDiff in ClearCase</title><link>https://cctags.github.io/posts/2011/03/15/use_examdiff_in_clearcase.html</link><description>&lt;p&gt;由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;写个小程序，diffspawn.exe，它的作用是启动同目录下的 diffspawn.bat，然后自己退出；&lt;/li&gt;
-&lt;li&gt;diffspawn.bat 的内容：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;@echo off
-&amp;quot;C:\Program Files\ExamDiff Pro\ExamDiff.exe&amp;quot; %5 %6
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;ul&gt;
-&lt;li&gt;修改 &lt;code&gt;%ProgramFiles%\Rational\ClearCase\lib\mgrs\map&lt;/code&gt; 配置文件：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;text_file_delta     compare  &amp;lt;path&amp;gt;\diffspawn.exe
-text_file_delta     xcompare &amp;lt;path&amp;gt;\diffspawn.exe …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 15 Mar 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-03-15:/posts/2011/03/15/use_examdiff_in_clearcase.html</guid><category>VCS</category><category>ClearCase</category></item><item><title>wxPython 里的 wx.ID_YES 与 wx.YES 不是一回事</title><link>https://cctags.github.io/posts/2011/02/11/wx_id_yes_not_yes.html</link><description>&lt;p&gt;基于 wxPython 写了一个小程序，看到了以下两个不一样的 YES：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;wx.MessageDialog() 返回的是 &lt;a href="https://wxpython.org/Phoenix/docs/html/wx.MessageDialog.html#wx.MessageDialog.ShowModal"&gt;wx.ID_YES, ...&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;wx.MessageBox() 返回的是 &lt;a href="https://wxpython.org/Phoenix/docs/html/wx.functions.html#wx.MessageBox"&gt;wx.YES, ...&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;使用的时候要注意。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 11 Feb 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-02-11:/posts/2011/02/11/wx_id_yes_not_yes.html</guid><category>Programming</category><category>Python</category><category>wxPython</category></item><item><title>终端与远程之间的文件传递</title><link>https://cctags.github.io/posts/2011/01/11/file-transfer.html</link><description>&lt;p&gt;经常需要在终端和远程服务器之间进行文件传递，以下是几种常用的方法：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;ssh（文件比较大时，会比较慢）&lt;ul&gt;
-&lt;li&gt;rz/sz &lt;a href="https://linux.die.net/man/1/sz"&gt;https://linux.die.net/man/1/sz&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;rsync &lt;a href="https://linux.die.net/man/1/rsync"&gt;https://linux.die.net/man/1/rsync&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;pscp &lt;a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html"&gt;https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;WinSCP&lt;/li&gt;
-&lt;li&gt;Xshell，可以直接拖拽，连 rz/sz 都省了&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;sftp&lt;/li&gt;
-&lt;li&gt;ftp，速度快；需要考虑文件的访问权限；&lt;/li&gt;
-&lt;li&gt;python 小工具：&lt;ul&gt;
-&lt;li&gt;下载文件，&lt;code&gt;python -m SimpleHTTPServer …&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 11 Jan 2011 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2011-01-11:/posts/2011/01/11/file-transfer.html</guid><category>Tools</category><category>linux</category><category>ssh</category><category>Python</category></item><item><title>git-svn 提示仓库格式错误</title><link>https://cctags.github.io/posts/2010/12/28/update-svn-repo-format.html</link><description>&lt;p&gt;问题：使用 git 操作一个 svn 仓库时，报错如下：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Expected FS format &amp;#39;2&amp;#39;; found format &amp;#39;3&amp;#39;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;解决办法：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;在 &lt;strong&gt;v1.5&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin dump /path/to/repo1 &amp;gt; dump.db&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;切换到 &lt;strong&gt;v1.4&lt;/strong&gt; 的软件环境下：&lt;code&gt;svnadmin load /path/to/repo2 &amp;lt; dump.db&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;设置权限并开启服务：&lt;code&gt;svnserve -d [--foreground]&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;git svn clone svn://&amp;lt;ip&amp;gt;/path/to/repo2&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;OK …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Tue, 28 Dec 2010 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2010-12-28:/posts/2010/12/28/update-svn-repo-format.html</guid><category>VCS</category><category>git</category><category>svn</category></item><item><title>体验 svn 和 git 的使用差异</title><link>https://cctags.github.io/posts/2010/12/27/the-difference-between-svn-and-git.html</link><description>&lt;p&gt;很长时间以来，一直是用 svn。最近开始学习和使用 git。通过一段时间的使用，感受到它们有不小的差异。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;svn&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;有全局唯一的版本号，可以嵌到代码里；&lt;/li&gt;
-&lt;li&gt;可以下载部分模块、而不是全部；&lt;/li&gt;
-&lt;li&gt;有服务器存放仓库；&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;git&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;除了少数几个操作以外，几乎都可以不依赖网络，离线操作；&lt;/li&gt;
-&lt;li&gt;操作快速高效；&lt;/li&gt;
-&lt;li&gt;只有根目录有一个 &lt;code&gt;.git/&lt;/code&gt; 目录，没有多余的隐藏目录；&lt;/li&gt;
-&lt;li&gt;可以撤销之前的操作；&lt;/li&gt;
-&lt;li&gt;命令行的控制更加丰富；&lt;/li&gt;
-&lt;li&gt;可以通过 &lt;a href="https://git-scm.com/docs/git-svn"&gt;git-svn&lt;/a&gt; 访问 svn 仓库；&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;另外，还注意到：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;在目录结构上，git 更干净；在 svn 里，可以使用 export 导出干净的目录结构。&lt;/li&gt;
-&lt;li&gt;git 每次都有唯一的 ID，结合 post-commit，也可以嵌到代码里。&lt;/li&gt;
-&lt;li&gt;git 不会跟踪空目录，非要这样做，可以在空目录里放个空的 …&lt;/li&gt;&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 27 Dec 2010 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2010-12-27:/posts/2010/12/27/the-difference-between-svn-and-git.html</guid><category>VCS</category><category>git</category><category>svn</category></item><item><title>临时对象引起的内存泄漏</title><link>https://cctags.github.io/posts/2010/12/13/temporary_object_memory_leak.html</link><description>&lt;h3&gt;※ 问题&lt;/h3&gt;
-&lt;p&gt;程序退出时，VC 开发环境提示有多处内存泄漏。&lt;/p&gt;
-&lt;h3&gt;※ 调试&lt;/h3&gt;
-&lt;p&gt;经过数次尝试之后，找到了重现的方法，以及问题出现的操作路径。&lt;/p&gt;
-&lt;p&gt;于是，使用 &lt;code&gt;_CrtSetBreakAlloc()&lt;/code&gt; 来进一步地分析。这是一个 Win32 API，它的用处是在堆上第 { 指定 } 次内存分配时，产生一次异常，调试程序从而可以接管整个程序，直接定位到是哪里的内存分配。这个 API 的调用位置，通常是在程序初始化的时候。&lt;/p&gt;
-&lt;p&gt;添加调试代码、编译、运行，调试器很顺利地捕获到了这个断点，停留在了&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetArgs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;ArgsWrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;info&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
-    &lt;span class="n"&gt;this&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;Do&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;这段代码里，先构造一个 ArgsWrapper 的 C++ 对象，然后它又作为参数，传递给 SetArgs 函数。后续地，会调用 Do …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Mon, 13 Dec 2010 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2010-12-13:/posts/2010/12/13/temporary_object_memory_leak.html</guid><category>Programming</category><category>memory leak</category></item><item><title>资源泄漏导致程序无法响应</title><link>https://cctags.github.io/posts/2010/09/08/server_unavailable.html</link><description>&lt;h3&gt;※ 问题&lt;/h3&gt;
-&lt;p&gt;程序提交测试后，发现了一个问题，某些情况下，在运行了几十个小时、甚至更长时间之后，服务端会失去响应，从而导致客户端无法连接上来。这个问题不容易重现，同时重新运行服务端后即可恢复正常。&lt;/p&gt;
-&lt;h3&gt;※ 调试&lt;/h3&gt;
-&lt;p&gt;这个问题出现过数次，但一直没有总结出固定重现的方法，且每次出现也都是长时间的运行之后，因此没有明确的解决思路。&lt;/p&gt;
-&lt;p&gt;由于没有固定重现方法，所以只能等待。在这期间，仔细分析了客户端与服务端之间连接和通信的实现代码，并无可疑之处，而且这段代码很长时间里没有修改过，所以粗略感觉下来问题不在这里。&lt;/p&gt;
-&lt;p&gt;终于等到了问题的重现！&lt;/p&gt;
-&lt;p&gt;经过仔细观察，问题出现后的现象是这样的：客户端去连接服务端，会提示连接失败；观察服务端，系统日志里出现了很多打印，其中比较值得关注的是 socket 监听失败。&lt;/p&gt;
-&lt;p&gt;服务端在开发过程中实现了日志的功能，这对问题的分析起了很大的帮助。分析日志，发现里面有很多的打开文件的错误记录，分析下来那就是打开了很多文件，以至于无法打开更多的文件，从而导致 socket 监听失败，引起客户端无法连接上来。&lt;/p&gt;
-&lt;p&gt;进入了 &lt;code&gt;/proc/&amp;lt;server pid&amp;gt;/fd/&lt;/code&gt; 这个目录，ls 了一下 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Wed, 08 Sep 2010 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2010-09-08:/posts/2010/09/08/server_unavailable.html</guid><category>Programming</category><category>memory leak</category></item><item><title>FTP 上传文件被阻塞的问题</title><link>https://cctags.github.io/posts/2010/03/13/ftp_upload_block.html</link><description>&lt;h3&gt;※ 问题&lt;/h3&gt;
-&lt;p&gt;程序里有一个功能是通过 FTP 上传升级包来完成系统的升级。&lt;/p&gt;
-&lt;p&gt;使用过程中发现，某些情况下，在某个文件升级时，进度条界面会显示正在上传，但这个过程一直在进行，不会结束。&lt;/p&gt;
-&lt;h3&gt;※ 调试&lt;/h3&gt;
-&lt;p&gt;FTP 上传的过程：升级包上传的过程实现里依次包括了使用操作系统的 “ 文件选择对话框 ” 来选择需要上传的文件、建立一个 FTP 连接、上传文件、断开 FTP 连接等。由于上传过程不是在 “ 瞬间 ” 能完成的，所以放在后台进行，前台使用一个进度条来更新状态。代码的实现很简单，开发过程中自测了多次，没有出现过问题。&lt;/p&gt;
-&lt;p&gt;是不是 FTP 服务端的问题？简单地验证了一下，结果正常。&lt;/p&gt;
-&lt;p&gt;是不是客户端程序里 FTP 组件的使用、连接等等出了问题呢？按上述步骤重新操作了一下，抓包工具里没有出现 FTP 相关的包。就是说 FTP 连接还没有开始。&lt;/p&gt;
-&lt;p&gt;尝试选择其他的文件上传，结果正常。&lt;/p&gt;
-&lt;p&gt;在经过这些操作以后 …&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Sat, 13 Mar 2010 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2010-03-13:/posts/2010/03/13/ftp_upload_block.html</guid><category>Programming</category><category>FTP</category></item><item><title>Linux 内核模块加载过程</title><link>https://cctags.github.io/posts/2009/09/17/load_kernel_module.html</link><description>
-&lt;H2&gt;0x0&lt;/H2&gt;
-
-&lt;P&gt;
-项目开发过程中，尝试加载一个内核模块时出错，查看系统日志，有以下错误信息：
-&lt;/P&gt;
-
-&lt;PRE&gt;
-  iscsi_sfnet: disagrees about version of symbol struct_module
-&lt;/PRE&gt;
-
-&lt;P&gt;
-经过调试发现，是因为这个内核模块与当前 Linux kernel 版本不一致，所以无法加载。更新版本后问题解决。
-&lt;/P&gt;
-
-&lt;H2&gt;0x1&lt;/H2&gt;
-
-&lt;P&gt;
-以下内容是在问题解决后对于内核模块加载过程的一些学习记录。
-&lt;/P&gt;
-
-&lt;OL&gt;
-&lt;LI&gt;使用 insmod 或者 modprobe 加载内核模块（需要 root 权限），比如：
-
-&lt;PRE&gt;
-  insmod hello.ko，    或者
-  modprobe hello      （需要通过 depmod 更新模块的依赖关系）
-&lt;/PRE&gt;
-
-&lt;P&gt;&lt;/P&gt;
-&lt;LI&gt;用户工具通过 &lt;CODE&gt;sys_init_module()&lt;/CODE&gt; 这个系统调用陷入内核，来完成将模块加载到内核里去的动作
-&lt;P&gt;&lt;/P&gt;
-    &lt;OL&gt;
-    &lt;LI&gt;首先，会对这个模块进行各种检查，以确保对它的加载不会影响内核的运行，包括
-    &lt;P&gt;&lt;/P&gt;
-        &lt;OL&gt;
-        &lt;LI&gt;确认文件的大小，比如最大不能超过 6MB …&lt;/li&gt;&lt;/ol&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Thu, 17 Sep 2009 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2009-09-17:/posts/2009/09/17/load_kernel_module.html</guid><category>Programming</category><category>Linux</category><category>kernel</category></item><item><title>文件系统学习笔记</title><link>https://cctags.github.io/posts/2009/02/27/filesystem_review.html</link><description>&lt;P&gt;&lt;/P&gt;
-&lt;HR NOSHADE SIZE=1&gt;
-&lt;P&gt;&lt;/P&gt;
-
-  &lt;OL&gt;
-  &lt;LI&gt;&lt;A HREF="#toc1"&gt;环境搭建&lt;/A&gt;
-    &lt;UL&gt;
-    &lt;LI&gt;&lt;A HREF="#toc2"&gt;1.1. 宿主机的安装&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc3"&gt;1.2. 虚拟机的安装&lt;/A&gt;
-    &lt;/UL&gt;
-  &lt;LI&gt;&lt;A HREF="#toc4"&gt;编译内核&lt;/A&gt;
-  &lt;LI&gt;&lt;A HREF="#toc5"&gt;文件系统相关工具的使用&lt;/A&gt;
-  &lt;LI&gt;&lt;A HREF="#toc6"&gt;文件系统的层次&lt;/A&gt;
-  &lt;LI&gt;&lt;A HREF="#toc7"&gt;VFS&lt;/A&gt;
-    &lt;UL&gt;
-    &lt;LI&gt;&lt;A HREF="#toc8"&gt;5.1. 内存里的结构&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc9"&gt;5.2. 操作&lt;/A&gt;
-    &lt;/UL&gt;
-  &lt;LI&gt;&lt;A HREF="#toc10"&gt;ext3 文件系统&lt;/A&gt;
-    &lt;UL&gt;
-    &lt;LI&gt;&lt;A HREF="#toc11"&gt;6.1. 源代码位置&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc12"&gt;6.2. 数据结构&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc13"&gt;6.3. 磁盘上的布局&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc14"&gt;6.4. inode、block 的管理&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc15"&gt;6.5. 日志&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc16"&gt;6.6. e2fsprogs&lt;/A&gt;
-    &lt;/UL&gt;
-  &lt;LI&gt;&lt;A HREF="#toc17"&gt;xfs 文件系统&lt;/A&gt;
-    &lt;UL&gt;
-    &lt;LI&gt;&lt;A HREF="#toc18"&gt;7.1. 源代码位置&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc19"&gt;7.2. 数据结构&lt;/A&gt;
-    &lt;LI&gt;&lt;A HREF="#toc20"&gt;7.3. 磁盘上的布局 …&lt;/a&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 27 Feb 2009 06:00:00 +0800</pubDate><guid isPermaLink="false">tag:cctags.github.io,2009-02-27:/posts/2009/02/27/filesystem_review.html</guid><category>Programming</category><category>Linux</category><category>kernel</category><category>filesystem</category></item></channel></rss>
+&lt;p&gt;虽然以下写法也是允许的，并且渲染的结果是一样的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;1.&lt;/span&gt; First item
+&lt;span class="k"&gt;1 …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">cctags</dc:creator><pubDate>Fri, 26 Apr 2013 08:18:00 +0800</pubDate><guid>tag:cctags.github.io,2013-04-26:/posts/2013/04/26/vim_insert_numbered_list.html</guid><category>Tools</category><category>vim</category><category>markdown</category></item></channel></rss>

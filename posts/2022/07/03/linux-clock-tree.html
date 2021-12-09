@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux clock tree 的实现 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/07/03/linux-clock-tree.html">
+        <meta name="twitter:title" content="Linux clock tree 的实现">
+        <meta name="twitter:description" content="1. Linux 里已经预定义了几种 clock clk-fixed-rate: basic fixed-rate clock that cannot gate, 比如固定频率的 oscillator clk-fixed-factor: basic fixed multiplier and divider clock that cannot gate，比如从上一级按固定比例分频 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/07/03/linux-clock-tree.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux clock tree 的实现">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="1. Linux 里已经预定义了几种 clock clk-fixed-rate: basic fixed-rate clock that cannot gate, 比如固定频率的 oscillator clk-fixed-factor: basic fixed multiplier and divider clock that cannot gate，比如从上一级按固定比例分频 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/07/03/linux-clock-tree.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html" rel="bookmark" title="Permalink to Linux clock tree 的实现">Linux clock tree 的实现</a>
+                </h2>
+                <p class="post-meta">
+                    2022-07-03 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2022/07/03/linux-clock-tree.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>1. Linux 里已经预定义了几种 clock</strong></p>
+<ul>
+<li><strong>clk-fixed-rate</strong>: basic fixed-rate clock that cannot gate, 比如固定频率的 oscillator</li>
+<li><strong>clk-fixed-factor</strong>: basic fixed multiplier and divider clock that cannot gate，比如从上一级按固定比例分频</li>
+<li><strong>clk-divider</strong>: basic adjustable divider clock that cannot gate，用于分频</li>
+<li><strong>clk-composite</strong>，</li>
+<li><strong>clk-gate</strong>: basic gatable clock which can gate and ungate it's ouput</li>
+<li><strong>clk-mux</strong>: basic adjustable multiplexer clock that cannot gate，用于多路选择</li>
+</ul>
+<p><strong>2. 实现一个 clock 的驱动</strong></p>
+<p>对于厂商自己的 clock，上面这些预定义的就没法直接用了，需要添加驱动来支持。实现过程大概是这样的：</p>
+<p>比如，添加 <code>drivers/clk/clk-&lt;vendor&gt;.c</code> 实现：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 定义自己的 clock 结构，比如</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">my_clk</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">clk_hw</span><span class="w"> </span><span class="n">hw</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 寄存器以及其他实现相关的内容</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+
+<span class="o">&lt;</span><span class="n">vendor</span><span class="o">&gt;</span><span class="n">_clk_init</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 初始化 clk_init_data，包括 name、parent_names、clk_ops 等等</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">clk_init_data</span><span class="w"> </span><span class="n">init</span><span class="p">;</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="c1">// 注册 clock</span>
+<span class="w">    </span><span class="n">clk_hw_register</span><span class="p">(...,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">my_clk</span><span class="o">-&gt;</span><span class="n">hw</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>其中，clock 的 name 以及 parent_names，决定了在 clock tree 里的具体位置。</p>
+<p>而在 clk_ops 回调里，需要实现：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 查询硬件寄存器的信息，计算 clock 的频率</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="nf">long</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">recalc_rate</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">clk_hw</span><span class="w"> </span><span class="o">*</span><span class="n">hw</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">parent_rate</span><span class="p">);</span>
+
+<span class="c1">// 返回能支持的最接近的频率</span>
+<span class="kt">long</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">round_rate</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">clk_hw</span><span class="w"> </span><span class="o">*</span><span class="n">hw</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">rate</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="o">*</span><span class="n">parent_rate</span><span class="p">);</span>
+
+<span class="c1">// 把频率设置到硬件寄存器</span>
+<span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">set_rate</span><span class="p">)(</span><span class="k">struct</span><span class="w"> </span><span class="nc">clk_hw</span><span class="w"> </span><span class="o">*</span><span class="n">hw</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">rate</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">parent_rate</span><span class="p">);</span>
+</code></pre></div>
+
+<p>这样就完成了 clock 的封装。对于依赖这个 clock 的设备的驱动来说，只需要通过 Linux 里标准的 clk_xxx API 来访问，而不需要关心 clock 的实现细节，比如 clk_get_rate() 获取时钟频率，等等。</p>
+<p><strong>3. 使用 clock</strong></p>
+<p>在使用的时候，有多种方式，比如：</p>
+<p><strong>(1) 在 dts 里定义，比如：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nl">osc</span><span class="p">:</span><span class="w"> </span><span class="nf">oscillator</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kr">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;fixed-clock&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">clock-frequency</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mi">24000000</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">};</span>
+
+<span class="nl">mmc_clk</span><span class="p">:</span><span class="w"> </span><span class="nf">mmc_clk</span><span class="o">@</span><span class="mi">12340000</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kr">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;vendor,mmc-clock&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kr">reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x12340000</span><span class="w"> </span><span class="mh">0x100</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">clocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;&amp;</span><span class="na">osc</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p>这里定义了两个 clock。一个是 24MHz 固定频率的 osc，另一个是 mmc_clk，由刚才实现的 clock 代码来驱动，并且是以 osc 为 parent input。</p>
+<p>这样，在具体设备的驱动里，就可以引用这个 clock 了，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="nl">mmc0</span><span class="p">:</span><span class="w"> </span><span class="nf">mmc</span><span class="o">@</span><span class="mi">56780000</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">clocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;&amp;</span><span class="na">mmc_clk</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p><strong>(2) 定义在驱动实现里 :</strong></p>
+<p>对应的 <code>drivers/clk/clk-&lt;vendor&gt;.c</code> 文件里，除了实现 clock 的驱动，另外也要定义 clock tree：</p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="n">vendor</span><span class="o">&gt;</span><span class="n">_clk_init</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">clk_hw</span><span class="w"> </span><span class="o">*</span><span class="n">hws</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">hws</span><span class="p">[</span><span class="n">xx</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clk_hw_register_fixed_rate</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;osc&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">24000000</span><span class="p">);</span>
+<span class="w">    </span><span class="n">hws</span><span class="p">[</span><span class="n">yy</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vendor_clk_hw_register</span><span class="p">(</span><span class="s">&quot;mmc_clk&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="s">&quot;osc&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="c1">// 可选，如果导出，可以从 clk_get_sys(..., &quot;mmc_clk&quot;) 查询到</span>
+<span class="w">    </span><span class="n">clk_hw_register_clkdev</span><span class="p">(...,</span><span class="w"> </span><span class="s">&quot;mmc_clk&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>其中， xx、yy 定义了对应 clock 的 dt-bindings，通常在 <code>include/dt-bindings/clock/</code> 目录下。</p>
+<p>这时，对应的 dts 是这样引用：</p>
+<div class="highlight"><pre><span></span><code><span class="nl">clks</span><span class="p">:</span><span class="w"> </span><span class="nf">clock-controller</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="o">#</span><span class="n">clock-cells</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="kr">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;vender,xxx&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">};</span>
+
+<span class="nl">mmc0</span><span class="p">:</span><span class="w"> </span><span class="nf">mmc</span><span class="o">@</span><span class="mi">56780000</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">clocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;&amp;</span><span class="na">clks</span><span class="w"> </span><span class="na">yy</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p><strong>4. 查看 clock</strong></p>
+<p>可以通过 debugfs，查看系统里的 clock tree，比如：</p>
+<div class="highlight"><pre><span></span><code>mount<span class="w"> </span>-t<span class="w"> </span>debugfs<span class="w"> </span>debugfs<span class="w"> </span>/proc/sys/debug
+<span class="nb">cd</span><span class="w"> </span>/proc/sys/debug/clk
+cat<span class="w"> </span>clk_summary
+</code></pre></div>
+
+<p>可以看到每个 clock 的名字，当前频率，以及相互之间的关系等等信息：</p>
+<div class="highlight"><pre><span></span><code>                 enable  prepare  protect                                duty  hardware
+   clock          count    count    count        rate   accuracy phase  cycle    enable
+---------------------------------------------------------------------------------------
+ osc                  2        2        0    24000000          0     0  50000         Y
+    mmc_clk           1        1        0    30000000          0     0  50000         Y
+...
+</code></pre></div>
+
+<p><strong>参考资料</strong></p>
+<ul>
+<li>linux/drivers/clk/*.c</li>
+<li>Documentation/devicetree/bindings/clock/clock-bindings.txt</li>
+<li><a href="http://www.wowotech.net/pm_subsystem/clk_overview.html">http://www.wowotech.net/pm_subsystem/clk_overview.html</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">Linux Kernel pr_debug(), dev_dbg() 以及动态调试</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html">
+                &laquo; 定制 SoC 的 U-Boot SPL image type 类型
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">
+                Linux PWM 驱动的实现 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

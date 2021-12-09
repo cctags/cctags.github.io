@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
+
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/10/28/change_the_background_color_in_pdf_reader.html" rel="bookmark" title="Permalink to Change the Background Color in PDF Reader">Change the Background Color in PDF Reader</a>
+                </h2>
+                <p class="post-meta">
+                    2015-10-28 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/10/28/change_the_background_color_in_pdf_reader.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>以 Adobe Reader 为例，从主菜单选择：编辑 ∕ 首选项 ∕ 辅助工具 ∕ 自定义颜色 ∕ 页面背景 ∕ 其它颜色，比如色调 45、饱和度 35、亮度 165。</p>
+<p>参考：</p>
+<ul>
+<li><a href="http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2">http://jingyan.baidu …</a></li></ul>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/09/30/git_p4_submit_error.html" rel="bookmark" title="Permalink to Git-P4 Submit Error">Git-P4 Submit Error</a>
+                </h2>
+                <p class="post-meta">
+                    2015-09-30 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/vcs.html">VCS</a>
+                    &middot; <a href="./posts/2015/09/30/git_p4_submit_error.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <P>
+提交代码时遇到了这样的错误：
+</P>
+
+<PRE>
+  $ git p4 submit
+  Error: Cannot locate perforce checkout of //XXX/YYY/ZZZ/ in client view
+</PRE>
+
+<P>
+一下子还真没想明白是哪里不对。
+</P>
+<P>
+后来想明白了，需要 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/09/18/setup_comments_with_disqus.html" rel="bookmark" title="Permalink to Setup Comments with Disqus in Pelican">Setup Comments with Disqus in Pelican</a>
+                </h2>
+                <p class="post-meta">
+                    2015-09-18 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/09/18/setup_comments_with_disqus.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="https://disqus.com/">Disqus</a> 是一个外挂的评论系统，对于像 GitHub Pages 这种静态网页来说，非常实用。</p>
+<p>找到一个文档 <a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html</a>，把<a href="https://disqus.com/">Disqus</a>的使用步骤写得很清 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/09/16/limit_cpu_usage.html" rel="bookmark" title="Permalink to Limit CPU Usage">Limit CPU Usage</a>
+                </h2>
+                <p class="post-meta">
+                    2015-09-16 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/09/16/limit_cpu_usage.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>这里有一些网页，描述了如何限制 CPU 的使用：</p>
+<ul>
+<li>Restricting process CPU usage using nice, cpulimit, and cgroups <a href="http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups">http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups</a></li>
+<li>CPU Usage Limiter for Linux <a href="http://cpulimit.sourceforge.net/">http://cpulimit.sourceforge.net/</a></li>
+<li><a href="https://github.com/opsengine/cpulimit">https://github.com/opsengine/cpulimit …</a></li></ul>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/09/15/the_linux_cpu_load.html" rel="bookmark" title="Permalink to What is the Linux CPU Load">What is the Linux CPU Load</a>
+                </h2>
+                <p class="post-meta">
+                    2015-09-15 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/09/15/the_linux_cpu_load.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>The <strong>load average</strong> represents the <strong>average</strong> system load over a period of time. It conventionally appears in the form of three numbers which represent the system load during the last one-, five-, and fifteen-minute periods. <a href="https://en.wikipedia.org/wiki/Load_(computing)">https://en.wikipedia.org/wiki/Load_(computing)</a></p>
+<p>按照网上看到的一 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/07/23/using_git_p4.html" rel="bookmark" title="Permalink to Using Git-P4">Using Git-P4</a>
+                </h2>
+                <p class="post-meta">
+                    2015-07-23 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/vcs.html">VCS</a>
+                    &middot; <a href="./posts/2015/07/23/using_git_p4.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <P>
+平时一直使用 <A HREF="https://git-scm.com/">git</A>，习惯了各种离线操作和强大的分支功能，所以总觉得要比 <A HREF="http://www.perforce.com/">Perforce / p4</A> 好用太多。
+</P>
+<P>
+对于目前项目里用到的 p4 仓库 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/07/15/sysfs.html" rel="bookmark" title="Permalink to Sysfs">Sysfs</a>
+                </h2>
+                <p class="post-meta">
+                    2015-07-15 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/07/15/sysfs.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>在 linux 里，<a href="https://en.wikipedia.org/wiki/Sysfs">sysfs</a> 和 <a href="https://en.wikipedia.org/wiki/Procfs">procfs</a> 都是没有存储介质的虚拟文件系统，用于内核与用户态的交互。以下是摘自《Professional Linux Kernel Architecture》的一段话，对两者在概 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/07/10/linuxtoy_uses_pelican.html" rel="bookmark" title="Permalink to More Use of Pelican">More Use of Pelican</a>
+                </h2>
+                <p class="post-meta">
+                    2015-07-10 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/07/10/linuxtoy_uses_pelican.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>经常会去 <a href="https://linuxtoy.org/">LinuxTOY</a>, 看看有哪些新的 Linux 相关的信息。</p>
+<p>好吧，最近它也已经 <a href="https://linuxtoy.org/archives/moving-to-pelican.html">从 WordPress 迁移到 Pelican</a>，现在访问速度快了不是一点点。</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/18/upgrade_to_pelican_3_6.html" rel="bookmark" title="Permalink to Upgrade to Pelican 3.6">Upgrade to Pelican 3.6</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-18 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/06/18/upgrade_to_pelican_3_6.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="http://blog.getpelican.com/pelican-3.6-released.html">Pelican 3.6</a> 发布了。</p>
+<p>可以使用万能的 <code>easy_install</code> 来更新：</p>
+<div class="highlight"><pre><span></span><code>$ easy_install --upgrade pelican
+Searching for pelican
+Reading http://pypi.python.org/simple/pelican/
+Best match: pelican 3.6.0
+Processing pelican-3.6.0-py2.7.egg
+...
+
+$ pelican --version
+3.6.0
+</code></pre></div>
+
+<p>浏览了 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/10/subprocess_popen_use.html" rel="bookmark" title="Permalink to Use subprocess.Popen class in Python">Use subprocess.Popen class in Python</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-10 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/06/10/subprocess_popen_use.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="https://docs.python.org/2/library/subprocess.html#popen-constructor">subprocess.Popen</a> 是 Python 标准库提供的一个类，用于进程的创建、管理以及数据交互。在实现上，它尽可能地屏蔽了操作系统之间相关语义 …</p>
+            </div>
+        </section>
+    </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index8.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 9/12</li>
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index10.html">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
+
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

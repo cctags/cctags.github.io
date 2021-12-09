@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux Virtual Memory Split with 3.5G/0.5G &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2016/09/09/linux-virtual-memory-split-with-35-05.html">
+        <meta name="twitter:title" content="Linux Virtual Memory Split with 3.5G/0.5G">
+        <meta name="twitter:description" content="问题 项目里用到的一款开发板，配置的是 32 位 ARM 处理器。因为业务程序相关方面的实际开销，需要在用户态虚拟地址空间 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2016/09/09/linux-virtual-memory-split-with-35-05.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux Virtual Memory Split with 3.5G/0.5G">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 项目里用到的一款开发板，配置的是 32 位 ARM 处理器。因为业务程序相关方面的实际开销，需要在用户态虚拟地址空间 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2016/09/09/linux-virtual-memory-split-with-35-05.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2016/09/09/linux-virtual-memory-split-with-35-05.html" rel="bookmark" title="Permalink to Linux Virtual Memory Split with 3.5G/0.5G">Linux Virtual Memory Split with 3.5G/0.5G</a>
+                </h2>
+                <p class="post-meta">
+                    2016-09-09 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2016/09/09/linux-virtual-memory-split-with-35-05.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>项目里用到的一款开发板，配置的是 32 位 ARM 处理器。因为业务程序相关方面的实际开销，需要在用户态虚拟地址空间里使用到大量内存，实际可能要超过 3GB，这引起了内存分配上的错误。</p>
+<h2>内核相关模块</h2>
+<p>Linux kernel 里，会把 4GB 的虚拟地址空间，划分成用户和内核两个部分，一般低地址是用户虚拟地址空间，高地址是内核虚拟地址窠（至于这两个部分里更具体的划分情况，由于跟这里要解决的问题关系不大，就不展开了），如下图：</p>
+<div class="highlight"><pre><span></span><code>  +---------------+ &lt;---- 4G
+  |               |
+  | Kernel Space  |
+  |               |
+  +---------------+ &lt;---- PAGE_OFFSET
+  |               |
+  |               |
+  | User Space    |
+  |               |
+  |               |
+  +---------------+ &lt;---- 0
+</code></pre></div>
+
+<p>Linux kernel 内核代码里有个选项 “Memory Split”，用来配置 4GB 的虚拟地址空间里，用户和内核虚拟地址空间的访问范围：</p>
+<div class="highlight"><pre><span></span><code>choice
+        prompt &quot;Memory split&quot;
+        default VMSPLIT_3G
+        help
+          Select the desired split between kernel and user memory.
+
+          If you are not absolutely sure what you are doing, leave this
+          option alone!
+
+        config VMSPLIT_3G
+                bool &quot;3G/1G user/kernel split&quot;
+        config VMSPLIT_2G
+                bool &quot;2G/2G user/kernel split&quot;
+        config VMSPLIT_1G
+                bool &quot;1G/3G user/kernel split&quot;
+endchoice
+
+config PAGE_OFFSET
+        hex
+        default 0x40000000 if VMSPLIT_1G
+        default 0x80000000 if VMSPLIT_2G
+        default 0xC0000000
+</code></pre></div>
+
+<p>一共有三种选择，结合 <code>PAGE_OFFSET</code> 的定义，表示的含义是这样的：</p>
+<ol>
+<li>比如 <code>VMSPLIT_3G</code> 表示用户虚拟地址空间大小是 3GB，范围从 [0, 3G)；内核虚拟地址空间大小是 1GB，范围是 [3G, 4G)。</li>
+<li><code>VMSPLIT_2G</code> 和 <code>VMSPLIT_1G</code> 相应的是另外两种定义。</li>
+</ol>
+<p>通常情况下，默认是用 <code>VMSPLIT_3G</code>。如果内核虚拟地址空间里开销比较大，可以选择另外两个，这就需要缩小用户虚拟地址空间的范围。</p>
+<h2>针对项目实际情况，调整虚拟内存地址范围</h2>
+<p>目前项目里遇到的情况，即使 3GB 的用户虚拟地址空间，仍然不够用。</p>
+<p>在已知选项无法满足实际需求的情况下，准备动手修改内核的实现，重新划分范围。以下是 <code>3.5G/0.5G</code> 的实现（针对的是 3.x 版本）：</p>
+<div class="highlight"><pre><span></span><code><span class="gh">diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig</span>
+<span class="gd">--- a/arch/arm/Kconfig</span>
+<span class="gi">+++ b/arch/arm/Kconfig</span>
+<span class="gu">@@ -1797,25 +1797,28 @@ choice</span>
+<span class="w"> </span>       help
+<span class="w"> </span>         Select the desired split between kernel and user memory.
+
+<span class="w"> </span>         If you are not absolutely sure what you are doing, leave this
+<span class="w"> </span>         option alone!
+
+<span class="gi">+       config VMSPLIT_35G</span>
+<span class="gi">+               bool &quot;3.5G/0.5G user/kernel split&quot;</span>
+<span class="w"> </span>       config VMSPLIT_3G
+<span class="w"> </span>               bool &quot;3G/1G user/kernel split&quot;
+<span class="w"> </span>       config VMSPLIT_2G
+<span class="w"> </span>               bool &quot;2G/2G user/kernel split&quot;
+<span class="w"> </span>       config VMSPLIT_1G
+<span class="w"> </span>               bool &quot;1G/3G user/kernel split&quot;
+<span class="w"> </span>endchoice
+
+<span class="w"> </span>config PAGE_OFFSET
+<span class="w"> </span>       hex
+<span class="w"> </span>       default 0x40000000 if VMSPLIT_1G
+<span class="w"> </span>       default 0x80000000 if VMSPLIT_2G
+<span class="gd">-       default 0xC0000000</span>
+<span class="gi">+       default 0xC0000000 if VMSPLIT_3G</span>
+<span class="gi">+       default 0xE0000000</span>
+
+<span class="w"> </span>config NR_CPUS
+<span class="w"> </span>       int &quot;Maximum number of CPUs (2-32)&quot;
+<span class="w"> </span>       range 2 32
+<span class="w"> </span>       depends on SMP
+<span class="w"> </span>       default &quot;4&quot;
+<span class="gh">diff --git a/arch/arm/mm/pgd.c b/arch/arm/mm/pgd.c</span>
+<span class="gd">--- a/arch/arm/mm/pgd.c</span>
+<span class="gi">+++ b/arch/arm/mm/pgd.c</span>
+<span class="gu">@@ -44,14 +44,20 @@ pgd_t *pgd_alloc(struct mm_struct *mm)</span>
+<span class="w"> </span>       memset(new_pgd, 0, USER_PTRS_PER_PGD * sizeof(pgd_t));
+
+<span class="w"> </span>       /*
+<span class="w"> </span>        * Copy over the kernel and IO PGD entries
+<span class="w"> </span>        */
+<span class="w"> </span>       init_pgd = pgd_offset_k(0);
+<span class="gi">+</span>
+<span class="gi">+#if defined(CONFIG_VMSPLIT_35G) &amp;&amp; defined(CONFIG_ARM_LPAE)</span>
+<span class="gi">+       memset(new_pgd + USER_PTRS_PER_PGD, 0,</span>
+<span class="gi">+                      (PTRS_PER_PGD - USER_PTRS_PER_PGD) * sizeof(pgd_t));</span>
+<span class="gi">+#else</span>
+<span class="w"> </span>       memcpy(new_pgd + USER_PTRS_PER_PGD, init_pgd + USER_PTRS_PER_PGD,
+<span class="w"> </span>                      (PTRS_PER_PGD - USER_PTRS_PER_PGD) * sizeof(pgd_t));
+<span class="gi">+#endif</span>
+
+<span class="w"> </span>       clean_dcache_area(new_pgd, PTRS_PER_PGD * sizeof(pgd_t));
+
+<span class="w"> </span>#ifdef CONFIG_ARM_LPAE
+<span class="w"> </span>       /*
+<span class="w"> </span>        * Allocate PMD table for modules and pkmap mappings.
+<span class="gh">diff --git a/arch/arm/mm/proc-v7-3level.S b/arch/arm/mm/proc-v7-3level.S</span>
+<span class="gd">--- a/arch/arm/mm/proc-v7-3level.S</span>
+<span class="gi">+++ b/arch/arm/mm/proc-v7-3level.S</span>
+<span class="gu">@@ -113,25 +113,33 @@ ENDPROC(cpu_v7_set_pte_ext)</span>
+<span class="w"> </span>       ALT_UP(orr      \tmp, \tmp, #TTB_FLAGS_UP &lt;&lt; 16)
+<span class="w"> </span>       /*
+<span class="w"> </span>        * TTBR0/TTBR1 split (PAGE_OFFSET):
+<span class="w"> </span>        *   0x40000000: T0SZ = 2, T1SZ = 0 (not used)
+<span class="w"> </span>        *   0x80000000: T0SZ = 0, T1SZ = 1
+<span class="w"> </span>        *   0xc0000000: T0SZ = 0, T1SZ = 2
+<span class="gi">+        *   0xe0000000: T0SZ = 0, T1SZ = 3</span>
+<span class="w"> </span>        *
+<span class="w"> </span>        * Only use this feature if PHYS_OFFSET &lt;= PAGE_OFFSET, otherwise
+<span class="w"> </span>        * booting secondary CPUs would end up using TTBR1 for the identity
+<span class="w"> </span>        * mapping set up in TTBR0.
+<span class="w"> </span>        */
+<span class="w"> </span>       bhi     9001f                           @ PHYS_OFFSET &gt; PAGE_OFFSET?
+<span class="gi">+#if defined CONFIG_VMSPLIT_35G</span>
+<span class="gi">+       orr     \tmp, \tmp, #0x00030000         @ TTBCR.T1SZ</span>
+<span class="gi">+#else</span>
+<span class="w"> </span>       orr     \tmp, \tmp, #(((PAGE_OFFSET &gt;&gt; 30) - 1) &lt;&lt; 16) @ TTBCR.T1SZ
+<span class="gi">+#endif</span>
+<span class="w"> </span>#if defined CONFIG_VMSPLIT_2G
+<span class="w"> </span>       /* PAGE_OFFSET == 0x80000000, T1SZ == 1 */
+<span class="w"> </span>       add     \ttbr1, \ttbr1, #1 &lt;&lt; 4         @ skip two L1 entries
+<span class="w"> </span>#elif defined CONFIG_VMSPLIT_3G
+<span class="w"> </span>       /* PAGE_OFFSET == 0xc0000000, T1SZ == 2 */
+<span class="w"> </span>       add     \ttbr1, \ttbr1, #4096 * (1 + 3) @ only L2 used, skip pgd+3*pmd
+<span class="gi">+#elif defined CONFIG_VMSPLIT_35G</span>
+<span class="gi">+       /* PAGE_OFFSET == 0xe0000000, T1SZ == 3 */</span>
+<span class="gi">+       add     \ttbr1, \ttbr1, #2048 * (2 + 7) @ only L2 used, skip pgd+(3+1/2)*pmd</span>
+<span class="w"> </span>#endif
+<span class="w"> </span>       /* CONFIG_VMSPLIT_1G does not need TTBR1 adjustment */
+<span class="w"> </span>9001:  mcr     p15, 0, \tmp, c2, c0, 2         @ TTB control register
+<span class="w"> </span>       mcrr    p15, 1, \ttbr1, \zero, c2       @ load TTBR1
+<span class="w"> </span>       .endm
+</code></pre></div>
+
+<p>这个实现里包括了以下几个方面：</p>
+<ol>
+<li>添加了一个选项叫 <code>VMSPLIT_35G</code>，是 <code>3.5G/0.5G</code> 的范围划分；</li>
+<li>相应的 <code>PAGE_OFFSET</code> 需要配置为 0xE0000000（也就是 3.5G），即用户虚拟地址空间的范围 [0, 0xE0000000) 和 [0xE0000000，4G)；</li>
+<li>寄存器 <code>ttbr1</code> 指向新的页目录里的位置（或者说是偏移），因为内核虚拟地址入口调整后，对应页目录里的位置会发生变化；当然，因为用户虚拟地址入口没有变化，所以 <code>ttbr0</code> 不需要调整；</li>
+</ol>
+<p>应用这个补丁后，从项目的 <code>defconfig</code> 配置文件里，选中这里的 <code>VMSPLIT_35G</code>，重新编译生成内核即可。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>,                 <a href="../../../../tag/mm.html">mm</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html">Boot With Small Pages on RISC-V</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2016/06/18/btc-algorithm.html">
+                &laquo; Bitcoin (BTC) 算法
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html">
+                vim 里打开 file:line &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

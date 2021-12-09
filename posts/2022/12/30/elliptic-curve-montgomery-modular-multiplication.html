@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>椭圆曲线和蒙哥马利算法的一些记录 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html">
+        <meta name="twitter:title" content="椭圆曲线和蒙哥马利算法的一些记录">
+        <meta name="twitter:description" content="0. 数论知识 以下有些地方的同余符号用了等号代替，或者省略了 \(\pmod{m}\) 的写法。另外，除非特别说明，代码都是用 Python 实现。 0.1 …if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) { var align = "left", indent = "0em", linebreak = "false"; if (false) { align = (screen.width">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="椭圆曲线和蒙哥马利算法的一些记录">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0. 数论知识 以下有些地方的同余符号用了等号代替，或者省略了 \(\pmod{m}\) 的写法。另外，除非特别说明，代码都是用 Python 实现。 0.1 …if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) { var align = "left", indent = "0em", linebreak = "false"; if (false) { align = (screen.width">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html" rel="bookmark" title="Permalink to 椭圆曲线和蒙哥马利算法的一些记录">椭圆曲线和蒙哥马利算法的一些记录</a>
+                </h2>
+                <p class="post-meta">
+                    2022-12-30 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>0. 数论知识</h2>
+<p>以下有些地方的同余符号用了等号代替，或者省略了 <span class="math">\(\pmod{m}\)</span> 的写法。另外，除非特别说明，代码都是用 Python 实现。</p>
+<p><strong>0.1. 同余（Modulo）</strong></p>
+<p>给定一个正整数 m，如果两个整数 a 和 b 分别除以 m 得到的余数相同，那么 a 和 b 对模 m 同余。记作 <span class="math">\(a \equiv b \pmod{m}\)</span></p>
+<p>比如，7 和 29 对模 11 同余，<span class="math">\(7 \equiv 29 \pmod{11}\)</span></p>
+<p>验算：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="mi">7</span> <span class="o">%</span> <span class="mi">11</span>
+<span class="go">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">29</span> <span class="o">%</span> <span class="mi">11</span>
+<span class="go">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">7</span> <span class="o">%</span> <span class="mi">11</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">29</span> <span class="o">%</span> <span class="mi">11</span><span class="p">)</span>
+<span class="go">True</span>
+</code></pre></div>
+
+<p><strong>0.2. 模逆（Modular Inverse）</strong></p>
+<p>对于非零整数 a，m，如果存在 b 使得 <span class="math">\(a \times b \equiv 1 \pmod{m}\)</span>，那么就称 b 是 a 在模 m 下的逆，记作 <span class="math">\(a^{-1}\)</span></p>
+<p>比如，对于模 11，在 <code>(0, 11)</code> 范围里，可以计算每一个数的逆：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">1: 1</span>
+<span class="go">2: 6</span>
+<span class="go">3: 4</span>
+<span class="go">4: 3</span>
+<span class="go">5: 9</span>
+<span class="go">6: 2</span>
+<span class="go">7: 8</span>
+<span class="go">8: 7</span>
+<span class="go">9: 5</span>
+<span class="go">10: 10</span>
+</code></pre></div>
+
+<p>验算也很简单：<span class="math">\(1 \times 1 \equiv 1 \pmod{11}\)</span>，<span class="math">\(2 \times 6 = 12 \equiv 1 \pmod{11}\)</span>，……，<span class="math">\(10 \times 10 =  100 \equiv 1 \pmod{11}\)</span>。</p>
+<p>并且，在这个范围里，逆是唯一的。反证，如果 a 存在两个不相等的逆 <span class="math">\(b_{1}\)</span> 和 <span class="math">\(b_{2}\)</span>，那么 <span class="math">\(a \times b_{1} \equiv a \times b_{2} \pmod{11} \Longrightarrow a \times (b_{1} - b_{2}) \equiv 0 \pmod{11} \Longrightarrow b_{1} - b{2} \equiv 0 \pmod{11}\)</span>  对于指定范围里的两个数，这里显然矛盾了。当然，在不指定范围时，如果存在逆，显然存在无穷多个。</p>
+<p><strong>0.3. 扩展欧几里德算法（Extended Euclidean）</strong></p>
+<p>扩展欧几里德算法用来求不定方程 <span class="math">\(ax + by = c\)</span> 的解，其中 c 是 a 和 b 的最大公约数。</p>
+<p>比如 <span class="math">\(7x+11y=1\)</span>：</p>
+<div class="highlight"><pre><span></span><code>从 11 和 7 入手：
+
+(1) 11 = 1 * 7 + 4   // 11 除以 7，余 4
+(2)  7 = 1 * 4 + 3   //  7 除以 4，余 3
+(3)  4 = 1 * 3 + 1   //  4 除以 3，余 1
+(4)  3 = 3 * 1       //  3 除以 1，余 0，结束
+
+从 (3) 开始：
+
+1 = 4 - 1 * 3                       // 由 (3) 移项得到
+  = (11 - 1 * 7) - 1 * (7 - 1 * 4)  // 由 (1) 移项得到 4 = 11 - 1 * 7，并替换
+                                    // 由 (2) 移项得到 3 =  7 - 1 * 4，并替换
+  = 11 - 7 - 7 + 4                  // 整理
+  = 11 - 2 * 7 + (11 - 1 * 7)       // 替换
+  = 2 * 11 - 3 * 7                  // 整理
+</code></pre></div>
+
+<p>所以 x0 = -3, y0 = 2。由于不定方程的解不唯一，可以继续求得通解公式 x = -3 + 11t, y = 2 - 7t</p>
+<p>在通解公式基础上求逆：</p>
+<div class="highlight"><pre><span></span><code>x = -3 + 11t
+
+inv(7) = (-3 + 11t) (mod 11) = (-3) % 11 = 8
+
+验算：7 * 8 % 11 = 1, OK.
+</code></pre></div>
+
+<p>扩展欧几里德算法的实现：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">egcd</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">egcd</span><span class="p">(</span><span class="n">b</span> <span class="o">%</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">x</span> <span class="o">-</span> <span class="p">(</span><span class="n">b</span> <span class="o">//</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">modinv</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">%=</span> <span class="n">m</span>
+    <span class="n">g</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">egcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">g</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;modular inverse does not exist&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="n">m</span>
+</code></pre></div>
+
+<p>使用：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">modinv</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span class="go">9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">5</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">%</span> <span class="mi">11</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modinv</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span class="go">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">7</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">%</span> <span class="mi">11</span>
+<span class="go">1</span>
+</code></pre></div>
+
+<p>其实，在高版本的 Python 里，<a href="https://docs.python.org/3/library/functions.html#pow">pow() 接口</a> 已经内置了求逆的算法实现，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">pow</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span class="go">9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">pow</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span class="go">8</span>
+</code></pre></div>
+
+<h2>1. 椭圆曲线（Elliptic Curve）</h2>
+<p>椭圆曲线是指方程为 <span class="math">\(y^2 = x^3 + ax + b\)</span> （其中 a 和 b 为常数）的曲线，其中 <span class="math">\((x, y) \in \mathbb{R}^2\)</span>。</p>
+<p>椭圆曲线在平面直角坐标系里的图像，可以在线搜索到，比如<a href="https://en.wikipedia.org/wiki/Elliptic_curve">维基 Elliptic curve</a>。</p>
+<p><strong>1.1. 点加（Point Addition）：</strong></p>
+<p>取椭圆曲线上的两个点：<span class="math">\(P(x_1, y_1), Q(x_2, y_2)\)</span>。连接 P、Q 两点的直线（如果 P == Q，取经过该点的切线），与椭圆曲线交于第三点 G，过 G 点作垂直于 X 轴的直线，将过椭圆曲线另一点 R（一般是关于 X 轴对称的点），R 点则被定义为 P+Q 的结果，即 <span class="math">\(P + Q = R\)</span>。</p>
+<p><strong>1.2. 计算：</strong></p>
+<p>当 P != Q 时，直线的斜率为 <span class="math">\(\lambda = \frac{y_2-y_1}{x_2-x_1}\)</span>；当 P = Q 时，直线（切线）的斜率为：<span class="math">\(\lambda = \frac{3x_1^2 + a}{2 y_1}\)</span>，所以 R 的坐标：</p>
+<div class="math">$$
+\begin{cases}
+x_r = \lambda^2 - x_1 - x_2 \\
+y_r = \lambda (x_1 - x_r) - y_1
+\end{cases} \\
+$$</div>
+<h2>2. 有限域上的椭圆曲线</h2>
+<p>取一个素数 p，整数 a、b，将以上实数域 <span class="math">\(\mathbb{R}\)</span> 改为有限素数域 <span class="math">\(\mathbb{F}_p: {0, 1, 2, \cdots, p-1}\)</span>，等号改为关于模 p 的同余，除法改为模逆运算，即：<span class="math">\(y^2 \equiv x^3 + ax + b \pmod{p}\)</span>，其中 <span class="math">\((x, y) \in \mathbb{F}_p^2\)</span></p>
+<p>比如取 <span class="math">\(p = 11, a = 0, b = 1\)</span>，就得到了一个椭圆曲线的方程 <span class="math">\(y^2 = x^3 + 1\)</span>，考察 <span class="math">\(\mathbb{F}_{11}\)</span> 里的每一个数，可以知道以下这些点在线上：<span class="math">\((0, 1), (0, 10), (2, 3), (2, 8), (5, 4), (5, 7), (7, 5), (7, 6), (9, 2), (9, 9), (10, 0)\)</span>。</p>
+<p>验算如下：比如 <span class="math">\((0, 1)\)</span>：<span class="math">\(x^3+1=0^3+1=1\)</span>，<span class="math">\(y^2=1^2=1\)</span>，符合；再比如 <span class="math">\((5, 7)\)</span>： <span class="math">\(x^3+1=5^3+1=126 \equiv 5 \pmod{11}\)</span>，同时 <span class="math">\(y^2=7^2=49 \equiv 5 \pmod{11}\)</span>，也符合；等等。</p>
+<p><strong>2.1. 点加运算的封闭性</strong></p>
+<p>跟实数域上一样，有限素域上的点加，也符合运算的封闭性，即点加的结果，仍然在曲线上。比如：</p>
+<p><strong>例 1</strong>，取两个点 <span class="math">\((0, 1), (2, 3)\)</span>：</p>
+<div class="math">$$
+\lambda = \frac{y_2-y_1}{x_2-x_1} = (3-1) \times (2-0)^{-1} = 2 \times 2^{-1} = 2 \times 6 = 12 = 1 \\
+x = \lambda^2 - x_1 - x_2 = 1^1 - 0 - 2 = -1 = 10 \\
+y = \lambda (x_1 - x) - y_1 = 1 \times (0 - 10) - 1 = -11 = 0
+$$</div>
+<p>所以点加的结果是 <span class="math">\((0, 1) + (2, 3) = (10, 0)\)</span>，它是曲线上的点。</p>
+<p><strong>例 2</strong>，取同一个点 <span class="math">\((7, 6)\)</span> 做点加：</p>
+<div class="math">$$
+\lambda = \frac{3x_1^2 + a}{2 y_1} = (3 \times 7 ^ 2) \times (2 \times 6)^{-1} = 147 \times 12^{-1} = 4 \times 1^{-1} = 4 \times 1 = 4 \\
+x = \lambda^2 - x_1 - x_2 = 4^2 - 7 - 7 = 2 \\
+y = \lambda (x_1 - x) - y_1 = 4 \times (7 - 2) - 6 = 3
+$$</div>
+<p>所以点加的结果是 <span class="math">\((7, 6) + (7, 6) = (2, 3)\)</span>，它是曲线上的点。</p>
+<p><strong>例 3</strong>，再取 <span class="math">\((2, 3), (7, 6)\)</span> 做加法：</p>
+<div class="math">$$
+\lambda = \frac{y_2-y_1}{x_2-x_1} = (6-3) \times (7-2)^{-1} = 3 \times 5^{-1} = 3 \times 9 = 27 = 5 \\
+x = \lambda^2 - x_1 - x_2 = 5^2 - 2 - 7 = 16 = 5 \\
+y = \lambda (x_1 - x) - y_1 = 5 \times (2 - 5) - 3 = -18 = 4
+$$</div>
+<p>所以点加 <span class="math">\((2, 3) + (7, 6) = (5, 4)\)</span>，也是曲线上的点。</p>
+<p><strong>加法表：</strong></p>
+<p>添加零元素，构成集合 <span class="math">\(\{\mathbf{0}, (0, 1), (0, 10), (2, 3), (2, 8), (5, 4), (5, 7), (7, 5), (7, 6), (9, 2), (9, 9), (10, 0)\}\)</span>，因为任意两点相加后的结果，仍然在集合里，满足运算的封闭性，可以生成如下的加法表：</p>
+<div class="highlight"><pre><span></span><code>++=======++=======+=======+=======+=======+=======+=======+=======+=======+=======+=======+=======+=======+
+||  ADD  ||   0   | (0,1) |(0,10) | (2,3) | (2,8) | (5,4) | (5,7) | (7,5) | (7,6) | (9,2) | (9,9) |(10,0) |
+|========++=======+=======+=======+=======+=======+=======+=======+=======+=======+=======+=======+=======+
+||   0   ||   0   | (0,1) |(0,10) | (2,3) | (2,8) | (5,4) | (5,7) | (7,5) | (7,6) | (9,2) | (9,9) |(10,0) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (0,1) || (0,1) |(0,10) |   0   |(10,0) | (2,3) | (9,9) | (7,6) | (5,4) | (9,2) | (5,7) | (7,5) | (2,8) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+||(0,10) ||(0,10) |   0   | (0,1) | (2,8) |(10,0) | (7,5) | (9,2) | (9,9) | (5,7) | (7,6) | (5,4) | (2,3) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (2,3) || (2,3) |(10,0) | (2,8) | (0,1) |   0   | (9,2) | (7,5) | (7,6) | (5,4) | (9,9) | (5,7) |(0,10) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (2,8) || (2,8) | (2,3) |(10,0) |   0   |(0,10) | (7,6) | (9,9) | (5,7) | (7,5) | (5,4) | (9,2) | (0,1) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (5,4) || (5,4) | (9,9) | (7,5) | (9,2) | (7,6) |(10,0) |   0   | (2,3) | (0,1) |(0,10) | (2,8) | (5,7) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (5,7) || (5,7) | (7,6) | (9,2) | (7,5) | (9,9) |   0   |(10,0) |(0,10) | (2,8) | (2,3) | (0,1) | (5,4) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (7,5) || (7,5) | (5,4) | (9,9) | (7,6) | (5,7) | (2,3) |(0,10) | (2,8) |   0   | (0,1) |(10,0) | (9,2) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (7,6) || (7,6) | (9,2) | (5,7) | (5,4) | (7,5) | (0,1) | (2,8) |   0   | (2,3) |(10,0) |(0,10) | (9,9) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (9,2) || (9,2) | (5,7) | (7,6) | (9,9) | (5,4) |(0,10) | (2,3) | (0,1) |(10,0) | (2,8) |   0   | (7,5) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|| (9,9) || (9,9) | (7,5) | (5,4) | (5,7) | (9,2) | (2,8) | (0,1) |(10,0) |(0,10) |   0   | (2,3) | (7,6) |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+||(10,0) ||(10,0) | (2,8) | (2,3) |(0,10) | (0,1) | (5,7) | (5,4) | (9,2) | (9,9) | (7,5) | (7,6) |   0   |
+|--------++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+</code></pre></div>
+
+<p><strong>2.2. 乘法运算</strong></p>
+<p>一个正整数 k 以及一个点 P，定义：
+</p>
+<div class="math">$$
+\begin{matrix} kP = \underbrace{ P + P + \cdots + P } \\ k\end{matrix}
+$$</div>
+<p>通过加法表，可以整理出如下的乘法表：</p>
+<div class="highlight"><pre><span></span><code>P =      0:  0P=0, 1P=0, ...
+P =  (0,1):  0P=0, 1P=(0,1),  2P=(0,10), 3P=0, ...
+P = (0,10):  0P=0, 1P=(0,10), 2P=(0,1),  3P=0, ...
+P =  (2,3):  0P=0, 1P=(2,3),  2P=(0,1),  3P=(10,0), 4P=(0,10), 5P=(2,8), 6P=0, ...
+P =  (2,8):  0P=0, 1P=(2,8),  2P=(0,10), 3P=(10,0), 4P=(0,1),  5P=(2,3), 6P=0, ...
+P =  (5,4):  0P=0, 1P=(5,4),  2P=(10,0), 3P=(5,7),  4P=0, ...
+P =  (5,7):  0P=0, 1P=(5,7),  2P=(10,0), 3P=(5,4),  4P=0, ...
+P =  (7,5):  0P=0, 1P=(7,5),  2P=(2,8),  3P=(5,7),  4P=(0,10), 5P=(9,9), 6P=(10,0),
+                   7P=(9,2),  8P=(0,1),  9P=(5,4), 10P=(2,3), 11P=(7,6), 12P=0, ...
+P =  (7,6):  0P=0, 1P=(7,6),  2P=(2,3),  3P=(5,4),  4P=(0,1),  5P=(9,2), 6P=(10,0),
+                   7P=(9,9),  8P=(0,10), 9P=(5,7), 10P=(2,8), 11P=(7,5), 12P=0, ...
+P =  (9,2):  0P=0, 1P=(9,2),  2P=(2,8),  3P=(5,4),  4P=(0,10), 5P=(7,6), 6P=(10,0),
+                   7P=(7,5),  8P=(0,1),  9P=(5,7), 10P=(2,3), 11P=(9,9), 12P=0, ...
+P =  (9,9):  0P=0, 1P=(9,9),  2P=(2,3),  3P=(5,7),  4P=(0,1),  5P=(7,5), 6P=(10,0),
+                   7P=(7,6),  8P=(0,10), 9P=(5,4), 10P=(2,8), 11P=(9,2), 12P=0, ...
+P =  (10,0): 0P=0, 1P=(10,0), 2P=0, ...
+</code></pre></div>
+
+<p>可以看到，对于每一个点 P，<span class="math">\(kP\)</span> 也在曲线上。并且，每一个点 P，倍乘的结果是有限的、且有周期的，比如 <code>P = (2,3)</code>，除了 0，只有 1, 2, 3, 4, 5 这几种倍数，即 <span class="math">\(kP = (k \pmod{6})P\)</span>。再比如 <code>P=(9,2)</code>，只有十二种倍数，等等。</p>
+<p><strong>2.3. 计算难题</strong></p>
+<p>根据加法和乘法的定义，对于给定的正整数 k 以及一个点 P，可以计算 <span class="math">\(Q = kP\)</span>。即使 k 很大，稍加优化，计算复杂度也很有限。比如 <code>k=1234567890</code>，考虑以下过程：</p>
+<div class="highlight"><pre><span></span><code><span class="n">Q</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">ks</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s1">0b</span><span class="si">}</span><span class="s1">&#39;</span> <span class="c1"># k 转换成二进制形式 1001001100101100000001011010010</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ks</span><span class="p">:</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">+</span> <span class="n">Q</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span>
+        <span class="n">Q</span> <span class="o">+=</span> <span class="n">P</span>
+</code></pre></div>
+
+<p>这样，经过几十次加法后，就可以得到 <code>Q = kP</code>，并不需要真的进行 k 次加法。</p>
+<p>但反过来呢？<strong>已知 Q 和 P，求正整数 k，以满足 <code>Q = kP</code></strong>。从目前的结论来看，这个过程并没有实际的快速算法。对于很小的有限素数域，那可以枚举出一条曲线上所有的点，以及任意两个点之间的 “ 倍数 ” 关系，从而通过查表即可得到 k；而对于几百位数的 <strong>大素数</strong>，即使知道 <code>kP</code> 的结果只有有限个，但也远远超过上面举例乘法表的循环范围，所以也没有办法预先完成所有点的枚举，只能通过实时的反复迭代，逐个地尝试 <code>k = 0, 1, 2, ...</code> 计算 <code>kP</code> ，直到找出满足条件的整数。</p>
+<p>这就是椭圆曲线加密算法采用的难题。这类似于 RSA 算法里的大素数分解难题，即给定两个素数 p 和 q 很容易相乘得到 n，而对 n 进行因式分解却相对困难。</p>
+<h2>3. 蒙哥马利乘法（Montgomery Multiplication）</h2>
+<p>在上面计算点加结果坐标的过程中，每一个步骤都要求 <span class="math">\(\pmod{p}\)</span> 运算，而模运算求余数时所用到的除法运算，比加法和乘法的开销要大很多，特别是在几百位的大数、在反复迭代计算 <span class="math">\(kP\)</span> 的情况下。而如果跳过某些步骤的模运算，那么中间结果的位数越来越多，暂存和计算的开销会越来越大。</p>
+<p>蒙哥马利算法的设计目的是避免除法，而用加法、乘法、移位等操作来实现模乘，从而降低大数模运算的开销，提升计算效率。</p>
+<p><strong>3.1. 定义</strong></p>
+<div class="math">$$
+\bar{x} \equiv x \cdot R \pmod{p}   \\
+x \otimes y \equiv x \cdot y \cdot R^{-1} \pmod{p}
+$$</div>
+<p>其中：</p>
+<ul>
+<li><span class="math">\(x\)</span> 是有限素域上的数，<span class="math">\(\bar{x}\)</span> 是 <span class="math">\(x\)</span> 在蒙哥马利空间里对应的数；</li>
+<li><span class="math">\(\otimes\)</span> 是蒙哥马利模乘。</li>
+<li>R：大于 p 的最小的 2 的幂，这样对于与 R 的乘法，可以使用移位操作；</li>
+<li>RR： <span class="math">\(RR \equiv R^2 \pmod{p}\)</span></li>
+</ul>
+<p>经过以下计算：</p>
+<div class="math">$$
+\bar{x} = x \cdot R = x \cdot RR \cdot R^{-1} = x \otimes RR  \\
+x = (x \cdot R) \cdot 1 \cdot R^{-1} = \bar{x} \cdot 1 \cdot R^{-1} = \bar{x} \otimes 1
+$$</div>
+<p>这样使用蒙哥马利模乘 <span class="math">\(\otimes\)</span> 可以实现 <span class="math">\(x\)</span> 和 <span class="math">\(\bar{x}\)</span> 相互转化，即 <span class="math">\(\bar{x} = x \otimes RR\)</span> 和 <span class="math">\(x = \bar{x} \otimes 1\)</span>。</p>
+<p><strong>3.2. 模乘法</strong></p>
+<p>① 利用模乘计算 <span class="math">\(x \pmod{p}\)</span>：</p>
+<ol>
+<li>把 x 转化为蒙哥马利空间上的数 <span class="math">\(\bar{x}\)</span>，利用公式：<span class="math">\(\bar{x} = x \otimes RR\)</span></li>
+<li>得到结果 <code>x % p</code>，利用公式：<span class="math">\(\bar{x} \otimes 1 = x\)</span></li>
+</ol>
+<p>一共进行了两次模乘 <span class="math">\(\otimes\)</span>。</p>
+<p>② 利用模乘计算 <span class="math">\(xy \pmod{p}\)</span>：</p>
+<ol>
+<li>把 x, y 转化为蒙哥马利空间上的数 <span class="math">\(\bar{x}, \bar{y}\)</span>，利用公式：<span class="math">\(\bar{x} = x \otimes RR, \cdots\)</span></li>
+<li>进行蒙哥马利模乘 <span class="math">\(\bar{x} \otimes \bar{y}\)</span> 得到 <span class="math">\(\overline{xy}\)</span>，利用公式：<span class="math">\(\bar{x} \otimes \bar{y} = \bar{x} \cdot \bar{y} \cdot R^{-1} = (x \cdot R) \cdot (y \cdot R) \cdot R^{-1} = xy \cdot R = \overline{xy}\)</span></li>
+<li>得到结果 <code>xy % p</code>，利用公式：<span class="math">\(\overline{xy} \otimes 1 = xy\)</span></li>
+</ol>
+<p>一共进行了四次模乘 <span class="math">\(\otimes\)</span>。</p>
+<p>③ 再比如利用模乘计算 <span class="math">\(xyz \pmod{p}\)</span>：</p>
+<ol>
+<li>把 x, y, z 转化为蒙哥马利空间上的数 <span class="math">\(\bar{x}, \bar{y}, \bar{z}\)</span>，利用公式：<span class="math">\(\bar{x} = x \otimes RR, \cdots\)</span></li>
+<li>进行蒙哥马利模乘 <span class="math">\(\bar{x} \otimes \bar{y} \otimes \bar{z}\)</span> 得到 <span class="math">\(\overline{xyz}\)</span>，利用公式：<span class="math">\(\bar{x} \otimes \bar{y} \otimes \bar{z} = \overline{xy} \otimes \bar{z} = \overline{xyz}\)</span></li>
+<li>得到结果 <code>xyz % p</code>，利用公式：<span class="math">\(\overline{xyz} \otimes 1 = xyz\)</span></li>
+</ol>
+<p>一共进行了六次模乘 <span class="math">\(\otimes\)</span>。</p>
+<p>④ 对于计算 n 个数的模乘 <span class="math">\(x_1 x_2 \cdots x_n \pmod{p}\)</span>，也是类似的三个步骤，一共 2n 次模乘。</p>
+<p><strong>3.3. 模幂</strong></p>
+<p>计算 <span class="math">\(x^n \pmod{p}\)</span>。一个办法是当作 n 个 x 的模乘法，总共 2n 次模乘，但这在 n 很大时就会出现问题。所以一般是用计算 <span class="math">\(Q = kP\)</span> 时二进制展开的思路，比如计算 <span class="math">\(x^{1234567890} \pmod{p}\)</span>：</p>
+<div class="highlight"><pre><span></span><code># 1234567890 转换成二进制形式 1001001100101100000001011010010
+# 从左到右进行 31 次迭代
+
+x̄ = x ⮾ RR
+t = 1 ⮾ RR
+
+ (1) &quot;1&quot;: t = t ⮾ t, t = t ⮾ x̄
+ (2) &quot;0&quot;:             t = t ⮾ x̄
+ (3) &quot;0&quot;:             t = t ⮾ x̄
+ (4) &quot;1&quot;: t = t ⮾ t, t = t ⮾ x̄
+ (5) &quot;0&quot;:             t = t ⮾ x̄
+...
+(29) &quot;0&quot;:             t = t ⮾ x̄
+(30) &quot;1&quot;: t = t ⮾ t, t = t ⮾ x̄
+(31) &quot;0&quot;:             t = t ⮾ x̄
+
+ret = t ⮾ 1
+</code></pre></div>
+
+<p>这样，经过几十次的模乘，就完成了模幂运算。</p>
+<p><strong>3.4. 蒙哥马利模乘的实现</strong></p>
+<p>对于指定的椭圆曲线，<span class="math">\(p, a, b\)</span> 都是已知的，下列参数可以预先计算得到（可以认为是常数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">p</span> <span class="o">=</span> <span class="mh">0x12ab655e9a2ca55660b44d1e5c37b00159aa76fed00000010a11800000000001</span>     <span class="c1"># 这是一个 253 位的大素数</span>
+<span class="n">Rbit</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">Rbit</span>              <span class="c1"># 0x10000000000000000000000000000000000000000000000000000000000000000</span>
+<span class="n">RR</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Rbit</span><span class="p">))</span> <span class="o">%</span> <span class="n">p</span> <span class="c1"># 0x0011fdae7eff1c939a7cc008fe5dc8593cc2c27b58860591f25d577bab861857b</span>
+<span class="k">assert</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">R</span>
+
+<span class="n">Rmask</span> <span class="o">=</span> <span class="n">R</span> <span class="o">-</span> <span class="mi">1</span>              <span class="c1"># 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</span>
+<span class="n">Rinv</span> <span class="o">=</span> <span class="n">modinv</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>        <span class="c1"># 0x07b301912290c02c838557e227b28e2fbd1eae9574fee8754122dd1a1beeec02</span>
+<span class="n">mp</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">modinv</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">R</span><span class="p">))</span> <span class="o">%</span> <span class="n">R</span>   <span class="c1"># 0x6992d0fa68b29556249765c34790a000452217cc900000010a117fffffffffff</span>
+
+<span class="n">One</span> <span class="o">=</span> <span class="mh">0xd4bda322bbb9a9d16d81575512c0fee7257f50f6ffffff27d1c7ffffffffff3</span>
+</code></pre></div>
+
+<p>算法实现：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">redc</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">((</span><span class="n">t</span> <span class="o">&amp;</span> <span class="n">Rmask</span><span class="p">)</span> <span class="o">*</span> <span class="n">mp</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">Rmask</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">Rbit</span>
+    <span class="k">return</span> <span class="n">u</span> <span class="k">if</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="n">p</span> <span class="k">else</span> <span class="n">u</span> <span class="o">-</span> <span class="n">p</span>
+
+<span class="k">def</span> <span class="nf">mont_mul</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">redc</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">mont_exp</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">bl</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">bl</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">One</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bl</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">mont_mul</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">mont_mul</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">t</span>
+
+<span class="k">def</span> <span class="nf">mont_add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">t</span> <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">p</span> <span class="k">else</span> <span class="n">t</span> <span class="o">-</span> <span class="n">p</span>
+
+<span class="k">def</span> <span class="nf">mont_to</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">mont_mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">RR</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">mont_from</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">mont_mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p><code>mont_mul</code> 实现了模乘，即 <span class="math">\(\bar{x} \otimes \bar{y}\)</span> 的计算，具体实现在 <code>redc</code> 里。<code>mont_exp</code> 基于 <code>mont_mul</code> 实现了模幂。<code>mont_to</code> 和 <code>mont_from</code> 分别实现了 <span class="math">\(x\)</span> 和 <span class="math">\(\bar{x}\)</span> 的相互转换，而它们本身也是基于 <code>mont_mul</code> 模乘，即上面的 <span class="math">\(\bar{x} = x \otimes RR\)</span> 和 <span class="math">\(x = \bar{x} \otimes 1\)</span>。这段算法实现里，用到的计算包括乘法、加减法和位操作，而没有求余数的除法，而且 <code>redc</code> 计算过程中的数的位数，可以控制在 <code>p</code> 的位数两倍的范围内。</p>
+<p>测试代码：</p>
+<div class="highlight"><pre><span></span><code><span class="n">a</span> <span class="o">=</span> <span class="mi">12345678901234567890123456789012345678901234567890123456789012345678901234567890</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">234567890123456789012345678901234567890123456789012345678901</span>
+
+<span class="c1"># 计算 a % p</span>
+<span class="n">ma</span> <span class="o">=</span> <span class="n">mont_to</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>           <span class="c1"># 47774228896283489157036751982362406630881429895235558673865236505409400898380</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">mont_from</span><span class="p">(</span><span class="n">ma</span><span class="p">)</span>       <span class="c1"># 8320285319718700295923553452506196561045639230036204175636266583566336328989</span>
+<span class="n">a</span> <span class="o">%</span> <span class="n">p</span>                     <span class="c1"># 8320285319718700295923553452506196561045639230036204175636266583566336328989</span>
+<span class="p">(</span><span class="n">a</span> <span class="o">%</span> <span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="n">ret</span>            <span class="c1"># True</span>
+
+<span class="c1"># 计算 (a * b) % p</span>
+<span class="n">mb</span> <span class="o">=</span> <span class="n">mont_to</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>           <span class="c1"># 752157449874033112950826507274103158123732489659345112413844821135028041396</span>
+<span class="n">mret</span> <span class="o">=</span> <span class="n">mont_mul</span><span class="p">(</span><span class="n">ma</span><span class="p">,</span> <span class="n">mb</span><span class="p">)</span>   <span class="c1"># 7014121123572333438484878328614185679586782249100287203107380325626246371772</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">mont_from</span><span class="p">(</span><span class="n">mret</span><span class="p">)</span>     <span class="c1"># 4735315692184182269794618183476157384269041996450209651391775074969684495039</span>
+<span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">p</span>               <span class="c1"># 4735315692184182269794618183476157384269041996450209651391775074969684495039</span>
+<span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="n">ret</span>        <span class="c1"># True</span>
+
+<span class="c1"># 计算 (a ** 123456) % p</span>
+<span class="n">mret</span> <span class="o">=</span> <span class="n">mont_exp</span><span class="p">(</span><span class="n">ma</span><span class="p">,</span> <span class="mi">123456</span><span class="p">)</span> <span class="c1"># 2235662470013157180684545427949591396527117508244437990505406258291924615906</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">mont_from</span><span class="p">(</span><span class="n">mret</span><span class="p">)</span>       <span class="c1"># 6139851876230022544409935042924230117393985717868875855549992950437714693536</span>
+<span class="p">(</span><span class="n">a</span> <span class="o">**</span> <span class="mi">123456</span><span class="p">)</span> <span class="o">%</span> <span class="n">p</span>           <span class="c1"># 6139851876230022544409935042924230117393985717868875855549992950437714693536</span>
+<span class="p">(</span><span class="n">a</span> <span class="o">**</span> <span class="mi">123456</span><span class="p">)</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="n">ret</span>    <span class="c1"># True</span>
+</code></pre></div>
+
+<h2>4. 参考资料</h2>
+<ol>
+<li>Extended Euclidean algorithm <a href="https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm">https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm</a></li>
+<li>Wikipedia: Elliptic curve <a href="https://en.wikipedia.org/wiki/Elliptic_curve">https://en.wikipedia.org/wiki/Elliptic_curve</a></li>
+<li>Wikipedia: Elliptic curve point multiplication <a href="https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication">https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication</a></li>
+<li><a href="https://github.com/supranational/blst">https://github.com/supranational/blst</a></li>
+</ol>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "left",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: false," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: '#09408e ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/hash.html">hash</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/11/02/one-time-password.html">一次性密码算法 One-Time Password (OTP)</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/06/18/ltc-algorithm.html">Litecoin (LTC) 算法</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2016/06/18/btc-algorithm.html">Bitcoin (BTC) 算法</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2016/06/16/base-encode-decode-algorithm.html">Base64, Base58 等算法的编码和解码过程</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/11/02/one-time-password.html">
+                &laquo; 一次性密码算法 One-Time Password (OTP)
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">
+                Cache 的组织和过程（VIVT、VIPT、PIPT） &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

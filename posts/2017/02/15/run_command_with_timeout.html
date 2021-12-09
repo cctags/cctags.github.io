@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>运行程序时设置 timeout 超时 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2017/02/15/run_command_with_timeout.html">
+        <meta name="twitter:title" content="运行程序时设置 timeout 超时">
+        <meta name="twitter:description" content="问题 因为有个临时的需求，所以开了服务并监听在某个公网端口上，然后忘了关了 …… 直到很久才想起 …… 解决 对于类似的使用 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2017/02/15/run_command_with_timeout.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="运行程序时设置 timeout 超时">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 因为有个临时的需求，所以开了服务并监听在某个公网端口上，然后忘了关了 …… 直到很久才想起 …… 解决 对于类似的使用 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2017/02/15/run_command_with_timeout.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2017/02/15/run_command_with_timeout.html" rel="bookmark" title="Permalink to 运行程序时设置 timeout 超时">运行程序时设置 timeout 超时</a>
+                </h2>
+                <p class="post-meta">
+                    2017-02-15 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2017/02/15/run_command_with_timeout.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题</strong></p>
+<p>因为有个临时的需求，所以开了服务并监听在某个公网端口上，然后忘了关了 …… 直到很久才想起 ……</p>
+<p><strong>解决</strong></p>
+<p>对于类似的使用情况，最好还是在需要运行的程序时加上超时限制，避免引起不必要的问题，特别是上述在公网地址上监听的情况。</p>
+<p>如果业务程序本身有超时参数，那直接启用即可。</p>
+<p>对于业务程序本身没有超时参数的情况，应该怎么处理呢？其实也有办法，比如运行 <code>service.py</code>，运行 1 小时后退出，可以使用 <code>timeout</code> 工具：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>timeout<span class="w"> </span>1h<span class="w"> </span>./service.py
+</code></pre></div>
+
+<p>其中，<code>timeout</code> 是用来控制程序运行的时间，如果程序在指定时间里还没有结束，就会在时间到期后，杀掉进程。查到 <code>timeout</code> 的帮助：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>timeout<span class="w"> </span>--help
+<span class="go">Usage: timeout [OPTION] DURATION COMMAND [ARG]...</span>
+<span class="go">  or:  timeout [OPTION]</span>
+<span class="go">Start COMMAND, and kill it if still running after DURATION.</span>
+
+<span class="go">Mandatory arguments to long options are mandatory for short options too.</span>
+<span class="go">      --preserve-status</span>
+<span class="go">                 exit with the same status as COMMAND, even when the</span>
+<span class="go">                   command times out</span>
+<span class="go">      --foreground</span>
+<span class="go">                 when not running timeout directly from a shell prompt,</span>
+<span class="go">                   allow COMMAND to read from the TTY and get TTY signals;</span>
+<span class="go">                   in this mode, children of COMMAND will not be timed out</span>
+<span class="go">  -k, --kill-after=DURATION</span>
+<span class="go">                 also send a KILL signal if COMMAND is still running</span>
+<span class="go">                   this long after the initial signal was sent</span>
+<span class="go">  -s, --signal=SIGNAL</span>
+<span class="go">                 specify the signal to be sent on timeout;</span>
+<span class="go">                   SIGNAL may be a name like &#39;HUP&#39; or a number;</span>
+<span class="go">                   see &#39;kill -l&#39; for a list of signals</span>
+<span class="go">      --help     display this help and exit</span>
+<span class="go">      --version  output version information and exit</span>
+
+<span class="go">DURATION is a floating point number with an optional suffix:</span>
+<span class="go">&#39;s&#39; for seconds (the default), &#39;m&#39; for minutes, &#39;h&#39; for hours or &#39;d&#39; for days.</span>
+
+<span class="go">If the command times out, and --preserve-status is not set, then exit with</span>
+<span class="go">status 124.  Otherwise, exit with the status of COMMAND.  If no signal</span>
+<span class="go">is specified, send the TERM signal upon timeout.  The TERM signal kills</span>
+<span class="go">any process that does not block or catch that signal.  It may be necessary</span>
+<span class="go">to use the KILL (9) signal, since this signal cannot be caught, in which</span>
+<span class="go">case the exit status is 128+9 rather than 124.</span>
+</code></pre></div>
+
+<p>其中，时间可以按 “ 秒 ”、“ 分钟 ”、“ 小时 ” 和 “ 天 ” 来指定，比如：1s、2m、3h、4d。</p>
+<p>至于 <code>signal</code>，默认是 <code>TERM</code>，也可以指定其他的，可以从 <code>kill -l</code> 来查看：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span><span class="nb">kill</span><span class="w"> </span>-l
+<span class="go"> 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP</span>
+<span class="go"> 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1</span>
+<span class="go">11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM</span>
+<span class="go">16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP</span>
+<span class="go">21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ</span>
+<span class="go">26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR</span>
+<span class="go">31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3</span>
+<span class="go">38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8</span>
+<span class="go">43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13</span>
+<span class="go">48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12</span>
+<span class="go">53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7</span>
+<span class="go">58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2</span>
+<span class="go">63) SIGRTMAX-1  64) SIGRTMAX</span>
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/07/28/python-crypt-module.html">Python crypt 模块</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html">
+                &laquo; vim 里打开 file:line
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2017/04/19/python-decorator.html">
+                Python decorator 装饰器 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

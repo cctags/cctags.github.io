@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>ARM Watch Point 寄存器 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/04/09/ram-watch-point-register.html">
+        <meta name="twitter:title" content="ARM Watch Point 寄存器">
+        <meta name="twitter:description" content="Watch Point (WP) 有 6 个寄存器： Address Value / Mask Register Data Value / Mask Register Control Value / Mask Register 其中，WP Address Value / Mask 是监控地址总线，WP Data Value / Mask 是监控数据总线。 断点用来标 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/04/09/ram-watch-point-register.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="ARM Watch Point 寄存器">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="Watch Point (WP) 有 6 个寄存器： Address Value / Mask Register Data Value / Mask Register Control Value / Mask Register 其中，WP Address Value / Mask 是监控地址总线，WP Data Value / Mask 是监控数据总线。 断点用来标 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/04/09/ram-watch-point-register.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/04/09/ram-watch-point-register.html" rel="bookmark" title="Permalink to ARM Watch Point 寄存器">ARM Watch Point 寄存器</a>
+                </h2>
+                <p class="post-meta">
+                    2022-04-09 Saturday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2022/04/09/ram-watch-point-register.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Watch Point (WP) 有 6 个寄存器：</p>
+<ul>
+<li>Address Value / Mask Register</li>
+<li>Data Value / Mask Register</li>
+<li>Control Value / Mask Register</li>
+</ul>
+<p>其中，WP Address Value / Mask 是监控地址总线，WP Data Value / Mask 是监控数据总线。</p>
+<p><strong>断点</strong>用来标识某个地址上的一条<strong>指令</strong>，而<strong>观察点</strong>用来观察某个地址上的<strong>数据</strong>变化。</p>
+<p>利用 WP 寄存器，可以实现硬件断点、软件断点以及观察点。比如：</p>
+<p><strong>1. 设置硬件断点</strong></p>
+<div class="highlight"><pre><span></span><code>WP Control Value 寄存器的 nPOC 位置 0，表示取指令
+在一个地址（比如 0x1234）设置一个断点：
+<span class="gs">* WP Address Value = 0x1234; WP Address Mask = 0x0</span>
+<span class="gs">*</span> WP Data Mask = 0xFFFFFFFF, 忽略 data
+</code></pre></div>
+
+<p>这样，当运行到地址 0x1234 处的<strong>代码</strong>时，进入调试状态。</p>
+<p>这是一种非侵入型硬件实现的断点，调试器不需要干预。</p>
+<p><strong>2. 设置软件断点</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nx">WP</span><span class="w"> </span><span class="nx">Control</span><span class="w"> </span><span class="nx">Value</span><span class="w"> </span><span class="nx">寄存器的</span><span class="w"> </span><span class="nx">nPOC</span><span class="w"> </span><span class="nx">位置</span><span class="w"> </span><span class="mi">0</span><span class="err">，</span><span class="nx">表示取指令</span>
+<span class="nx">WP</span><span class="w"> </span><span class="nx">Data</span><span class="w"> </span><span class="nx">Value</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mh">0xDEDEDEDE</span><span class="p">,</span><span class="w"> </span><span class="nx">WP</span><span class="w"> </span><span class="nx">Data</span><span class="w"> </span><span class="nx">Mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mh">0x00000000</span>
+<span class="nx">WP</span><span class="w"> </span><span class="nx">Address</span><span class="w"> </span><span class="nx">Mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mh">0xFFFFFFFF</span><span class="err">，</span><span class="nx">忽略</span><span class="w"> </span><span class="nx">address</span>
+</code></pre></div>
+
+<p>调试器的操作步骤：</p>
+<ul>
+<li>在需要设置断点的地方，将其<strong>代码</strong>内容备份，并替换为 0xDEDEDEDE。这样，当执行到这个位置时，进入调试状态；</li>
+<li>调试过这个位置以后，将该处内容恢复，并恢复程序运行；</li>
+</ul>
+<p><strong>3. 设置观察点</strong></p>
+<div class="highlight"><pre><span></span><code>WP Control Value 寄存器的 nPOC 位置 0，表示数据访问
+nRW = 0 （读） 1 （读写）
+WP Address Value = 0x1234，WP Address Mask = 0x00000000
+WP Data Mask = 0xFFFFFFFF
+</code></pre></div>
+
+<p>这样，对地址 0x1234 的<strong>数据</strong>进行读写时，进入调试状态。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>《ARM JTAG 调试原理》</li>
+<li><a href="https://www.fpga4fun.com/JTAG.html">https://www.fpga4fun.com/JTAG.html</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/hardware.html">hardware</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">
+                &laquo; Linux Kernel pr_debug(), dev_dbg() 以及动态调试
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html">
+                定制 SoC 的 U-Boot SPL image type 类型 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

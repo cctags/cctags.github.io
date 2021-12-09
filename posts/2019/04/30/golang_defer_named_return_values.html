@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Go 语言里 defer, panic 和 named return values &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2019/04/30/golang_defer_named_return_values.html">
+        <meta name="twitter:title" content="Go 语言里 defer, panic 和 named return values">
+        <meta name="twitter:description" content="Go 语言里，函数过程中通过 defer 注册的回调，会在函数结束前、按 LIFO 的顺序调用执行。有名返回值（named return value）在编程时，恰当的变量 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2019/04/30/golang_defer_named_return_values.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Go 语言里 defer, panic 和 named return values">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="Go 语言里，函数过程中通过 defer 注册的回调，会在函数结束前、按 LIFO 的顺序调用执行。有名返回值（named return value）在编程时，恰当的变量 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2019/04/30/golang_defer_named_return_values.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2019/04/30/golang_defer_named_return_values.html" rel="bookmark" title="Permalink to Go 语言里 defer, panic 和 named return values">Go 语言里 defer, panic 和 named return values</a>
+                </h2>
+                <p class="post-meta">
+                    2019-04-30 Tuesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2019/04/30/golang_defer_named_return_values.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Go 语言里，函数过程中通过 defer 注册的回调，会在函数结束前、按 LIFO 的顺序调用执行。有名返回值（named return value）在编程时，恰当的变量名，结合类型，对于走读代码、或者生成的文档，会更加清晰和直观。</p>
+<p>当两者混用的时候，要注意相关步骤调用的先后顺序对实际返回值的影响。</p>
+<p>先说结论：</p>
+<ol>
+<li>如果是普通的返回值：<ul>
+<li>函数结束时 return 的值，会被放到 <code>return value</code> 里；如果因为 panic() 异常而没有走到 return 的代码，<code>return value</code> 应该是返回值类型对应的默认值；</li>
+<li>defer 回调里对变量的操作，不影响 <code>return value</code>；</li>
+</ul>
+</li>
+<li>如果是 named return value，所有作用在返回值变量上的操作，等同于 <code>return value</code>；</li>
+<li>caller 拿到 <code>return value</code> 里的返回值；</li>
+</ol>
+<p><strong>1. 比如：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">test</span><span class="p">()</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">ret</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;test .. ret=%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">ret</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">ret</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<ol>
+<li><code>return ret</code>，把当前值 1 放到 <code>return value</code> 里；</li>
+<li>运行两个 defer 函数，先运行 <code>ret *= 2</code> 得到 2，再运行 <code>ret += 3</code> 得到 5；但 ret 只是临时变量，不影响 <code>return value</code>；</li>
+<li>把 <code>return value</code> 里的值交给 caller。</li>
+</ol>
+<p>所以，这里返回的是 1。</p>
+<p><strong>2. 作为对比：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">test</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="nx">ret</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">ret</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;test .. ret=%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">ret</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">ret</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>现在 ret 是 <code>named return value</code>：</p>
+<ol>
+<li><code>return ret</code> 把当前值 1 放到 <code>return value</code>（即 ret）里；</li>
+<li>运行两个 defer 函数，先运行 <code>ret *= 2</code> 得到 2，再运行 <code>ret += 3</code> 得到 5。这里对 ret 的修改，等同于影响 <code>return value</code>；</li>
+<li>把 <code>return value</code> （即 ret）里的值交给 caller。</li>
+</ol>
+<p>所以，这里返回的是 5。</p>
+<p><strong>3. 添加 panic</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">test</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="nx">ret</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">ret</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">recover</span><span class="p">();</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">20</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">recover</span><span class="p">();</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ret</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">}()</span>
+
+<span class="w">    </span><span class="nb">panic</span><span class="p">(</span><span class="s">&quot;some error&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;test .. ret=%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">ret</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">ret</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>在前一个例子的基础上，添加了 <code>panic</code> 和 <code>recover</code> 的处理。</p>
+<ol>
+<li><code>panic("some error")</code> 后面的代码执行不到了，不过这时 <code>return value</code> 里已经是 1；</li>
+<li>运行几个 defer 函数，先运行 <code>ret *= 2</code> 得到 2，运行 <code>ret += 3</code> 得到 5，再运行 recover() 一段里的 <code>ret *= 10</code> 得到 50，最后的 recover() 一段，因为这时 r == nil，就不执行了。这里对 ret 的修改，等同于影响 <code>return value</code>；</li>
+<li>把 <code>return value</code> （即 ret）里的值交给 caller。</li>
+</ol>
+<p>所以，这里返回的是 50。</p>
+<p>另外，如果这里的 <code>ret</code> 不是 <code>named return value</code>，而是临时变量，那么即使变量在初始时赋值为 1，因为 <code>panic("some error")</code> 后面的代码执行不到，所以这时 <code>return value</code> 里仍然是默认值 0；并且几个 defer 函数里的修改作用在临时变量上，并不涉及到 <code>return value</code>，所以最后返回的是 0。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/golang.html">golang</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">Go 语言里 Kong 命令行解析工具的参数验证问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/20/golang_interface.html">Go 语言里的接口赋值问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/10/golang_errors.html">Go 语言里的 errors 错误包装处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/03/golang_panic_position.html">Go 语言里的 panic 状态位置问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/01/golang_unittest_cover.html">Go 语言里的单元测试覆盖率</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2019/04/28/golang_slice.html">
+                &laquo; Go 语言里的 slice 切片
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2019/05/01/golang_unittest_cover.html">
+                Go 语言里的单元测试覆盖率 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SeaweedFS ec decode missing shard 的问题及解决 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">
+        <meta name="twitter:title" content="SeaweedFS ec decode missing shard 的问题及解决">
+        <meta name="twitter:description" content="这里记录了使用 SeaweedFS 过程中，对于有时出现的 ec.decode volume 失败的情况，所进行的问题重现、分析和解决办法。 问题 在使用 SeaweedFS 过程中 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="SeaweedFS ec decode missing shard 的问题及解决">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="这里记录了使用 SeaweedFS 过程中，对于有时出现的 ec.decode volume 失败的情况，所进行的问题重现、分析和解决办法。 问题 在使用 SeaweedFS 过程中 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html" rel="bookmark" title="Permalink to SeaweedFS ec decode missing shard 的问题及解决">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </h2>
+                <p class="post-meta">
+                    2023-11-12 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>这里记录了使用 <strong>SeaweedFS</strong> 过程中，对于有时出现的 <code>ec.decode volume</code> 失败的情况，所进行的问题重现、分析和解决办法。</p>
+<h2>问题</h2>
+<p>在使用 SeaweedFS 过程中，发现对于一个 erasure coding (ec) 卷，在运行 <code>ec.decode</code> 时，有时会遇到缺少 shard 的情况，类似这样的错误提示：</p>
+<div class="highlight"><pre><span></span><code>generateNormalVolume from ec volume 107 on 192.168.1.208:8082
+error: generate normal volume 107 on 192.168.1.208:8082: rpc error: code = Unknown desc = ec volume 107 missing shard 1
+</code></pre></div>
+
+<p>但奇怪的是，有时候再次运行同样的命令，又可以执行成功。从多次运行的情况来看，问题并不能必然重现，但总体上有相当的规律性。</p>
+<p>另外，在走读代码中，看到服务进程里实现了对 signal 的处理，所以在问题重现时，发现如果发送一个 <code>HUP</code> 信号，有时也可以解决问题。</p>
+<h2>是否已知问题</h2>
+<p>根据 <a href="https://github.com/seaweedfs/seaweedfs/issues">SeaweedFS 项目的 issue 列表</a> 里的搜索结果来看，确实有人提过相似问题，比如 <a href="https://github.com/seaweedfs/seaweedfs/issues/4833">这里</a>。并且，结合最新版本（当前是 30GB 3.58）也能重现的情况，能确认是个问题并且还未修复。</p>
+<h2>问题分析及解决</h2>
+<p>以下是走读代码后发现问题所在的调用关系：</p>
+<div class="highlight"><pre><span></span><code>doEcDecode()
+  collectEcShards()
+    volumeServerClient.VolumeEcShardsCopy()
+  generateNormalVolume()
+    volumeServerClient.VolumeEcShardsToVolume()
+      vs.store.CollectEcShards()
+      loop the shardFileNames and check if shard missing
+  mountVolumeAndDeleteEcShards()
+</code></pre></div>
+
+<p>跟踪代码，系统在处理 <code>ec.decode</code> 子命令时，会把所有的 ec shard 文件块从它们各自所在的 volume server，拷贝并归拢到某一台指定的 volume server 上。这些 ec shard 文件块，会被用来恢复成普通卷。定位到的问题是，这些从其他 volume server 上拷贝回来的 ec shard 文件块，并没有在 decode 时被枚举到（具体是在上述 <code>collectEcShards()</code> 函数里面），从而被后续流程发现有 shard 文件块缺失，并进入出错处理流程，最终导致出错。</p>
+<p>定位到了原因，后续的修复就容易了。在上述出错的地方，添加 ec shard 文件块的挂载操作，重新编译部署并反复运行后，确认问题解决，<code>ec.decode</code> 可以正常运行完成。</p>
+<p><strong>以下是补丁：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="gh">diff --git a/weed/shell/command_ec_decode.go b/weed/shell/command_ec_decode.go</span>
+<span class="gd">--- a/weed/shell/command_ec_decode.go</span>
+<span class="gi">+++ b/weed/shell/command_ec_decode.go</span>
+<span class="gu">@@ -194,12 +194,22 @@ func collectEcShards(commandEnv *CommandEnv, nodeToEcIndexBits map[pb.ServerAddr</span>
+<span class="w"> </span>                               SourceDataNode: string(loc),
+<span class="w"> </span>                       })
+<span class="w"> </span>                       if copyErr != nil {
+<span class="w"> </span>                               return fmt.Errorf(&quot;copy %d.%v %s =&gt; %s : %v\n&quot;, vid, needToCopyEcIndexBits.ShardIds(), loc, targetNodeLocation, copyErr)
+<span class="w"> </span>                       }
+
+<span class="gi">+                       fmt.Printf(&quot;mount %d.%v on %s\n&quot;, vid, needToCopyEcIndexBits.ShardIds(), targetNodeLocation)</span>
+<span class="gi">+                       _, mountErr := volumeServerClient.VolumeEcShardsMount(context.Background(), &amp;volume_server_pb.VolumeEcShardsMountRequest{</span>
+<span class="gi">+                               VolumeId:   uint32(vid),</span>
+<span class="gi">+                               Collection: collection,</span>
+<span class="gi">+                               ShardIds:   needToCopyEcIndexBits.ToUint32Slice(),</span>
+<span class="gi">+                       })</span>
+<span class="gi">+                       if mountErr != nil {</span>
+<span class="gi">+                               return fmt.Errorf(&quot;mount %d.%v on %s : %v\n&quot;, vid, needToCopyEcIndexBits.ShardIds(), targetNodeLocation, mountErr)</span>
+<span class="gi">+                       }</span>
+<span class="gi">+</span>
+<span class="w"> </span>                       return nil
+<span class="w"> </span>               })
+
+<span class="w"> </span>               if err != nil {
+<span class="w"> </span>                       break
+<span class="w"> </span>               }
+</code></pre></div>
+
+<p>后来把整理的补丁，给项目作者<a href="https://github.com/seaweedfs/seaweedfs/pull/4995">发了个 pull request</a>，目前已经被合并。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">Python Turtle 画圆时的圆心位置问题</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">
+                &laquo; Python 函数的位置参数（positional argument）和关键字参数（keyword argument）
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">
+                Linux 添加 memory block &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

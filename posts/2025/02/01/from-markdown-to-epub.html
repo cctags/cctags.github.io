@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>从 markdown 生成 epub 文件 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2025/02/01/from-markdown-to-epub.html">
+        <meta name="twitter:title" content="从 markdown 生成 epub 文件">
+        <meta name="twitter:description" content="0x0 从 markdown 生成 epub 文件 手机端电子阅读 APP，是可以导入 epub 格式的文件，所以会有这样的实际需求，即把一些文档资料、笔记都导 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2025/02/01/from-markdown-to-epub.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="从 markdown 生成 epub 文件">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0x0 从 markdown 生成 epub 文件 手机端电子阅读 APP，是可以导入 epub 格式的文件，所以会有这样的实际需求，即把一些文档资料、笔记都导 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2025/02/01/from-markdown-to-epub.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2025/02/01/from-markdown-to-epub.html" rel="bookmark" title="Permalink to 从 markdown 生成 epub 文件">从 markdown 生成 epub 文件</a>
+                </h2>
+                <p class="post-meta">
+                    2025-02-01 Saturday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2025/02/01/from-markdown-to-epub.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>0x0 从 markdown 生成 epub 文件</h2>
+<p>手机端电子阅读 APP，是可以导入 epub 格式的文件，所以会有这样的实际需求，即把一些文档资料、笔记都导入手机来阅读。</p>
+<p>这里记录一下大概的步骤：</p>
+<p>1、把文档资料、笔记等以 markdown 格式保存。考虑到文本格式化的趋势，各种相关编辑软件的出现，以及版本化的保存方式，markdown 以及其他文本格式十分普遍。</p>
+<p>2、创建 title.txt，大概是这样的格式：</p>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">title</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XXX</span>
+<span class="w">  </span><span class="nt">creator</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">author</span>
+<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XXX</span>
+<span class="w">  </span><span class="nt">cover-image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cover.jpg</span>
+<span class="nt">rights</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Public Domain</span>
+<span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zh-CN</span>
+<span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XXXX-XX-XX</span>
+</code></pre></div>
+
+<p>3、使用 <a href="https://pandoc.org/">pandoc</a> 工具：</p>
+<p>按照 pandoc 的介绍，这是一款 <code>a universal document converter</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="nf">a.epub</span><span class="o">:</span><span class="w"> </span><span class="n">title</span>.<span class="n">txt</span> <span class="n">a</span>.<span class="n">markdown</span> <span class="n">b</span>.<span class="n">markdown</span> <span class="n">c</span>.<span class="n">markdown</span>
+<span class="w">    </span>pandoc<span class="w"> </span>-o<span class="w"> </span><span class="nv">$@</span><span class="w"> </span><span class="k">$(</span>filter<span class="w"> </span>%.txt,<span class="w"> </span>$^<span class="k">)</span><span class="w"> </span><span class="k">$(</span>filter<span class="w"> </span>%.markdown,<span class="w"> </span>$^<span class="k">)</span>
+</code></pre></div>
+
+<p>生成的速度取决于文档的尺寸。</p>
+<p>4、导入手机。</p>
+<h2>0x1 一些注意点</h2>
+<p>pandoc 生成 xhtml 页面时，对源文件里的标签有比较严格的要求。从实际应用来看，对于 <code>&lt;br&gt;</code> 这种没有闭合的标签，会有编译报错，需要改用 <code>&lt;br/&gt;</code>。</p>
+<h2>0x2 字体</h2>
+<p>顺便提一下字体的问题。在 github 上面有一款非常出色的字体，叫<a href="https://github.com/lxgw/LxgwWenkaiGB">霞鹜字体</a>，免费开源。手机本身的字体显示，因为有主题以及版权等限制，只能从应用商店下载，所以没办法加载这款字体。但阅读 APP 里，却提供了导入第三方字体的入口。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/epub.html">epub</a>,                 <a href="../../../../tag/markdown.html">markdown</a>,                 <a href="../../../../tag/pandoc.html">pandoc</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2013/04/26/vim_insert_numbered_list.html">vim 里插入列表编号</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">
+                &laquo; Python 包管理器 uv
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">
+                从 NERDTree 切换到 nvim-tree &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

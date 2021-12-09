@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html">
+        <meta name="twitter:title" content="RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20">
+        <meta name="twitter:description" content="问题 在一个基于 RISC-V 架构的项目里，遇到了如下的链接问题： xxx/file:xxx:(.text.startup+0x74): relocation truncated to fit: R_RISCV_PCREL_HI20 against symbol xxx ... collect2: error: ld returned 1 exit status make: *** [Makefile:xx: xxx.elf …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 在一个基于 RISC-V 架构的项目里，遇到了如下的链接问题： xxx/file:xxx:(.text.startup+0x74): relocation truncated to fit: R_RISCV_PCREL_HI20 against symbol xxx ... collect2: error: ld returned 1 exit status make: *** [Makefile:xx: xxx.elf …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html" rel="bookmark" title="Permalink to RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20">RISC-V 链接问题：relocation truncated to fit: R_RISCV_PCREL_HI20</a>
+                </h2>
+                <p class="post-meta">
+                    2021-11-25 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2021/11/25/risc-v-link-issue-relocation-truncated-to-fit-r-riscv-pcrel-hi20.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>在一个基于 RISC-V 架构的项目里，遇到了如下的链接问题：</p>
+<div class="highlight"><pre><span></span><code>xxx/file:xxx:(.text.startup+0x74): relocation truncated to fit: R_RISCV_PCREL_HI20 against symbol xxx ...
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:xx: xxx.elf] Error 1
+</code></pre></div>
+
+<p>从提示信息来看，是在链接某个全局变量时发生了错误。</p>
+<h2>原因</h2>
+<p>根据查找到的信息，从实际的项目配置来看，原因是这样的：代码段本身，被链接到 0x0 地址；而数据段，则被链接到 2G (0x8000_0000) 地址；并且，访问这个全局变量的代码的地址偏移，跟这个全局变量本身所在数据段里的地址偏移，两者之间的间隔超过了 2G 字节的范围限制，从而引起了链接错误。</p>
+<h2>解决</h2>
+<p>既然超过了范围限制，那调整链接地址就可以解决问题。</p>
+<p>但实际项目里，代码段和数据段的地址受限于实际的情况，没有办法调整。</p>
+<p>所以目前的办法是，指定某片物理内存区域，就当作是全局变量所在的地方；在代码里，通过栈上指针来指向这片区域并进行读写。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/linux.html">linux</a>,                 <a href="../../../../tag/risc-v.html">risc-v</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html">Boot With Small Pages on RISC-V</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/07/28/python-crypt-module.html">Python crypt 模块</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2021/11/19/python_console_hex_display.html">
+                &laquo; Python 命令行里显示十六进制
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2021/12/03/linux-kernel-printk-log-level.html">
+                Linux kernel printk log level &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

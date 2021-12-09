@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
+
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/07/use_txt2tags_in_pelican.html" rel="bookmark" title="Permalink to Use txt2tags in Pelican">Use txt2tags in Pelican</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-07 Sunday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/06/07/use_txt2tags_in_pelican.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            
+<H1>1. txt2tags</H1>
+
+<P>
+<A HREF="http://daringfireball.net/projects/markdown/">Markdown</A> 是 <A HREF="http://blog.getpelican.com/">Pelican</A> 默认支持的标记语言。其语法简洁，功能实用，多数情况下，可以满足实际的使用需求。
+</P>
+<P>
+<A HREF="http://txt2tags.org">txt2tags</A> 是一个类似的项目：
+</P>
+
+<PRE>
+  Txt2tags is …</pre>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/06/02/use_pelican.html" rel="bookmark" title="Permalink to Pelican 使用记录">Pelican 使用记录</a>
+                </h2>
+                <p class="post-meta">
+                    2015-06-02 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/06/02/use_pelican.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+  <OL>
+  <LI><A HREF="#toc1">Why Here?</A>
+  <LI><A HREF="#toc2">Why Pelican?</A>
+  <LI><A HREF="#toc3">Use Pelican</A>
+    <UL>
+    <LI><A HREF="#toc4">3.1. Install</A>
+    <LI><A HREF="#toc5">3.2. Kickstart your site</A>
+    <LI><A HREF="#toc6">3.3. Config file</A>
+      <UL>
+      <LI><A HREF="#toc7">3.3.1. Theme</A>
+      <LI><A HREF="#toc8">3.3.2. Plugin</A>
+      </UL>
+    <LI><A HREF="#toc9">3.4. Add a note</A>
+    <LI><A HREF="#toc10">3.5. Compile</A>
+    </UL>
+  <LI><A HREF="#toc11">Publish</A>
+  </OL>
+
+<P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+<A NAME="toc1"></A>
+<H1>1. Why Here?</H1>
+
+<P>
+之前博客搭在 <A HREF="http://hi.baidu.com/">Baidu Hi</A> 上面，前后 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/05/29/gcc_linker_order.html" rel="bookmark" title="Permalink to GCC Linker Order">GCC Linker Order</a>
+                </h2>
+                <p class="post-meta">
+                    2015-05-29 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/05/29/gcc_linker_order.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题</h3>
+<p>在程序开发过程中遇到了这样的问题：</p>
+<p>程序比较大，因而拆分成了若干个静态库：</p>
+<ol>
+<li>编译：OK!</li>
+<li>链接：把静态库链接到可执行 …</li></ol>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/12/12/global_variable_name_conflict.html" rel="bookmark" title="Permalink to 同名全局变量造成的冲突">同名全局变量造成的冲突</a>
+                </h2>
+                <p class="post-meta">
+                    2014-12-12 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/12/12/global_variable_name_conflict.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>0x0 问题</h3>
+<p>程序运行时崩溃。</p>
+<h3>0x1 调试</h3>
+<p>经过调试发现，程序本身、和它所依赖的动态库里，有同名的全局变量，Loader 表示很凌乱。。</p>
+<h3>0x2 解决 …</h3>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html" rel="bookmark" title="Permalink to redefinition of typedef error">redefinition of typedef error</a>
+                </h2>
+                <p class="post-meta">
+                    2014-10-30 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/10/30/redefinition_of_typedef_error_with_gcc.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>又是一个坑。。啥也别说了。。</p>
+<p><a href="http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6">http://stackoverflow.com/questions/6526322/why-redefinition-of-typedef-error-with-gcc-4-3-but-not-gcc-4-6</a></p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html" rel="bookmark" title="Permalink to gcc reverse_iterator comparison operators missing?">gcc reverse_iterator comparison operators missing?</a>
+                </h2>
+                <p class="post-meta">
+                    2014-10-22 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>I get a compile error of the iterator when porting an application which is based on the C++ standard library. Someone get the same issue before, and there is already an answer at <a href="http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing">http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing</a>.</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2014/10/17/debug_the_stack_overflow.html" rel="bookmark" title="Permalink to 栈溢出的调试及解决办法">栈溢出的调试及解决办法</a>
+                </h2>
+                <p class="post-meta">
+                    2014-10-17 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2014/10/17/debug_the_stack_overflow.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题：</h3>
+<p>栈上消耗的内存太多，导致溢出，程序崩溃。</p>
+<h3>※ 程序崩溃的过程是怎样的？</h3>
+<div class="highlight"><pre><span></span><code>1. CPU 执行代码时，反复地压栈；
+2. 访问栈上内存时 …</code></pre></div>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2013/09/11/grep-less-with-highlight-color.html" rel="bookmark" title="Permalink to 保持 grep 的输出重定向到 less 时的颜色高亮">保持 grep 的输出重定向到 less 时的颜色高亮</a>
+                </h2>
+                <p class="post-meta">
+                    2013-09-11 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2013/09/11/grep-less-with-highlight-color.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>使用 <code>grep</code> 搜索，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>cat<span class="w"> </span>a.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;word&quot;</span>
+</code></pre></div>
+
+<p>在输出结果里，匹配到的字符会通过颜色高亮显示，方便定位；</p>
+<p>但如果输出结果比较多 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2013/09/11/pthread-rwlock-writer-starvation.html" rel="bookmark" title="Permalink to 读写锁 rwlock 实现里的避免写锁饥饿问题">读写锁 rwlock 实现里的避免写锁饥饿问题</a>
+                </h2>
+                <p class="post-meta">
+                    2013-09-11 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2013/09/11/pthread-rwlock-writer-starvation.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>使用读写锁时，同一时刻可以有多个读锁占用，但只能有一个写锁占用。</p>
+<p>使用 pthread 多线程时，需要考虑如果持续地有多个线程 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2013/04/26/vim_insert_numbered_list.html" rel="bookmark" title="Permalink to vim 里插入列表编号">vim 里插入列表编号</a>
+                </h2>
+                <p class="post-meta">
+                    2013-04-26 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2013/04/26/vim_insert_numbered_list.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>0x00</strong></p>
+<p>markdown 里的 Ordered Lists 语法是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="k">1.</span> First item
+<span class="k">2.</span> Second item
+<span class="k">3.</span> Third item
+<span class="k">4.</span> Fourth item
+</code></pre></div>
+
+<p>虽然以下写法也是允许的，并且渲染的结果是一样的：</p>
+<div class="highlight"><pre><span></span><code><span class="k">1.</span> First item
+<span class="k">1 …</span></code></pre></div>
+            </div>
+        </section>
+    </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index9.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 10/12</li>
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index11.html">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
+
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>保持 grep 的输出重定向到 less 时的颜色高亮 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2013/09/11/grep-less-with-highlight-color.html">
+        <meta name="twitter:title" content="保持 grep 的输出重定向到 less 时的颜色高亮">
+        <meta name="twitter:description" content="问题 使用 grep 搜索，比如： $ cat a.txt | grep -a "word" 在输出结果里，匹配到的字符会通过颜色高亮显示，方便定位； 但如果输出结果比较多 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2013/09/11/grep-less-with-highlight-color.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="保持 grep 的输出重定向到 less 时的颜色高亮">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 使用 grep 搜索，比如： $ cat a.txt | grep -a "word" 在输出结果里，匹配到的字符会通过颜色高亮显示，方便定位； 但如果输出结果比较多 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2013/09/11/grep-less-with-highlight-color.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2013/09/11/grep-less-with-highlight-color.html" rel="bookmark" title="Permalink to 保持 grep 的输出重定向到 less 时的颜色高亮">保持 grep 的输出重定向到 less 时的颜色高亮</a>
+                </h2>
+                <p class="post-meta">
+                    2013-09-11 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2013/09/11/grep-less-with-highlight-color.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>使用 <code>grep</code> 搜索，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>cat<span class="w"> </span>a.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;word&quot;</span>
+</code></pre></div>
+
+<p>在输出结果里，匹配到的字符会通过颜色高亮显示，方便定位；</p>
+<p>但如果输出结果比较多，有时还带上下文一起，就需要分屏显示，比如这样使用：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>cat<span class="w"> </span>a.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;word&quot;</span><span class="w">  </span><span class="p">|</span><span class="w"> </span>less<span class="w"> </span>-NR
+</code></pre></div>
+
+<p>这时，匹配到的字符没有了颜色高亮，即使 <code>less</code> 已经加上了 <code>-R</code> 选项也不行。</p>
+<h2>走读实现代码</h2>
+<p>浏览了 <code>grep</code> 源代码里的相关逻辑，主要是 <code>color_option</code> 变量的赋值和使用：</p>
+<p><strong>定义：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="cm">/* If nonzero, use color markers.  */</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">color_option</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>根据命令行参数初始化：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="no">COLOR_OPTION</span><span class="p">:</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">)</span>
+<span class="w">          </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;always&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;force&quot;</span><span class="p">))</span>
+<span class="w">              </span><span class="n">color_option</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;never&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;no&quot;</span><span class="p">)</span>
+<span class="w">                     </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="p">))</span>
+<span class="w">              </span><span class="n">color_option</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;auto&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tty&quot;</span><span class="p">)</span>
+<span class="w">                     </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">strcasecmp</span><span class="w"> </span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;if-tty&quot;</span><span class="p">))</span>
+<span class="w">              </span><span class="n">color_option</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">              </span><span class="n">show_help</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">          </span><span class="n">color_option</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>如果命令行参数里没有指定，那么进行自动判断：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">color_option</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">    </span><span class="n">color_option</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">possibly_tty</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">should_colorize</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">isatty</span><span class="w"> </span><span class="p">(</span><span class="n">STDOUT_FILENO</span><span class="p">);</span>
+<span class="w">  </span><span class="n">init_colorize</span><span class="w"> </span><span class="p">();</span>
+</code></pre></div>
+
+<h2>解决</h2>
+<p><code>color_option</code> 默认的是 <code>auto</code> 自动判断，即在输出时，检查环境变量 <code>TERM</code> 以及接口 <code>int isatty(int fd)</code>，如果结果是输出到控制台，那么就加上颜色高亮。而对于通过管道输出到 <code>less</code>，就没有颜色高亮了。</p>
+<p>所以，对于这个问题，可以加上 <code>--color=always</code> 选项，强制要求颜色高亮，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>cat<span class="w"> </span>a.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-a<span class="w"> </span>--color<span class="o">=</span>always<span class="w"> </span><span class="s2">&quot;word&quot;</span><span class="w">  </span><span class="p">|</span><span class="w"> </span>less<span class="w"> </span>-NR
+</code></pre></div>
+
+<p>这样就可以了。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/grep.html">grep</a>,                 <a href="../../../../tag/less.html">less</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2013/09/11/pthread-rwlock-writer-starvation.html">
+                &laquo; 读写锁 rwlock 实现里的避免写锁饥饿问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2014/10/17/debug_the_stack_overflow.html">
+                栈溢出的调试及解决办法 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

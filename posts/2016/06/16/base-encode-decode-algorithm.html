@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Base64, Base58 等算法的编码和解码过程 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2016/06/16/base-encode-decode-algorithm.html">
+        <meta name="twitter:title" content="Base64, Base58 等算法的编码和解码过程">
+        <meta name="twitter:description" content="这里记录一下字节流在表示和传输中使用到的 Base 编码，即把二进制字节流编码成某种格式 ASCII 文本字符。 Base16 最简单的是平 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2016/06/16/base-encode-decode-algorithm.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Base64, Base58 等算法的编码和解码过程">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="这里记录一下字节流在表示和传输中使用到的 Base 编码，即把二进制字节流编码成某种格式 ASCII 文本字符。 Base16 最简单的是平 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2016/06/16/base-encode-decode-algorithm.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2016/06/16/base-encode-decode-algorithm.html" rel="bookmark" title="Permalink to Base64, Base58 等算法的编码和解码过程">Base64, Base58 等算法的编码和解码过程</a>
+                </h2>
+                <p class="post-meta">
+                    2016-06-16 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2016/06/16/base-encode-decode-algorithm.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>这里记录一下字节流在表示和传输中使用到的 Base 编码，即把二进制字节流编码成某种格式 ASCII 文本字符。</p>
+<h1>Base16</h1>
+<p>最简单的是平时常用到的十六进制编码。即以 <code>0123456789abcdef</code> （不区分大小写）作为字符表，对于输入字节流的每个字节，按高 4 位和低 4 位分别作为索引来查表并得到相应的字符，比如：</p>
+<ul>
+<li>输入字节流：两个字节，分别是 0x12 和 0x34；</li>
+<li>写成二进制：<code>00010010 00110100</code></li>
+<li>按 4 比特分组：<code>0001 0010 0011 0100</code></li>
+<li>转换成十进制，作为索引从字符表里得到四个符：<code>1、2、3、4</code>，放在一起即 <code>1234</code>。</li>
+</ul>
+<p>按编码前后的容量来看，它从最初的 <strong>两个字节</strong> 变成了 <strong>四个字节</strong>，即增加了一倍的容量；好处是得到了可见的字符流。</p>
+<p>实际上，十六进制编码，也就是 Base16 编码。概括地说，即以 16（2<sup>4</sup>）个字符作为字符表，输入字节流的每 4 个比特作为索引得到相应的字符。解码过程，则把每个字符对应的索引，按 4 比特（不足时高位补 0）连在一起，即得到了二进制的字节流。</p>
+<h1>Base64</h1>
+<p>Base64 编码，以 64（2<sup>6</sup>）个字符 <code>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/</code> 作为字符表。</p>
+<p>输入字节流中，每三个字节一组，24 比特，分成四个 6 比特，作为四个索引，从字符表中检索到相应字符，即每三个字节编码成四个字符。这样就在保持原输入字节流的信息、并且编码成明文可见字符串的情况下，容量只增加了三分之一。</p>
+<h2>编码</h2>
+<p>对于输入字节流，按每 6 位作为索引来查表并得到相应的字符，比如：</p>
+<ul>
+<li>输入字节流：三个字节，0x41、0x42、0x43，（对应的 ASCII 字符 <code>A、B、C</code>）</li>
+<li>写成二进制：<code>01000001 01000010 01000011</code></li>
+<li>按 6 比特分组：<code>010000 010100 001001 000011</code></li>
+<li>转换成十进制，作为索引：<code>16, 20, 9, 3</code></li>
+<li>从字符表检索得到：<code>Q，U，J，D</code></li>
+</ul>
+<p>所以 <code>base64(b'ABC') == b'QUJD'</code></p>
+<p>这里以三个字节举例，是因为 8bit × 3 = 6bit × 4，正好可以全部用于索引。</p>
+<p>如果六个字节，那就分成两组分别编码后再合并起来：<code>base64(b'DEF') == b'REVG'</code>、<code>base64(b'ABCDEF') == b'QUJDREVG'</code> 等等。</p>
+<h2>补全</h2>
+<p>如果字节流按每三个字节处理后，还剩下两个字节，是这样处理：</p>
+<ul>
+<li>剩余字节流：0x41、0x42</li>
+<li>写成二进制：<code>01000001 01000010</code></li>
+<li>按 6 比特分组：<code>010000 010100 0010xx xxxxxx</code>；两个字节只有 16 比特，所以再用 x 补全到四个 6 比特，计算时 x 取 0；</li>
+<li>转换成十进制，作为索引：<code>16, 20, 8, 0</code></li>
+<li>注意到上述两个字节 16 比特的信息只分布在前三组里，所以只索引前三个，第四个取<code>=</code>，即：<code>Q，U，I，=</code></li>
+</ul>
+<p>所以 <code>base64(b'AB') == b'QUI='</code></p>
+<p>如果字节流按每三个字节处理后，还剩下一个字节，比如：</p>
+<ul>
+<li>剩余字节流：0x41</li>
+<li>写成二进制：<code>01000001</code></li>
+<li>按每 6 比特分组：<code>010000 01xxxx xxxxxx xxxxxx</code>；一个字节只有 8 比特，所以再用 x 补全到四个 6 比特，计算时 x 取 0；</li>
+<li>转换成十进制，并作为索引：<code>16, 16, 0, 0</code></li>
+<li>注意到上述一个字节 8 比特的信息只分布在前两组里，所以只索引前两个，第三、四个取<code>=</code>，即 ：<code>Q，Q，=，=</code></li>
+</ul>
+<p>所以 <code>base64(b'A') == b'QQ=='</code></p>
+<h2>举例</h2>
+<p>把上述编码规则放在一起，举例：</p>
+<ul>
+<li><code>base64(b'ABC') == b'QUJD'</code></li>
+<li><code>base64(b'DEF') == b'REVG'</code></li>
+<li><code>base64(b'GH')  == b'R0g='</code></li>
+</ul>
+<p>所以 <code>base64(b'ABCDEFGH') == b'QUJDREVGR0g='</code>。</p>
+<h2>解码</h2>
+<p>解码就是按上述步骤的逆运算。即在编码字符串里，每四个字符一组，按字符表解码成四个索引数，并按二进制（不足 6 位时高位补 0）排在一起，按 8 比特理解成三个字节即可。</p>
+<p>输入的字符串，必然可以完整地分成若干个四字符组，否则输入是无效的。</p>
+<p>对于最后一组四字符组里有<code>=</code>的情况：</p>
+<ul>
+<li>如果补了一个 <code>=</code>，那么前三个字符提供了 6 比特 ×3=18 比特的信息，其中前 16 比特解码出两个字节，另外 2 比特用来作为校验（如果不为 0，说明编码字符串不合理）；</li>
+<li>如果补了两个 <code>=</code>，那么前两个字符提供了 6 比特 ×2=12 比特的信息，其中前 8 比特解码出一个字节，另外 4 比特用来作为校验（如果不为 0，说明编码字符串不合理）；</li>
+</ul>
+<h2>按 64 进制来理解</h2>
+<p>三个字节，24 位，按 6 位分组，可以用 64 进制来理解，比如：</p>
+<ul>
+<li>输入字节流：三个字节，0x41、0x42、0x43，（对应的 ASCII 字符 <code>A、B、C</code>）</li>
+<li>写成二进制：<code>01000001 01000010 01000011</code></li>
+<li>合在一起成为一个数：01000001_01000010_01000011<sub>2</sub> == 4276803<sub>10</sub></li>
+<li>展开：4276803 == 16 × 64<sup>3</sup> + 20 × 64<sup>2</sup> + 9 × 64<sup>1</sup> + 3 × 64<sup>0</sup>，4276803 == (16,20,9,3)<sub>64</sub></li>
+<li>得到的索引分别是 16, 20, 9, 3</li>
+<li>从字符表检索得到：<code>Q，U，J，D</code></li>
+</ul>
+<p>所以得到了相同的结果，即 <code>base64(b'ABC') == b'QUJD'</code></p>
+<p>实际上对于 2 的幂（比如 Base16、Base32、Base64 等等），都可以这样理解。 因为这跟之前的比特分组，原理上是一致的。</p>
+<h1>Base32</h1>
+<p>Base32 编码，以 32（2<sup>5</sup>）个字符 <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ234567</code> 作为字符表。</p>
+<p>输入字节流中，每五个字节一组，40 比特，分成八个 5 比特，作为八个索引，从字符表中检索到相应字符，即每五个字节编码成八个字符。</p>
+<p>关于补全，即在剩余字节数小于五个时，按实际剩余字节数 n（1、2、3、4），也就是 n × 8 比特，需要分布在多少个 5 比特里，剩余的补 <code>=</code>。具体地说：</p>
+<ul>
+<li>n=4 时，索引 7 个字符，补 1 个 <code>=</code>；</li>
+<li>n=3 时，索引 5 个字符，补 3 个 <code>=</code>；</li>
+<li>n=2 时，索引 4 个字符，补 4 个 <code>=</code>；</li>
+<li>n=1 时，索引 2 个字符，补 6 个 <code>=</code>；</li>
+</ul>
+<p>除了这些具体参数包括字符表，实际的编码和解码过程，跟 Base64 一致。</p>
+<h1>Base58</h1>
+<p>Base58 编码，以 58 个字符 <code>123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz</code> 作为字符表。相比 Base64，去掉了几个容易混淆的字符 "0OIl" 以及 "+" 和 "/" 符号。</p>
+<h2>编码</h2>
+<p>因为 58 并不是 2 的幂，所以不能按比特分组的方式，只能使用 58 进制的方式来计算。比如：</p>
+<ul>
+<li>输入字节流：三个字节，0x41、0x42、0x43，（对应的 ASCII 字符 <code>A、B、C</code>）</li>
+<li>写成二进制：<code>01000001 01000010 01000011</code></li>
+<li>合在一起成为一个数：01000001_01000010_01000011<sub>2</sub> == 4276803<sub>10</sub></li>
+<li>展开：4276803 == 21 × 58<sup>3</sup> + 53 × 58<sup>2</sup> + 19 × 58<sup>1</sup> + 57 × 58<sup>0</sup>，即 4276803 == (21,53,19,57)<sub>58</sub></li>
+<li>得到的索引分别是 21, 53, 19, 57</li>
+<li>从字符表检索得到：<code>N，v，L，z</code></li>
+</ul>
+<p>所以 <code>base58(b'ABC') == b'NvLz'</code></p>
+<p>这里要考虑一个特殊情况，如果输入字节流开头连续若干个 0，这个信息在合成大数后会丢失，比如：</p>
+<ul>
+<li>01000001_01000010_01000011<sub>2</sub> == 4276803<sub>10</sub></li>
+<li>00000000_00000000_01000001_01000010_01000011<sub>2</sub> == 4276803<sub>10</sub></li>
+</ul>
+<p>所以对于这样的输入（因为没有比特分组的情况，所以这里就是整个的输入字节流），有多少个 0 字节（00000000<sub>2</sub>）开头，就先输出多少个 <code>1</code> 字符；剩下的部分再按 58 进制处理。所以 <code>base58(b'\0\0ABC') == b'11NvLz'</code>。</p>
+<h2>解码</h2>
+<p>对于输入字符串：</p>
+<ul>
+<li>如果开头有若干个字符 <code>1</code>，先解码输出若干个 <code>\0</code>；</li>
+<li>剩下部分，每个字符转换成索引，并按 58 进制合成一个数；再按二进制展开（高位不足时补 0），即解码得到每个字节；</li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/base58.html">base58</a>,                 <a href="../../../../tag/base64.html">base64</a>,                 <a href="../../../../tag/hash.html">hash</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html">椭圆曲线和蒙哥马利算法的一些记录</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/11/02/one-time-password.html">一次性密码算法 One-Time Password (OTP)</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/06/18/ltc-algorithm.html">Litecoin (LTC) 算法</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2016/06/18/btc-algorithm.html">Bitcoin (BTC) 算法</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2016/03/28/using_rcs_keywords_in_perforce.html">
+                &laquo; Using RCS Keywords in Perforce
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2016/06/18/btc-algorithm.html">
+                Bitcoin (BTC) 算法 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

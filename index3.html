@@ -1,459 +1,276 @@
-
 <!DOCTYPE html>
 <html lang="cn">
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="HandheldFriendly" content="True" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="" />
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
 
-  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
 
-    <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/stylesheet/style.min.css">
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/pygments/github.min.css">
-  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/font-awesome/css/font-awesome.min.css">
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
 
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2022/08/17/win10_software_window_position_issue.html" rel="bookmark" title="Permalink to 解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题">解决 Windows 10 睡眠唤醒后软件窗口大小和位置有变化的问题</a>
+                </h2>
+                <p class="post-meta">
+                    2022-08-17 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2022/08/17/win10_software_window_position_issue.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题</strong></p>
+<p>Windows 10 经常碰到这样的情况，从睡眠状态唤醒以后，部分运行中的软件，窗口会被缩小，并且窗口也不在原来的位置，而是 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2022/08/02/compile-devicetree-source.html" rel="bookmark" title="Permalink to 编译 devicetree source 文件">编译 devicetree source 文件</a>
+                </h2>
+                <p class="post-meta">
+                    2022-08-02 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2022/08/02/compile-devicetree-source.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>dts, dtb</strong></p>
+<p>device tree (dts) 是一种树形结构的、用来描述 SoC 设备的组成的文件。有 dts 格式的文本源文件，用 Device Tree Compiler (dtc)，可以把 dts 编译生成 dtb …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2022/07/15/linux-pwm-driver.html" rel="bookmark" title="Permalink to Linux PWM 驱动的实现">Linux PWM 驱动的实现</a>
+                </h2>
+                <p class="post-meta">
+                    2022-07-15 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2022/07/15/linux-pwm-driver.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>0. PWM 概念</strong></p>
+<p>PWM 指的是脉冲宽度调制技术。 PWM 频率，指 1 秒的时间里 PWM 运行的次数。 PWM 周期，指一次完整的 PWM 输出所使用的时间 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2022/07/03/linux-clock-tree.html" rel="bookmark" title="Permalink to Linux clock tree 的实现">Linux clock tree 的实现</a>
+                </h2>
+                <p class="post-meta">
+                    2022-07-03 Sunday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2022/07/03/linux-clock-tree.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>1. Linux 里已经预定义了几种 clock</strong></p>
+<ul>
+<li><strong>clk-fixed-rate</strong>: basic fixed-rate clock that cannot gate, 比如固定频率的 oscillator</li>
+<li><strong>clk-fixed-factor</strong>: basic fixed multiplier and divider clock that cannot gate，比如从上一级按固定比例分频 …</li></ul>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2022/06/30/u-boot-spl-image-type-for-soc.html" rel="bookmark" title="Permalink to 定制 SoC 的 U-Boot SPL image type 类型">定制 SoC 的 U-Boot SPL image type 类型</a>
+                </h2>
+                <p class="post-meta">
+                    2022-06-30 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2022/06/30/u-boot-spl-image-type-for-soc.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>开发板 SoC 系统上电启动时，从 <code>boot rom</code> 开始运行、并加载后续程序；被加载的通常是 <code>U-Boot SPL</code>，它运行并加载其他后续的程序。按先后 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2022/04/09/ram-watch-point-register.html" rel="bookmark" title="Permalink to ARM Watch Point 寄存器">ARM Watch Point 寄存器</a>
+                </h2>
+                <p class="post-meta">
+                    2022-04-09 Saturday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2022/04/09/ram-watch-point-register.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Watch Point (WP) 有 6 个寄存器：</p>
+<ul>
+<li>Address Value / Mask Register</li>
+<li>Data Value / Mask Register</li>
+<li>Control Value / Mask Register</li>
+</ul>
+<p>其中，WP Address Value / Mask 是监控地址总线，WP Data Value / Mask 是监控数据总线。</p>
+<p><strong>断点</strong>用来标 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2021/12/09/linux-kernel-dynamic-debug.html" rel="bookmark" title="Permalink to Linux Kernel pr_debug(), dev_dbg() 以及动态调试">Linux Kernel pr_debug(), dev_dbg() 以及动态调试</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-09 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2021/12/09/linux-kernel-dynamic-debug.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>pr_err(), pr_info(), ... / dev_err(), dev_info(), ... 系列函数，在 pr_fmt / dev_fmt 的基础上，调用 vprintk_emit() 实现打印输出。但 pr_debug() / dev_dbg() 比较特殊，有不一样的代码路径。</p>
+<p>文件：include/linux/printk.h</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/* If you are writing …</span></code></pre></div>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2021/12/07/linux-kernel-printk-specifiers.html" rel="bookmark" title="Permalink to Linux kernel printk 占位符 %p 和 %px">Linux kernel printk 占位符 %p 和 %px</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-07 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2021/12/07/linux-kernel-printk-specifiers.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>1. %p</strong></p>
+<p>Linux 内核里的 printk 可以打印指针地址，这和 printf() 是一样的：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x1234</span><span class="p">;</span>
+<span class="n">printk</span><span class="p">(</span><span class="s">&quot;p = %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+</code></pre></div>
 
-    <link href="https://cctags.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gang Up Atom">
+<p>这里是想打印所指向的地址。实际运行起来后 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2021/12/05/linux-kernel-printk-alias-function.html" rel="bookmark" title="Permalink to Linux kernel printk 以及 pr_err, dev_err 等包装函数">Linux kernel printk 以及 pr_err, dev_err 等包装函数</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-05 Sunday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2021/12/05/linux-kernel-printk-alias-function.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>pr_err() 等包装函数</strong></p>
+<p>在 Linux 内核里打印信息，除了使用 printk，还可以用 pr_err() 等包装函数，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pr_err</span><span class="p">(</span><span class="s">&quot;page allocation failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre></div>
 
-
-
-<!-- Google Analytics -->
-<script type="text/javascript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-163482510-1', 'auto');
-  ga('send', 'pageview');
-</script>
-<!-- End Google Analytics -->
-    <!-- Chrome, Firefox OS and Opera -->
-    <meta name="theme-color" content="#eff3f9">
-    <!-- Windows Phone -->
-    <meta name="msapplication-navbutton-color" content="#eff3f9">
-    <!-- iOS Safari -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- Microsoft EDGE -->
-    <meta name="msapplication-TileColor" content="#eff3f9">
-
-    <meta name="author" content="cctags" />
-    <meta name="description" content="Random notes from a random developer" />
-<meta property="og:site_name" content="Gang Up"/>
-<meta property="og:type" content="blog"/>
-<meta property="og:title" content="Gang Up"/>
-<meta property="og:description" content="Random notes from a random developer"/>
-<meta property="og:locale" content="zh_CN"/>
-<meta property="og:url" content="https://cctags.github.io"/>
-
-  <title>Gang Up</title>
-
-</head>
-<body>
-  <aside>
-    <div>
-      <a href="https://cctags.github.io">
-        <img src="https://cctags.github.io/theme/img/profile.png" alt="Gang Up" title="Gang Up">
-      </a>
-      <h1><a href="https://cctags.github.io">Gang Up</a></h1>
-
-<p>Random notes from a random developer</p>
-      <nav>
-        <ul class="list">
-          <li><a href="https://cctags.github.io/pages/about.html#about">About</a></li>
-
-        </ul>
-      </nav>
-
-      <ul class="social">
-        <li><a class="sc-github" href="https://github.com/cctags" target="_blank"><i class="fa fa-github"></i></a></li>
-        <li><a class="sc-envelope-o" href="https://github.com/cctags" target="_blank"><i class="fa fa-envelope-o"></i></a></li>
-        <li><a class="sc-rss" href="feeds/all.rss.xml" target="_blank"><i class="fa fa-rss"></i></a></li>
-      </ul>
+<p>这个调用相当于 <code>printk(KERN_ERR "page allocation failed\n …</code></p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2021/12/03/linux-kernel-printk-log-level.html" rel="bookmark" title="Permalink to Linux kernel printk log level">Linux kernel printk log level</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-03 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">programming</a>
+                    &middot; <a href="./posts/2021/12/03/linux-kernel-printk-log-level.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>1. Log level 的定义</strong></p>
+<p>在 Linux 内核里，printk 经常用来格式化输出，类似于常见的 printf。需要注意的是，printk 有一个 log level 的参数，使用的时候经常 …</p>
+            </div>
+        </section>
     </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index2.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 3/12</li>
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index4.html">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
 
-
-  </aside>
-  <main>
-
-    <nav>
-      <a href="https://cctags.github.io">    Home
-</a>
-
-      <a href="/archives.html">Archives</a>
-      <a href="/categories.html">Categories</a>
-      <a href="/tags.html">Tags</a>
-      <a href="/pages/about.html">About</a>
-      <a href="/feeds/all.rss.xml">Rss</a>
-
-      <a href="https://cctags.github.io/feeds/all.atom.xml">    Atom
-</a>
-
-    </nav>
-
-
-
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html#cl_set_event_callback_in_ocl">Set Event Callback in OpenCL</a></h2>
-    <p>
-          Posted on 2015-12-30 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/opencl.html">OpenCL</a>
-    </p>
-  </header>
-  <div>
-      <p>这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下是原型：</p>
-<div class="highlight"><pre><span></span><code><span class="n">cl_int</span> <span class="n">clSetEventCallback</span><span class="p">(</span>
-    <span class="n">cl_event</span> <span class="n">event</span><span class="p">,</span>
-    <span class="n">cl_int</span> <span class="n">command_exec_callback_type</span><span class="p">,</span>
-    <span class="kt">void</span> <span class="p">(</span><span class="n">CL_CALLBACK</span>  <span class="o">*</span><span class="n">pfn_event_notify</span><span class="p">)</span> <span class="p">(</span><span class="n">cl_event</span> <span class="n">event</span><span class="p">,</span>
-                                           <span class="n">cl_int</span> <span class="n">event_command_exec_status</span><span class="p">,</span>
-                                           <span class="kt">void</span> <span class="o">*</span><span class="n">user_data</span><span class="p">),</span>
-    <span class="kt">void</span> <span class="o">*</span><span class="n">user_data</span><span class="p">)</span>
-</code></pre></div>
-
-
-<p>其中 <code>command_exec_callback_type</code> 参数在不同版本里有 <strong>差异</strong>：</p>
-<ul>
-<li><a href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clSetEventCallback.html">OpenCL 1.1</a>: The command execution callback value for which a callback can be registered is …</li></ul>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/12/30/cl_set_event_callback_in_ocl.html#cl_set_event_callback_in_ocl">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html#iphone_photo_library_ghost_space">iPhone Photo Library "Ghost" Space</a></h2>
-    <p>
-          Posted on 2015-12-25 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/ios.html">iOS</a>
-    </p>
-  </header>
-  <div>
-      <p>最近 iPhone 手机遇到个问题：照片拍了很多了，想清理一下，结果发现即使是删掉了绝大部分照片，照片图库仍然占用了大量的系统存储空间。尝试了好几次，都无法解决。</p>
-<p>后来发现，这其实是 iPhone 的一个 Bug。网上已经有了一个临时的解决办法，请参考这个官方论坛里的帖子：<a href="https://discussions.apple.com/thread/6560594?tstart=0">https://discussions.apple.com/thread/6560594?tstart=0</a>。</p>
-<p>以下是解决步骤：</p>
-<ul>
-<li>把手机系统时间改回很久以前；</li>
-<li>切换到照片图库，在 “ 最近删除 ” 里面，会看到很多照片；</li>
-<li>删除这些照片；</li>
-<li>切换到系统设置里，查看系统存储空间变化；</li>
-<li>恢复系统时间；</li>
-<li>OK!</li>
-</ul>
-<p>这个 Bug 很奇怪，这个解决办法更奇怪。</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/12/25/iphone_photo_library_ghost_space.html#iphone_photo_library_ghost_space">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html#merging_the_upstream_repository_into_the_fork">Merging the upstream repository into the fork</a></h2>
-    <p>
-          Posted on 2015-12-15 星期二 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/git.html">git</a>
-    </p>
-  </header>
-  <div>
-      <p>如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， <a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/">https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/</a>，关于对 <code>fork</code> 进行更新。</p>
-<p>记录一下，备忘。</p>
-<p>o 切换到 <code>master</code> 分支：</p>
-<div class="highlight"><pre><span></span><code>git checkout master
-</code></pre></div>
-
-
-<p>o 从 upstream repository 更新下来：</p>
-<div class="highlight"><pre><span></span><code>git pull https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git master
-</code></pre></div>
-
-
-<p>o 更新远程 repository：</p>
-<div class="highlight"><pre><span></span><code>git push origin master
-</code></pre></div>
-
-
-<p>更新后，对于 bugfix 或者 new …</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html#merging_the_upstream_repository_into_the_fork">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html#dial_toll_free_numbers_in_skype">Dial Toll Free Numbers in Skype</a></h2>
-    <p>
-          Posted on 2015-12-08 星期二 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/skype.html">Skype</a>
-    </p>
-  </header>
-  <div>
-      <p>电话会议，一般是用电话拨进去参加的会议，其中有些号码是免费的，有些则是付费的。</p>
-<p>当然，如果 Dial-In Number 里包括了以下这些：</p>
-<blockquote>
-<p>USA: +1 800, +1 866, +1 877, +1 888</p>
-</blockquote>
-<p>那也可以用 Skype 直接打过去。这里有使用说明：<a href="https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series">https://support.skype.com/en/faq/FA24/how-do-i-dial-toll-free-numbers-for-example-1-800-1-866-and-1-877-number-series</a>。 即使没有 Skype Credit，也可以使用。</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/12/08/dial_toll_free_numbers_in_skype.html#dial_toll_free_numbers_in_skype">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/11/17/global_and_local_work_size.html#global_and_local_work_size">Global and Local Work Size in OpenCL</a></h2>
-    <p>
-          Posted on 2015-11-17 星期二 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/opencl.html">OpenCL</a>
-    </p>
-  </header>
-  <div>
-      <p>The work-items in a given work-group execute concurrently on the processing elements of a single compute unit. This is a critical point in understanding the concurrency in OpenCL. ... OpenCL only assures that the workitems within a work-group execute concurrently (and share processor resources on the device).</p>
-<ul>
-<li><strong>global work offset</strong>: what …</li></ul>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/11/17/global_and_local_work_size.html#global_and_local_work_size">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html#change_the_background_color_in_pdf_reader">Change the Background Color in PDF Reader</a></h2>
-    <p>
-          Posted on 2015-10-28 星期三 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/pdf.html">PDF</a>
-    </p>
-  </header>
-  <div>
-      <p>以 Adobe Reader 为例，从主菜单选择：编辑 ∕ 首选项 ∕ 辅助工具 ∕ 自定义颜色 ∕ 页面背景 ∕ 其它颜色，比如色调 45、饱和度 35、亮度 165。</p>
-<p>参考：</p>
-<ul>
-<li><a href="http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2">http://jingyan.baidu.com/album/3052f5a1dd4a1097f31f86ff.html?picindex=2</a></li>
-<li><a href="http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast">http://lifehacker.com/5483656/change-the-background-color-in-adobe-reader-for-eye-friendly-contrast</a></li>
-</ul>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/10/28/change_the_background_color_in_pdf_reader.html#change_the_background_color_in_pdf_reader">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html#git_p4_submit_error">Git-P4 Submit Error</a></h2>
-    <p>
-          Posted on 2015-09-30 星期三 in <a href="https://cctags.github.io/category/vcs.html">VCS</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/git.html">git</a>,              <a href="https://cctags.github.io/tag/p4.html">p4</a>
-    </p>
-  </header>
-  <div>
-      <P>
-提交代码时遇到了这样的错误：
-</P>
-
-<PRE>
-  $ git p4 submit
-  Error: Cannot locate perforce checkout of //XXX/YYY/ZZZ/ in client view
-</PRE>
-
-<P>
-一下子还真没想明白是哪里不对。
-</P>
-<P>
-后来想明白了，需要重新登录一下 Perfoce：
-</P>
-
-<PRE>
-  $ p4 login
-  ...
-</PRE>
-
-<P>
-解决。
-</P>
-
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/09/30/git_p4_submit_error.html#git_p4_submit_error">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html#setup_comments_with_disqus">Setup Comments with Disqus in Pelican</a></h2>
-    <p>
-          Posted on 2015-09-18 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/pelican.html">Pelican</a>,              <a href="https://cctags.github.io/tag/disqus.html">Disqus</a>
-    </p>
-  </header>
-  <div>
-      <p><a href="https://disqus.com/">Disqus</a> 是一个外挂的评论系统，对于像 GitHub Pages 这种静态网页来说，非常实用。</p>
-<p>找到一个文档 <a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html</a>，把<a href="https://disqus.com/">Disqus</a>的使用步骤写得很清楚了。</p>
-<p>以下是主要的配置说明，记录在这里，备忘。</p>
-<p>注册 Disqus 账号：通过链接：http://&lt;YOUR_DOMAINE>.disqus.com/admin/settings，进行设置。</p>
-<p>配置 Pelican：在 <code>pelicanconfig.py</code> 文件里，添加如下配置：</p>
-<div class="highlight"><pre><span></span><code>DISQUS_SITENAME = &quot;&lt;YOUR_DOMAINE&gt;&quot;
-</code></pre></div>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/09/18/setup_comments_with_disqus.html#setup_comments_with_disqus">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/09/16/limit_cpu_usage.html#limit_cpu_usage">Limit CPU Usage</a></h2>
-    <p>
-          Posted on 2015-09-16 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/linux.html">Linux</a>
-    </p>
-  </header>
-  <div>
-      <p>这里有一些网页，描述了如何限制 CPU 的使用：</p>
-<ul>
-<li>Restricting process CPU usage using nice, cpulimit, and cgroups <a href="http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups">http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups</a></li>
-<li>CPU Usage Limiter for Linux <a href="http://cpulimit.sourceforge.net/">http://cpulimit.sourceforge.net/</a></li>
-<li><a href="https://github.com/opsengine/cpulimit">https://github.com/opsengine/cpulimit</a></li>
-<li>Two great signals: SIGSTOP and SIGCONT <a href="https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/">https://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/</a></li>
-</ul>
-<p>概括地讲 …</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/09/16/limit_cpu_usage.html#limit_cpu_usage">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2015/09/15/the_linux_cpu_load.html#the_linux_cpu_load">What is the Linux CPU Load</a></h2>
-    <p>
-          Posted on 2015-09-15 星期二 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/linux.html">Linux</a>
-    </p>
-  </header>
-  <div>
-      <p>The <strong>load average</strong> represents the <strong>average</strong> system load over a period of time. It conventionally appears in the form of three numbers which represent the system load during the last one-, five-, and fifteen-minute periods. <a href="https://en.wikipedia.org/wiki/Load_(computing)">https://en.wikipedia.org/wiki/Load_(computing)</a></p>
-<p>按照网上看到的一种很形象的说法，假设我们的系统是单 CPU 单内核的，把它比喻成是一条单向马路，把任务比作汽车。</p>
-<ul>
-<li>当车不多的时候，load …</li></ul>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2015/09/15/the_linux_cpu_load.html#the_linux_cpu_load">    Continue reading
-</a>
-  </div>
-</article>
-
-  <div class="pagination">
-    <a class="btn float-left" href="https://cctags.github.io/index4.html">
-      <i class="fa fa-angle-left"></i>     Older Posts
-
-    </a>
-    <a class="btn float-right" href="https://cctags.github.io/index2.html">
-          Newer Posts
- <i class="fa fa-angle-right"></i>
-    </a>
-  </div>
-
-
-
-
-    <footer>
-<p>
-  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
-</p>
-<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
-</p><p>
-  <a rel="license"
-     href="http://creativecommons.org/licenses/by-sa/4.0/"
-     target="_blank">
-    <img alt="Creative Commons License"
-         title="Creative Commons License"
-         style="border-width:0"
-           src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
-         width="80"
-         height="15"/>
-  </a>
-</p>    </footer>
-  </main>
-
-
-
-
-<script type="application/ld+json">
-{
-  "@context" : "http://schema.org",
-  "@type" : "Blog",
-  "name": " Gang Up ",
-  "url" : "https://cctags.github.io",
-  "image": "",
-  "description": "Random notes from a random developer"
-}
-</script>
-
-<a href="https://github.com/cctags/cctags.github.io.git" class="github-corner" aria-label="View source on Github">
-    <svg width="80"
-         height="80"
-         viewBox="0 0 250 250"
-         style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;"
-         aria-hidden="true">
-        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
-        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
-              fill="currentColor"
-              style="transform-origin: 130px 106px;"
-              class="octo-arm">
-        </path>
-        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
-              fill="currentColor"
-              class="octo-body">
-        </path>
-    </svg>
-</a>
-<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></body>
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
 </html>

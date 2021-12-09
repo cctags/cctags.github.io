@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>vim 里打开 file:line &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2017/01/18/vim_open_with_file_line.html">
+        <meta name="twitter:title" content="vim 里打开 file:line">
+        <meta name="twitter:description" content="0x00 Linux 里，很多工具都会按文件加行号（file:line）的格式输出，比如 grep： $ grep -nr "Sanitize in progress..." drivers/mmc/core/mmc_ops.c:1008: pr_debug("%s: Sanitize in progress...\n", mmc_hostname(host)); 又比如 Linux 动态 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2017/01/18/vim_open_with_file_line.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="vim 里打开 file:line">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0x00 Linux 里，很多工具都会按文件加行号（file:line）的格式输出，比如 grep： $ grep -nr "Sanitize in progress..." drivers/mmc/core/mmc_ops.c:1008: pr_debug("%s: Sanitize in progress...\n", mmc_hostname(host)); 又比如 Linux 动态 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2017/01/18/vim_open_with_file_line.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html" rel="bookmark" title="Permalink to vim 里打开 file:line">vim 里打开 file:line</a>
+                </h2>
+                <p class="post-meta">
+                    2017-01-18 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>0x00</strong></p>
+<p>Linux 里，很多工具都会按<strong>文件加行号</strong>（<code>file:line</code>）的格式输出，比如 <code>grep</code>：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>grep<span class="w"> </span>-nr<span class="w"> </span><span class="s2">&quot;Sanitize in progress...&quot;</span>
+drivers/mmc/core/mmc_ops.c:1008:<span class="w">     </span>pr_debug<span class="o">(</span><span class="s2">&quot;%s: Sanitize in progress...\n&quot;</span>,<span class="w"> </span>mmc_hostname<span class="o">(</span>host<span class="o">))</span><span class="p">;</span>
+</code></pre></div>
+
+<p>又比如 Linux 动态打印里的：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># cd /sys/kernel/debug/dynamic_debug</span>
+<span class="c1"># cat control | egrep &#39;^init&#39;</span>
+init/main.c:1426<span class="w"> </span><span class="o">[</span>main<span class="o">]</span><span class="nv">run_init_process</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;    %s\012&quot;</span>
+init/main.c:1424<span class="w"> </span><span class="o">[</span>main<span class="o">]</span><span class="nv">run_init_process</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;  with environment:\012&quot;</span>
+init/main.c:1423<span class="w"> </span><span class="o">[</span>main<span class="o">]</span><span class="nv">run_init_process</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;    %s\012&quot;</span>
+init/main.c:1421<span class="w"> </span><span class="o">[</span>main<span class="o">]</span><span class="nv">run_init_process</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;  with arguments:\012&quot;</span>
+init/main.c:1211<span class="w"> </span><span class="o">[</span>main<span class="o">]</span><span class="nv">initcall_blacklisted</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;initcall %s blacklisted\012&quot;</span>
+init/main.c:1172<span class="w"> </span><span class="o">[</span>main<span class="o">]</span><span class="nv">initcall_blacklist</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;blacklisting initcall %s\012&quot;</span>
+</code></pre></div>
+
+<p>或者 gdb 里显示 backtrace 调用栈的时候：</p>
+<div class="highlight"><pre><span></span><code><span class="gh">#</span>0  test (obs=0x24eb0, argc=1, argv=0x2b8c8)
+    at builtin.c:993
+<span class="gh">#</span>1  0x6e38 in expand_macro (sym=0x2b600) at macro.c:242
+<span class="gh">#</span>2  0x6840 in expand_token (obs=0x0, t=177664, td=0xf7fffb08)
+    at macro.c:71
+(More stack frames follow...)
+</code></pre></div>
+
+<p><strong>0x01</strong></p>
+<p>vim 可以有打开文件并定位到某一行的功能：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>vim<span class="w"> </span>--help
+...
+<span class="w">   </span>+<span class="w">                    </span>Start<span class="w"> </span>at<span class="w"> </span>end<span class="w"> </span>of<span class="w"> </span>file
+<span class="w">   </span>+&lt;lnum&gt;<span class="w">              </span>Start<span class="w"> </span>at<span class="w"> </span>line<span class="w"> </span>&lt;lnum&gt;
+...
+</code></pre></div>
+
+<p>比如：</p>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>+27<span class="w"> </span>foobar.py
+</code></pre></div>
+
+<p><strong>0x02</strong></p>
+<p>如何直接打开前面的 <code>file:line</code> 呢？找到一个插件：<a href="https://github.com/bogado/file-line">https://github.com/bogado/file-line</a> , 可以实现这个操作。比如，启用插件后，可以这样操作：</p>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>index.html:20
+vim<span class="w"> </span>app/models/user.rb:1337
+</code></pre></div>
+
+<p>这样从 grep 等各种输出里，可以直接拷贝，然后在 vim 里打开并跳转到指定行。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/linux.html">linux</a>,                 <a href="../../../../tag/vim.html">vim</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">从 NERDTree 切换到 nvim-tree</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/04/02/vim-paste-very-slow-issue.html">往 vim 粘贴大段文本会卡顿的问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2018/09/20/vim-unicode.html">Vim 里的特殊字符处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2013/04/26/vim_insert_numbered_list.html">vim 里插入列表编号</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2016/09/09/linux-virtual-memory-split-with-35-05.html">
+                &laquo; Linux Virtual Memory Split with 3.5G/0.5G
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2017/02/15/run_command_with_timeout.html">
+                运行程序时设置 timeout 超时 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

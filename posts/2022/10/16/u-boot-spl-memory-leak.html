@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>U-Boot SPL 加载后续程序过程中的内存泄漏问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/10/16/u-boot-spl-memory-leak.html">
+        <meta name="twitter:title" content="U-Boot SPL 加载后续程序过程中的内存泄漏问题">
+        <meta name="twitter:description" content="问题 项目里是这样设计的 U-Boot SPL 加载过程：SPL 会从多种启动设备尝试加载 uImage。加载的顺序是由板卡支持代码里指定的： 文件 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/10/16/u-boot-spl-memory-leak.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="U-Boot SPL 加载后续程序过程中的内存泄漏问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 项目里是这样设计的 U-Boot SPL 加载过程：SPL 会从多种启动设备尝试加载 uImage。加载的顺序是由板卡支持代码里指定的： 文件 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/10/16/u-boot-spl-memory-leak.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/10/16/u-boot-spl-memory-leak.html" rel="bookmark" title="Permalink to U-Boot SPL 加载后续程序过程中的内存泄漏问题">U-Boot SPL 加载后续程序过程中的内存泄漏问题</a>
+                </h2>
+                <p class="post-meta">
+                    2022-10-16 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2022/10/16/u-boot-spl-memory-leak.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>项目里是这样设计的 U-Boot SPL 加载过程：SPL 会从多种启动设备尝试加载 uImage。加载的顺序是由板卡支持代码里指定的：</p>
+<p>文件：board/<vendor>/xxx/yyy.c</p>
+<div class="highlight"><pre><span></span><code><span class="n">u32</span><span class="w"> </span><span class="nf">spl_boot_device</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">BOOT_DEVICE_MMC1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">board_boot_order</span><span class="p">(</span><span class="n">u32</span><span class="w"> </span><span class="o">*</span><span class="n">spl_boot_list</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">        </span><span class="n">spl_boot_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spl_boot_device</span><span class="p">();</span>
+<span class="w">        </span><span class="n">spl_boot_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BOOT_DEVICE_MMC2</span><span class="p">;</span>
+<span class="w">        </span><span class="n">spl_boot_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BOOT_DEVICE_SPI</span><span class="p">;</span>
+<span class="w">        </span><span class="n">spl_boot_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BOOT_DEVICE_NOR</span><span class="p">;</span>
+<span class="w">        </span><span class="n">spl_boot_list</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BOOT_DEVICE_SATA</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>这里的 <code>spl_boot_list</code> 指定了先后顺序。如果出现某个启动设备加载失败、或者加载内容不合格等等各种问题，那么就会尝试下一个启动设备，直到加载成功、并跳转到 U-Boot，或者启动失败。</p>
+<p>开发过程中，进行了多个组合的验证，比如写坏某些启动设备里的 uImage 内容，验证是否能从后续启动设备加载并运行，等等。</p>
+<p>现在碰到的问题是，遍历了若干个启动设备后，U-Boot SPL 出现内存不足，导致程序本身无法继续运行。</p>
+<h2>定位及解决</h2>
+<p>走读并跟踪了 SPL 代码，定位到内存泄漏出现之前的调用关系，如下：</p>
+<div class="highlight"><pre><span></span><code>// FILE: common/spl/spl_fit.c
+spl_load_simple_fit()
+    struct spl_fit_info ctx;
+    ...
+    spl_simple_fit_read(&amp;ctx, ...)
+        void * buf = spl_get_fit_load_buffer()
+            buf = malloc()
+        ...
+        info-&gt;read(..., buf)
+        ...
+        ctx-&gt;fit = buf;
+    ...
+</code></pre></div>
+
+<p><code>spl_load_simple_fit()</code> 通过调用 <code>spl_simple_fit_read()</code> 分配内存并往里面写入被加载的程序，所分配的内存记录在 <code>ctx.fit</code> 变量里。如果 <code>spl_load_simple_fit()</code> 后续的代码里遇到什么问题，加载过程就会被中断、并提前返回，但这里并没有正确地释放内存，所以产生了内存泄漏。</p>
+<p>定位到了问题，解决就容易了。查找 <code>spl_load_simple_fit()</code> 提前返回的地方，补上恰当的内存释放、调用 <code>free((void *)ctx.fit);</code> 即可。</p>
+<h2>结论</h2>
+<p>这个内存泄漏，只在板子内存特别有限、且有多种启动设备的情况下，才会出现实质性的影响。</p>
+<p>对于大多数的情况，不会出现什么影响；并且等后续的程序接管内存后，就不再是问题。所以从<a href="https://github.com/u-boot/u-boot/blob/master/common/spl/spl_fit.c">U-Boot 源代码</a>来看，这个代码一直是这样。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/soc.html">soc</a>,                 <a href="../../../../tag/u-boot.html">u-boot</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html">定制 SoC 的 U-Boot SPL image type 类型</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/08/23/yt-dlp-cookies-file.html">
+                &laquo; 解决 yt-dlp 使用的 cookies 文件格式的问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/11/02/one-time-password.html">
+                一次性密码算法 One-Time Password (OTP) &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

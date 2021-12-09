@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Go 语言里 Kong 命令行解析工具的参数验证问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">
+        <meta name="twitter:title" content="Go 语言里 Kong 命令行解析工具的参数验证问题">
+        <meta name="twitter:description" content="Kong 是一个用于 go 语言项目的命令行参数解析工具。（其实，可以找到不少用于 go 语言的命令行参数解析工具的开源实现，主 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Go 语言里 Kong 命令行解析工具的参数验证问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="Kong 是一个用于 go 语言项目的命令行参数解析工具。（其实，可以找到不少用于 go 语言的命令行参数解析工具的开源实现，主 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html" rel="bookmark" title="Permalink to Go 语言里 Kong 命令行解析工具的参数验证问题">Go 语言里 Kong 命令行解析工具的参数验证问题</a>
+                </h2>
+                <p class="post-meta">
+                    2024-12-15 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><a href="https://github.com/alecthomas/kong">Kong</a> 是一个用于 go 语言项目的命令行参数解析工具。（其实，可以找到不少用于 go 语言的命令行参数解析工具的开源实现，主要还是 <a href="https://pkg.go.dev/std">标准库</a> 里的 <a href="https://pkg.go.dev/flag">flag</a> 的原因。。）</p>
+<p>这里记录一个在使用 Kong 过程中的关于参数验证的问题和解决。</p>
+<p><strong>1. 问题</strong></p>
+<p>在进行命令行参数解析时，需要对用户输入内容的有效性进行全面的检查，以符合程序的要求，规范程序的运行。比如有这样的一个例子，程序需要用户指定 IP 地址：</p>
+<div class="highlight"><pre><span></span><code><span class="go">app --ipaddr &lt;..&gt;</span>
+</code></pre></div>
+
+<p>IP 地址有约定的格式，比如 <code>12.34.56.78</code>。在处理 <code>--ipaddr</code> 参数时，需要解析这个字符串（string），还要转化成整数（uint）或者程序所需要的其他格式。基于 Kong，实现过程大概是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">cli</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">IpAddr</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="s">`name:&quot;ipaddr&quot; help:&quot;ip address&quot;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">kong</span><span class="p">.</span><span class="nx">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">)</span>
+
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">ipaddr</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">IP</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="kt">error</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">ipaddr</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">ParseIP</span><span class="p">(</span><span class="nx">cli</span><span class="p">.</span><span class="nx">IpAddr</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%v, type:%s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">cli</span><span class="p">.</span><span class="nx">IpAddr</span><span class="p">,</span><span class="w"> </span><span class="nx">reflect</span><span class="p">.</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">cli</span><span class="p">.</span><span class="nx">IpAddr</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>这里的问题是，<code>kong.Parse()</code> 出来的结果里，<code>cli.IpAddr</code> 只是一个字符串，至于是否包含了有效的 IP 地址，是在下一步操作里进行的判断。而我们的理解是，在输入步骤应该过滤掉大部分的无效输入（比如格式问题），至于业务程序逻辑相关的不合理输入，才可能需要在其他地方处理。</p>
+<p><strong>2. 调整</strong></p>
+<p>Kong 本身提供了多种 <code>type decoder</code>，比如指定一个选项的参数为 <code>type:"existingfile"</code> 时，Kong 把后续的参数字符串参数解析成文件名、并检查文件的有效性，如果文件无效（比如不存在），Kong 会进行错误提示的流程，并结束程序的运行；再比如指定一个选项的参数为 <code>type:"existingdir"</code>，Kong 在把字符串解析（包括 home ~ 的展开）成目录名后、同时检查目录是否存在，等等。对程序开发来说，这些步骤是自动完成的，不需要额外的编码。</p>
+<blockquote>
+<p>Kong includes a number of builtin custom type mappers.
+These can be used by specifying the tag type:"<type>".
+They are registered with the option function NamedMapper(name, mapper).</p>
+</blockquote>
+<p>从上述文档描述来看，除了预定义的之外，Kong 也允许程序自定义 type 以及相应的操作。</p>
+<p>不过文档描述过于简略，无法着手。好在开源项目，很多细节可以从源码开始了解，在文件 <code>mapper_test.go</code> 里，搜索关键字 <code>kong.NamedMapper</code>、<code>Decode</code> 等来观察处理流程。</p>
+<p>对比之后，对于上述的 <code>--ipaddr &lt;..&gt;</code> 可以这样实现：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">cli</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">IpAddr</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">IP</span><span class="w"> </span><span class="s">`name:&quot;ipaddr&quot; help:&quot;ip address&quot; type:&quot;ipaddr&quot;`</span>
+<span class="p">}</span>
+
+<span class="kd">type</span><span class="w"> </span><span class="nx">ipAddrMapper</span><span class="w"> </span><span class="kd">struct</span><span class="p">{}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">ipAddrMapper</span><span class="p">)</span><span class="w"> </span><span class="nx">Decode</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="o">*</span><span class="nx">kong</span><span class="p">.</span><span class="nx">DecodeContext</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="kt">error</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">text</span><span class="w"> </span><span class="kt">string</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">ipaddr</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">IP</span>
+
+<span class="w">    </span><span class="c1">// 获取参数字符串</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Scan</span><span class="p">.</span><span class="nx">PopValueInto</span><span class="p">(</span><span class="s">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">text</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 检查和解析</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">ipaddr</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">ParseIP</span><span class="p">(</span><span class="nx">cli</span><span class="p">.</span><span class="nx">IpAddr</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 写入结果</span>
+<span class="w">    </span><span class="nx">v</span><span class="p">.</span><span class="nx">SetBytes</span><span class="p">(</span><span class="nx">ipaddr</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">kong</span><span class="p">.</span><span class="nx">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">,</span><span class="w"> </span><span class="nx">kong</span><span class="p">.</span><span class="nx">NamedMapper</span><span class="p">(</span><span class="s">&quot;ipaddr&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">ipAddrMapper</span><span class="p">{}))</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%v, type:%s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">cli</span><span class="p">.</span><span class="nx">IpAddr</span><span class="p">,</span><span class="w"> </span><span class="nx">reflect</span><span class="p">.</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">cli</span><span class="p">.</span><span class="nx">IpAddr</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>3. 总结</strong></p>
+<p>关键的修改先高亮显示一下：</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>cli struct {
+<span class="gd">-    IpAddr string `name:&quot;ipaddr&quot; help:&quot;ip address&quot;`</span>
+<span class="gi">+    IpAddr net.IP `name:&quot;ipaddr&quot; help:&quot;ip address&quot; type:&quot;ipaddr&quot;`</span>
+<span class="w"> </span>}
+</code></pre></div>
+
+<p>修改的内容包括：</p>
+<ol>
+<li>添加 <code>ipAddrMapper.Decode()</code>，实现从参数字符串的获取、有效性的检查、解析，并写入结果；</li>
+<li>定义 <code>type:"ipaddr"</code>，关联到 <code>ipAddrMapper</code>，并在 <code>kong.Parse()</code> 里注册；</li>
+<li>使用，<code>cli.IpAddr</code> 的定义里添加 <code>type:"ipaddr"</code>；并且从 <code>string</code> 修改成 <code>net.IP</code>，这样做的好处是，完成解析后可以直接使用 <code>cli.IpAddr</code>；</li>
+</ol>
+<p>这就把整个的过程放在了解析工具里面，而不会暴露到代码的其他地方。</p>
+<p>运行时是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>app<span class="w"> </span>--ipaddr<span class="w"> </span><span class="m">12</span>.34.56.78
+<span class="go">12.34.56.78, type:net.IP</span>
+
+<span class="gp">$ </span>app<span class="w"> </span>--ipaddr<span class="w"> </span><span class="m">12</span>.34.56.789
+<span class="go">app: error: --ipaddr: 12.34.56.789</span>
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/argparse.html">argparse</a>,                 <a href="../../../../tag/golang.html">golang</a>,                 <a href="../../../../tag/kong.html">kong</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/20/golang_interface.html">Go 语言里的接口赋值问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/10/golang_errors.html">Go 语言里的 errors 错误包装处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/03/golang_panic_position.html">Go 语言里的 panic 状态位置问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/01/golang_unittest_cover.html">Go 语言里的单元测试覆盖率</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/04/30/golang_defer_named_return_values.html">Go 语言里 defer, panic 和 named return values</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2024/12/01/decrypt_pdf_file.html">
+                &laquo; 解码 PDF 文档
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">
+                Python 包管理器 uv &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

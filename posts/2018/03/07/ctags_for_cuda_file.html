@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>生成 cuda 的 tags 文件 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2018/03/07/ctags_for_cuda_file.html">
+        <meta name="twitter:title" content="生成 cuda 的 tags 文件">
+        <meta name="twitter:description" content="问题： 项目开发过程中，遇到这样的问题：使用 ctags universal 生成 cuda 代码文件的 tags 时，总是有一些函数及其他符号无法生成，影响开发 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2018/03/07/ctags_for_cuda_file.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="生成 cuda 的 tags 文件">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题： 项目开发过程中，遇到这样的问题：使用 ctags universal 生成 cuda 代码文件的 tags 时，总是有一些函数及其他符号无法生成，影响开发 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2018/03/07/ctags_for_cuda_file.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2018/03/07/ctags_for_cuda_file.html" rel="bookmark" title="Permalink to 生成 cuda 的 tags 文件">生成 cuda 的 tags 文件</a>
+                </h2>
+                <p class="post-meta">
+                    2018-03-07 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2018/03/07/ctags_for_cuda_file.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题：</strong></p>
+<p>项目开发过程中，遇到这样的问题：使用 <a href="https://github.com/universal-ctags/ctags">ctags universal</a> 生成 cuda 代码文件的 tags 时，总是有一些函数及其他符号无法生成，影响开发效率。</p>
+<p><strong>临时办法：</strong></p>
+<p>实在找不到其他办法，临时试了一下按 <code>C++</code> 文件来处理。</p>
+<p>使用到了 <code>ctags</code> 的一个选项 <code>--langmap</code>，指定某些文件按某种语言来处理，这样：</p>
+<div class="highlight"><pre><span></span><code><span class="go">git ls-files | ctags-universal --langmap=c++:+.cu,c++:+.cuh -R -L -</span>
+</code></pre></div>
+
+<p>实际试下来，很多原先无法生成的函数及符号，现在都有了。效果还是不错的。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/ctags.html">ctags</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2018/02/02/net_framework_3_5_installation_error.html">
+                &laquo; .NET Framework 3.5 installation error
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2018/07/03/python-archive-zipapp.html">
+                Python 打包工具 zipapp &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Go 语言里的接口赋值问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2019/05/20/golang_interface.html">
+        <meta name="twitter:title" content="Go 语言里的接口赋值问题">
+        <meta name="twitter:description" content="Go 语言里的接口，先看定义： type iface struct { tab *itab data unsafe.Pointer } type eface struct { _type *_type data unsafe.Pointer } 其中 iface 描述接口变量（比如 var x IA）的内容及布局，变量大 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2019/05/20/golang_interface.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Go 语言里的接口赋值问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="Go 语言里的接口，先看定义： type iface struct { tab *itab data unsafe.Pointer } type eface struct { _type *_type data unsafe.Pointer } 其中 iface 描述接口变量（比如 var x IA）的内容及布局，变量大 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2019/05/20/golang_interface.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2019/05/20/golang_interface.html" rel="bookmark" title="Permalink to Go 语言里的接口赋值问题">Go 语言里的接口赋值问题</a>
+                </h2>
+                <p class="post-meta">
+                    2019-05-20 Monday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2019/05/20/golang_interface.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Go 语言里的接口，先看定义：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">iface</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">tab</span><span class="w">  </span><span class="o">*</span><span class="nx">itab</span>
+<span class="w">    </span><span class="nx">data</span><span class="w"> </span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="p">}</span>
+
+<span class="kd">type</span><span class="w"> </span><span class="nx">eface</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">_type</span><span class="w"> </span><span class="o">*</span><span class="nx">_type</span>
+<span class="w">    </span><span class="nx">data</span><span class="w">  </span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>其中 <code>iface</code> 描述接口变量（比如 <code>var x IA</code>）的内容及布局，变量大小是 16 个字节（64 位平台），两个字段分别是指向类似于函数表的指针、以及指向实际对象的指针；而 <code>eface</code> 描述 <code>var y interface{}</code> 这样的空接口，大小也是 16 个字节，两个字段分别是接口所指向的对象的类型，以及指向对象的指针。</p>
+<p>熟悉这样的结构内容以及相应的含义，有助于对接口使用的理解，即使这些字段本身并不能在程序里直接使用。</p>
+<p>以下是接口 “ 指向 ” 对象时的一个问题举例：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">age</span><span class="w"> </span><span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="c1">// Value Receiver</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="nx">Person</span><span class="p">)</span><span class="w"> </span><span class="nx">howOld</span><span class="p">()</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">p</span><span class="p">.</span><span class="nx">age</span>
+<span class="p">}</span>
+
+<span class="c1">// 注意这里的 Pointer Receiver</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><span class="nx">Person</span><span class="p">)</span><span class="w"> </span><span class="nx">growUp</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">p</span><span class="p">.</span><span class="nx">age</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="kd">type</span><span class="w"> </span><span class="nx">IPerson</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">howOld</span><span class="p">()</span><span class="w"> </span><span class="kt">int</span>
+<span class="w">    </span><span class="nx">growUp</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>然后定义一个对象，并用两种形式，通过接口 “ 指向 ” 它：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">p0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">Person</span><span class="p">{</span><span class="mi">18</span><span class="p">}</span>
+
+<span class="kd">var</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">IPerson</span>
+
+<span class="c1">// (1)</span>
+<span class="c1">//</span>
+<span class="c1">// ip 指向 p0 对象的地址</span>
+<span class="c1">// 这时，ip.data 里保存了 p0 的地址，即 ip.data = &amp;p0</span>
+<span class="c1">//</span>
+<span class="nx">ip</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">p0</span>
+
+<span class="nx">ip</span><span class="p">.</span><span class="nx">howOld</span><span class="p">()</span>
+<span class="nx">ip</span><span class="p">.</span><span class="nx">growUp</span><span class="p">()</span>
+
+<span class="c1">// (2)</span>
+<span class="c1">//</span>
+<span class="c1">// ip 指向 p0 对象</span>
+<span class="c1">// 实际上是生成了临时变量 tmp := p0；ip.data = &amp;tmp</span>
+<span class="c1">//</span>
+<span class="c1">// 但这里有编译错误</span>
+<span class="c1">//</span>
+<span class="nx">ip</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">p0</span>
+</code></pre></div>
+
+<p>在 (1) 处，可以编译过并执行。这里的接口变量 <code>ip</code>，像 “ 指针 ” 一样，作用了在 <code>p0</code> 上，即<code>ip.data = &amp;p0</code>，运行时的行为和预期的一致。</p>
+<p>在 (2) 处，会遇到编译错误。<code>ip</code> 指向 <code>p0</code> 对象，此处实际上是从 <code>p0</code> 复制并生成了一个临时变量 <code>tmp</code>，并让 <code>ip.data</code> 里保存了 <code>tmp</code> 的地址，即 <code>tmp := p0; ip.data = &amp;tmp</code>。这是基于语法的理解。至于编译错误的原因，是因为 <code>IPerson</code> 接口里的 <code>growUp()</code> 方法，是实现在 <code>pointer receiver</code> 上。<code>ip</code> 指向 <code>tmp</code> 的地址后，如果可以编译过，那么 <code>growUp()</code> 只是作用在临时变量 <code>tmp</code> 上，实际修改的结果对外不可见，这就产生了歧义。为了避免这个隐藏的问题，编译器会对这样的使用提示错误。</p>
+<p>所以这里需要注意区分接口实现上的 <code>Value Receiver</code> 和 <code>Pointer Receiver</code> 用法上的区别。以下是摘抄自手册里的说明：</p>
+<p><strong>Value Receiver</strong></p>
+<ul>
+<li>The method receives a copy of the receiver's value.</li>
+<li>Modifications within the method do not affect the original value outside the method.</li>
+<li>Suitable for methods that only read the receiver's state or for immutable types.</li>
+</ul>
+<p><strong>Pointer Receiver</strong></p>
+<ul>
+<li>The method receives a pointer to the receiver's value.</li>
+<li>Modifications within the method do affect the original value outside the method.</li>
+<li>Necessary for methods that need to modify the receiver's state or for large structs to avoid copying overhead.</li>
+</ul>
+<p>接收者是指针类型的方法，很可能在方法中会对接收者的属性进行更改操作，从而影响接收者；而对于接收者是值类型的方法，在方法中不会对接收者本身产生影响。所以，当实现了一个接收者是值类型的方法，就可以自动（或者隐含地）生成一个接收者是对应指针类型的方法，因为两者都不会影响接收者。但是，当实现了一个接收者是指针类型的方法，如果此时自动生成一个接收者是值类型的方法，原本期望对接收者的改变（通过指针实现），现在无法实现，因为值类型会产生一个拷贝，不会真正影响调用者。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/golang.html">golang</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">Go 语言里 Kong 命令行解析工具的参数验证问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/10/golang_errors.html">Go 语言里的 errors 错误包装处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/03/golang_panic_position.html">Go 语言里的 panic 状态位置问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/01/golang_unittest_cover.html">Go 语言里的单元测试覆盖率</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/04/30/golang_defer_named_return_values.html">Go 语言里 defer, panic 和 named return values</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2019/05/10/golang_errors.html">
+                &laquo; Go 语言里的 errors 错误包装处理
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2019/06/18/ltc-algorithm.html">
+                Litecoin (LTC) 算法 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

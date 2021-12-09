@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 函数的位置参数（positional argument）和关键字参数（keyword argument） &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">
+        <meta name="twitter:title" content="Python 函数的位置参数（positional argument）和关键字参数（keyword argument）">
+        <meta name="twitter:description" content="在 Python 里，函数的参数默认是 positional-or-keyword，就是说即可以是位置参数，也可以是关键字参数。文档里是这样描述的： positional-or-keyword: specifies an argument that can be passed either …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 函数的位置参数（positional argument）和关键字参数（keyword argument）">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="在 Python 里，函数的参数默认是 positional-or-keyword，就是说即可以是位置参数，也可以是关键字参数。文档里是这样描述的： positional-or-keyword: specifies an argument that can be passed either …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html" rel="bookmark" title="Permalink to Python 函数的位置参数（positional argument）和关键字参数（keyword argument）">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </h2>
+                <p class="post-meta">
+                    2023-08-25 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>在 Python 里，函数的参数默认是 <code>positional-or-keyword</code>，就是说即可以是位置参数，也可以是关键字参数。文档里是这样描述的：</p>
+<blockquote>
+<p>positional-or-keyword: specifies an argument that can be passed either
+positionally or as a keyword argument. This is the default kind of parameter
+..</p>
+</blockquote>
+<p>比如：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;a=</span><span class="si">{}</span><span class="s1">, b=</span><span class="si">{}</span><span class="s1">, c=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">a=1, b=2, c=3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">a=1, b=2, c=3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">a=1, b=2, c=3</span>
+</code></pre></div>
+
+<p>函数调用的时候，可以按位置参数直接调用，比如 <code>f(1, 2, 3)</code>，也可以按（部分或者全部的）关键字参数调用，比如 <code>f(1, c=3, b=2)</code>，这里顺序都可以随意指定，因为在理解上不存在歧义。</p>
+<p>在其他语言里，参数类型和位置是需要明确的，至于参数名字，其实并不重要。但在 Python 里，既然可以是关键字参数，那参数名字就是属于函数定义的一部分。如果更改了函数参数的名字，那么已经实现的调用了这个函数的代码里，凡是用到关键字参数来调用的地方，都要相应地修改。</p>
+<p>在 Python 3.8 里引入了这样的语法：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</code></pre></div>
+
+<p>在这个函数里 :</p>
+<ul>
+<li>参数 a、b 是位置参数（positional-only）；</li>
+<li>参数 c、d 可以是位置参数，也可以是关键字参数；</li>
+<li>参数 e、f 只能是关键字参数（keyword-only）；</li>
+</ul>
+<p>有了这样的语法后，函数在使用时会比较直接，跟其他语言里一致，比如文档里举的一个例子：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">divmod</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
+    <span class="s2">&quot;Emulate the built in divmod() function&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">//</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span>
+</code></pre></div>
+
+<p>这里 a、b 只能按位置参数来使用，而不能用作关键字参数。那这种位置参数，参数名字就不再是函数的一部分了，以后即使参数名字修改了，已有代码也不用跟着调整，从而避免了关键字参数引入的问题。</p>
+<p>再比如：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+<span class="go">Help on built-in function len in module builtins:</span>
+
+<span class="go">len(obj, /)</span>
+<span class="go">    Return the number of items in a container.</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">len() takes no keyword arguments</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt;</span>
+</code></pre></div>
+
+<p>这里也一样，obj 不能作为关键字参数来用。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="https://docs.python.org/3/glossary.html#term-parameter">https://docs.python.org/3/glossary.html#term-parameter</a></li>
+<li><a href="https://docs.python.org/3/whatsnew/3.8.html#positional-only-parameters">https://docs.python.org/3/whatsnew/3.8.html#positional-only-parameters</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">Python Turtle 画圆时的圆心位置问题</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">
+                &laquo; Python Turtle 画圆时的圆心位置问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">
+                SeaweedFS ec decode missing shard 的问题及解决 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

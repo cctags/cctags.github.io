@@ -1,414 +1,286 @@
-
 <!DOCTYPE html>
 <html lang="cn">
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="HandheldFriendly" content="True" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="" />
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
 
-  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
 
-    <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/stylesheet/style.min.css">
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/pygments/github.min.css">
-  <link rel="stylesheet" type="text/css" href="https://cctags.github.io/theme/font-awesome/css/font-awesome.min.css">
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
 
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/06/18/ltc-algorithm.html" rel="bookmark" title="Permalink to Litecoin (LTC) 算法">Litecoin (LTC) 算法</a>
+                </h2>
+                <p class="post-meta">
+                    2019-06-18 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/06/18/ltc-algorithm.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>跟之前分析过的 BTC 算法类似，Litecon (LTC) 的算法也是寻找一个整数（nonce），以满足某个要求。它使用了 Scrypt 哈希算法，而不再是两次 sha256。以 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/05/20/golang_interface.html" rel="bookmark" title="Permalink to Go 语言里的接口赋值问题">Go 语言里的接口赋值问题</a>
+                </h2>
+                <p class="post-meta">
+                    2019-05-20 Monday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/05/20/golang_interface.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Go 语言里的接口，先看定义：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">iface</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">tab</span><span class="w">  </span><span class="o">*</span><span class="nx">itab</span>
+<span class="w">    </span><span class="nx">data</span><span class="w"> </span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="p">}</span>
 
-    <link href="https://cctags.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gang Up Atom">
+<span class="kd">type</span><span class="w"> </span><span class="nx">eface</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">_type</span><span class="w"> </span><span class="o">*</span><span class="nx">_type</span>
+<span class="w">    </span><span class="nx">data</span><span class="w">  </span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="p">}</span>
+</code></pre></div>
 
+<p>其中 <code>iface</code> 描述接口变量（比如 <code>var x IA</code>）的内容及布局，变量大 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/05/10/golang_errors.html" rel="bookmark" title="Permalink to Go 语言里的 errors 错误包装处理">Go 语言里的 errors 错误包装处理</a>
+                </h2>
+                <p class="post-meta">
+                    2019-05-10 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/05/10/golang_errors.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Go 语言在返回错误时，允许进行 <code>Wrap</code> 包装。比如，函数 <code>f()</code> 调用函数 <code>g()</code>，在遇到错误、但处理不了时，可以这样：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">e</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">f</span><span class="p">();</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf …</span></code></pre></div>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/05/03/golang_panic_position.html" rel="bookmark" title="Permalink to Go 语言里的 panic 状态位置问题">Go 语言里的 panic 状态位置问题</a>
+                </h2>
+                <p class="post-meta">
+                    2019-05-03 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/05/03/golang_panic_position.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>这里记录一下 Go 语言里 panic 的状态信息的变化和处理。用几个例子进行对比，后面是结论。</p>
+<h2>0x0 先看一个常见情况</h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt …</span></code></pre></div>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/05/01/golang_unittest_cover.html" rel="bookmark" title="Permalink to Go 语言里的单元测试覆盖率">Go 语言里的单元测试覆盖率</a>
+                </h2>
+                <p class="post-meta">
+                    2019-05-01 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/05/01/golang_unittest_cover.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Go 语言的项目里，单元测试一般这样写：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">Test_Xxx</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">Xxx</span><span class="p">();</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;bad&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">Logf</span><span class="p">(</span><span class="s">&quot;ok&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 
-
-<!-- Google Analytics -->
-<script type="text/javascript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-163482510-1', 'auto');
-  ga('send', 'pageview');
-</script>
-<!-- End Google Analytics -->
-    <!-- Chrome, Firefox OS and Opera -->
-    <meta name="theme-color" content="#eff3f9">
-    <!-- Windows Phone -->
-    <meta name="msapplication-navbutton-color" content="#eff3f9">
-    <!-- iOS Safari -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- Microsoft EDGE -->
-    <meta name="msapplication-TileColor" content="#eff3f9">
-
-    <meta name="author" content="cctags" />
-    <meta name="description" content="Random notes from a random developer" />
-<meta property="og:site_name" content="Gang Up"/>
-<meta property="og:type" content="blog"/>
-<meta property="og:title" content="Gang Up"/>
-<meta property="og:description" content="Random notes from a random developer"/>
-<meta property="og:locale" content="zh_CN"/>
-<meta property="og:url" content="https://cctags.github.io"/>
-
-  <title>Gang Up</title>
-
-</head>
-<body>
-  <aside>
-    <div>
-      <a href="https://cctags.github.io">
-        <img src="https://cctags.github.io/theme/img/profile.png" alt="Gang Up" title="Gang Up">
-      </a>
-      <h1><a href="https://cctags.github.io">Gang Up</a></h1>
-
-<p>Random notes from a random developer</p>
-      <nav>
-        <ul class="list">
-          <li><a href="https://cctags.github.io/pages/about.html#about">About</a></li>
-
-        </ul>
-      </nav>
-
-      <ul class="social">
-        <li><a class="sc-github" href="https://github.com/cctags" target="_blank"><i class="fa fa-github"></i></a></li>
-        <li><a class="sc-envelope-o" href="https://github.com/cctags" target="_blank"><i class="fa fa-envelope-o"></i></a></li>
-        <li><a class="sc-rss" href="feeds/all.rss.xml" target="_blank"><i class="fa fa-rss"></i></a></li>
-      </ul>
+<p>输入命令 <code>go test -v</code> 运行测试，并观察结果。</p>
+<div class="highlight"><pre><span></span><code><span class="go">PASS …</span></code></pre></div>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/04/30/golang_defer_named_return_values.html" rel="bookmark" title="Permalink to Go 语言里 defer, panic 和 named return values">Go 语言里 defer, panic 和 named return values</a>
+                </h2>
+                <p class="post-meta">
+                    2019-04-30 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/04/30/golang_defer_named_return_values.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Go 语言里，函数过程中通过 defer 注册的回调，会在函数结束前、按 LIFO 的顺序调用执行。有名返回值（named return value）在编程时，恰当的变量 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/04/28/golang_slice.html" rel="bookmark" title="Permalink to Go 语言里的 slice 切片">Go 语言里的 slice 切片</a>
+                </h2>
+                <p class="post-meta">
+                    2019-04-28 Sunday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/04/28/golang_slice.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>变量的 pass-by-value</strong></p>
+<p>Go 语言里的切片 slice，主要是针对数组类型不够灵活的问题。比如，<code>a [50]int</code> 和 <code>b [80]int</code> 是不同的类型，但同一个 slice <code>s []int …</code></p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/04/26/golang_range_gotcha.html" rel="bookmark" title="Permalink to Go 语言里的 range 问题">Go 语言里的 range 问题</a>
+                </h2>
+                <p class="post-meta">
+                    2019-04-26 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/04/26/golang_range_gotcha.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Golang 类似于 C/C++，同时又从其他语言（比如 Python）里借鉴了一些语法，比如 range。</p>
+<p>在使用上，range 有一些特性，如果不注意的话，很容易引起 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/04/18/golang_defer_value.html" rel="bookmark" title="Permalink to Go 语言里的 defer 参数传值问题">Go 语言里的 defer 参数传值问题</a>
+                </h2>
+                <p class="post-meta">
+                    2019-04-18 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/04/18/golang_defer_value.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>使用 <code>defer</code> 时遇到的一些问题，专门记录一下。</p>
+<p>先说结论，<code>defer</code> 函数时，所有变量是按值（Go 语言都是传值）来暂存，等到作用域结束前 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2019/03/31/zynq_usb_drive_issue.html" rel="bookmark" title="Permalink to Zynq USB Drive Issue">Zynq USB Drive Issue</a>
+                </h2>
+                <p class="post-meta">
+                    2019-03-31 Sunday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2019/03/31/zynq_usb_drive_issue.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题</h3>
+<p>Zynq 开发板，操作系统有时无法识别到优盘。</p>
+<h3>※ 调试</h3>
+<p>检查 Linux 里的 USB 驱动及配置。对比 Xilinx 的参考文档和示例，调试用的 kernel config、device …</p>
+            </div>
+        </section>
     </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index4.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 5/12</li>
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index6.html">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
 
-
-  </aside>
-  <main>
-
-    <nav>
-      <a href="https://cctags.github.io">    Home
-</a>
-
-      <a href="/archives.html">Archives</a>
-      <a href="/categories.html">Categories</a>
-      <a href="/tags.html">Tags</a>
-      <a href="/pages/about.html">About</a>
-      <a href="/feeds/all.rss.xml">Rss</a>
-
-      <a href="https://cctags.github.io/feeds/all.atom.xml">    Atom
-</a>
-
-    </nav>
-
-
-
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html#gcc_reverse_iterator_comparison_operators_missing">gcc reverse_iterator comparison operators missing?</a></h2>
-    <p>
-          Posted on 2014-10-22 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-
-    </p>
-  </header>
-  <div>
-      <p>I get a compile error of the iterator when porting an application which is based on the C++ standard library. Someone get the same issue before, and there is already an answer at <a href="http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing">http://stackoverflow.com/questions/2135094/gcc-reverse-iterator-comparison-operators-missing</a>.</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2014/10/22/gcc_reverse_iterator_comparison_operators_missing.html#gcc_reverse_iterator_comparison_operators_missing">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2014/10/17/debug_the_stack_overflow.html#debug_the_stack_overflow">栈溢出的调试及解决办法</a></h2>
-    <p>
-          Posted on 2014-10-17 星期五 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-
-    </p>
-  </header>
-  <div>
-      <h3>※ 问题：</h3>
-<p>栈上消耗的内存太多，导致溢出，程序崩溃。</p>
-<h3>※ 程序崩溃的过程是怎样的？</h3>
-<div class="highlight"><pre><span></span><code>1. CPU 执行代码时，反复地压栈；
-2. 访问栈上内存时缺页， CPU 抛异常，操作系统内核接管；
-3. 操作系统内核计算出异常地址已经低于栈的低地址，所以拒绝补页，同时抛出软件异常；
-4. 程序崩溃，调试器接管，或者提示错误并退出。
-</code></pre></div>
-
-
-<h3>※ 如何知道栈的大小？</h3>
-<p>一个简单的办法是，程序崩溃后，在调试器里，对比函数调用栈最高和最低处的栈指针即可。</p>
-<h3>※ 如何调整栈的大小？</h3>
-<p>设置全局配置、修改可执行文件内部属性、创建线程前指定栈大小等等。比如：</p>
-<div class="highlight"><pre><span></span><code>1. 主线程： ldrel -S 10M -L &lt;program&gt;   /* 10M + Lazy */
-2. 子线程： pthread_attr_setstacksize() + pthread_attr_setstacklazy()
-</code></pre></div>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2014/10/17/debug_the_stack_overflow.html#debug_the_stack_overflow">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html#how_to_use_ctrl_shift_fn_keys_in_putty">如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键</a></h2>
-    <p>
-          Posted on 2012-08-07 星期二 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/putty.html">PuTTY</a>,              <a href="https://cctags.github.io/tag/ssh.html">ssh</a>
-    </p>
-  </header>
-  <div>
-      <p>使用 vim 的时候，经常会用到 Ctrl-Fn 及 Shift-Fn 这样的组合键，无奈 PuTTY 不支持。</p>
-<p>从网上找到的解决办法：</p>
-<ul>
-<li><a href="http://www.newsmth.net/nForum/#!article/PHP/88598">http://www.newsmth.net/nForum/#!article/PHP/88598</a></li>
-<li><a href="http://www.newsmth.net/nForum/#!article/LinuxApp/859371">http://www.newsmth.net/nForum/#!article/LinuxApp/859371</a></li>
-<li><a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html">http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/modified-fkeys.html</a></li>
-</ul>
-<p>出于安全，小心使用。</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html#how_to_use_ctrl_shift_fn_keys_in_putty">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2012/04/16/baidu_and_google.html#baidu_and_google">以前的一个帖子</a></h2>
-    <p>
-          Posted on 2012-04-16 星期一 in <a href="https://cctags.github.io/category/misc.html">misc</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/python.html">Python</a>
-    </p>
-  </header>
-  <div>
-      <p><a href="http://topic.csdn.net/t/20040616/15/3097196.html">这是</a> 很久以前的一个夏天，在 csdn 论坛里的帖子，讨论一段不太优雅的 Python 代码。</p>
-<p>很久以后，我在 Baidu 里找了好久，不过这个帖子后来找不到了，挺可惜的。</p>
-<p>然后 Google 了一下，很快就找到了 -__-!</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2012/04/16/baidu_and_google.html#baidu_and_google">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2012/04/15/information.html#information">三思而行</a></h2>
-    <p>
-          Posted on 2012-04-15 星期日 in <a href="https://cctags.github.io/category/misc.html">misc</a>
-
-
-
-    </p>
-  </header>
-  <div>
-      <p>今天在 python-chinese 的邮件列表里看到一段话：</p>
-<blockquote>
-<p>All of the messages you send to these mailing lists will be archived. If you include sensitive information in your message it will be viewable by anyone. That includes email addresses, phone numbers, addresses, etc.  Site policy is to not edit the archives except, possibly to remove …</p></blockquote>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2012/04/15/information.html#information">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html#import_the_bookmarked_items_from_firefox">chrome 导入 portable firefox 收藏夹</a></h2>
-    <p>
-          Posted on 2011-09-05 星期一 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/chrome.html">Chrome</a>,              <a href="https://cctags.github.io/tag/firefox.html">Firefox</a>
-    </p>
-  </header>
-  <div>
-      <p>之前用的是 portable firefox，现在慢慢地转到 chrome 了。
-在导入收藏夹时遇到了问题。chrome 不知道 portable firefox 收藏夹的位置，折腾了好一会儿，找到个办法：</p>
-<ol>
-<li>将 firefox 的收藏夹导出为 bookmarks.html；</li>
-<li>将 bookmarks.html 导入 IE；</li>
-<li>在 chrome 里，导入 IE Favorites；</li>
-<li>OK!</li>
-</ol>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2011/09/05/import_the_bookmarked_items_from_firefox.html#import_the_bookmarked_items_from_firefox">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html#automatically_cc_bcc_the_mail_messages">Automatically cc/bcc the mail messages</a></h2>
-    <p>
-          Posted on 2011-07-25 星期一 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/outlook.html">Outlook</a>
-    </p>
-  </header>
-  <div>
-      <p>用了很长时间的 Thunderbird，随着收件箱里的邮件越来越多，形成了以下的使用习惯：</p>
-<ol>
-<li>按邮件的属性分成多个类别（文件夹）；</li>
-<li>更改设置，在发送一封邮件的同时，将其 bcc 给自己；</li>
-<li>在一个分类下，按索引（会话）方式罗列邮件；</li>
-</ol>
-<p>这样，邮箱里显示的是一个个的索引（会话），而不再是单独的邮件。其实用性不用多说，好多人也是这样用的。</p>
-<p>由于工作原因，目前使用的是 Outlook。在 Outlook 里，1 和 3 基本上不是问题，但 2 却无法直接搞定。</p>
-<p>还好有网络，花了点时间，找到了一些免费的解决方案：<a href="http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html">http://www.msofficeforums.com/outlook/862-outlook-automatic-bcc-another-e-mail-account.html</a>，<a href="http://www.slipstick.com/mail1/always_bcc.asp#.Ti0pMmHD4Rw">http://www.slipstick.com/mail1/always_bcc …</a></p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2011/07/25/automatically_cc_bcc_the_mail_messages.html#automatically_cc_bcc_the_mail_messages">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2011/07/13/os_time_not_correct_in_vm.html#os_time_not_correct_in_vm">虚拟机里的时间走慢的问题</a></h2>
-    <p>
-          Posted on 2011-07-13 星期三 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/vm.html">VM</a>
-    </p>
-  </header>
-  <div>
-      <p>使用过程中碰到了这个问题，很麻烦。</p>
-<p>参考了现成的解决方法，基本上可以通过安装 VMwareTools 工具解决。</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2011/07/13/os_time_not_correct_in_vm.html#os_time_not_correct_in_vm">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2011/07/08/how_to_undo_clear_offline_items.html#how_to_undo_clear_offline_items">How to undo "clear offline items"</a></h2>
-    <p>
-          Posted on 2011-07-08 星期五 in <a href="https://cctags.github.io/category/tools.html">Tools</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/outlook.html">Outlook</a>
-    </p>
-  </header>
-  <div>
-      <p>在 Outlook 里浏览邮件分类目录时，点了 “clear offline items” 按钮，这下邮件全没了。。那叫一个紧张呀。</p>
-<p>赶紧搜索一下，找到了几个：<a href="http://www.pcreview.co.uk/forums/do-undo-clear-offline-items-and-regain-my-calendar-t2961229.html">how do i undo "clear offline items"</a>，<a href="http://www.office-outlook.com/outlook-forum/index.php/m/511008/">how do i recoover "clear offline items"</a>。</p>
-<p>按着罗列的方法，邮件终于回来了。有惊无险。</p>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2011/07/08/how_to_undo_clear_offline_items.html#how_to_undo_clear_offline_items">    Continue reading
-</a>
-  </div>
-  <hr />
-</article>
-<article>
-  <header>
-    <h2><a href="https://cctags.github.io/posts/2011/07/06/pthread_tls_destructor_issue.html#pthread_tls_destructor_issue">使用 pthread tls destructor 时遇到的问题</a></h2>
-    <p>
-          Posted on 2011-07-06 星期三 in <a href="https://cctags.github.io/category/programming.html">Programming</a>
-
-
-          &#8226;     Tagged with
-
-              <a href="https://cctags.github.io/tag/pthread.html">pthread</a>
-    </p>
-  </header>
-  <div>
-      <p>使用 pthread 线程时，可以通过 pthread_key_create() 这个 API，给新创建的线程添加一个回调函数，在线程退出时会被系统调用到，通常用于线程相关资源的清理，等等。</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="nf">pthread_key_create</span><span class="p">(</span>
-    <span class="n">pthread_key_t</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">destructor</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="p">));</span>
-</code></pre></div>
-
-
-<p>特别要注意的是，在 destructor 被回调时，其参数肯定不为空，但此时 <strong>对应的 tls 已经被清空！</strong> 所以，如果 destructor 里有依赖 tls 的，其运行结果肯定跟预期的不一样。</p>
-<p>写代码的时候没注意，出了问题也没有头绪，仔细看了 <a href="https://linux.die.net/man/3/pthread_key_create">pthread_key_create 的文档</a> 才清楚：</p>
-<blockquote>
-<p>An optional destructor function may be associated with each key …</p></blockquote>
-      <br>
-      <a class="btn" href="https://cctags.github.io/posts/2011/07/06/pthread_tls_destructor_issue.html#pthread_tls_destructor_issue">    Continue reading
-</a>
-  </div>
-</article>
-
-  <div class="pagination">
-    <a class="btn float-left" href="https://cctags.github.io/index6.html">
-      <i class="fa fa-angle-left"></i>     Older Posts
-
-    </a>
-    <a class="btn float-right" href="https://cctags.github.io/index4.html">
-          Newer Posts
- <i class="fa fa-angle-right"></i>
-    </a>
-  </div>
-
-
-
-
-    <footer>
-<p>
-  &copy;  2009 - 2020 - This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
-</p>
-<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
-</p><p>
-  <a rel="license"
-     href="http://creativecommons.org/licenses/by-sa/4.0/"
-     target="_blank">
-    <img alt="Creative Commons License"
-         title="Creative Commons License"
-         style="border-width:0"
-           src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
-         width="80"
-         height="15"/>
-  </a>
-</p>    </footer>
-  </main>
-
-
-
-
-<script type="application/ld+json">
-{
-  "@context" : "http://schema.org",
-  "@type" : "Blog",
-  "name": " Gang Up ",
-  "url" : "https://cctags.github.io",
-  "image": "",
-  "description": "Random notes from a random developer"
-}
-</script>
-
-<a href="https://github.com/cctags/cctags.github.io.git" class="github-corner" aria-label="View source on Github">
-    <svg width="80"
-         height="80"
-         viewBox="0 0 250 250"
-         style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;"
-         aria-hidden="true">
-        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
-        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
-              fill="currentColor"
-              style="transform-origin: 130px 106px;"
-              class="octo-arm">
-        </path>
-        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
-              fill="currentColor"
-              class="octo-body">
-        </path>
-    </svg>
-</a>
-<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></body>
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
 </html>

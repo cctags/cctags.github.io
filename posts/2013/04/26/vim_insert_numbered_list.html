@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>vim 里插入列表编号 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2013/04/26/vim_insert_numbered_list.html">
+        <meta name="twitter:title" content="vim 里插入列表编号">
+        <meta name="twitter:description" content="0x00 markdown 里的 Ordered Lists 语法是这样的： 1. First item 2. Second item 3. Third item 4. Fourth item 虽然以下写法也是允许的，并且渲染的结果是一样的： 1. First item 1 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2013/04/26/vim_insert_numbered_list.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="vim 里插入列表编号">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0x00 markdown 里的 Ordered Lists 语法是这样的： 1. First item 2. Second item 3. Third item 4. Fourth item 虽然以下写法也是允许的，并且渲染的结果是一样的： 1. First item 1 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2013/04/26/vim_insert_numbered_list.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2013/04/26/vim_insert_numbered_list.html" rel="bookmark" title="Permalink to vim 里插入列表编号">vim 里插入列表编号</a>
+                </h2>
+                <p class="post-meta">
+                    2013-04-26 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2013/04/26/vim_insert_numbered_list.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>0x00</strong></p>
+<p>markdown 里的 Ordered Lists 语法是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="k">1.</span> First item
+<span class="k">2.</span> Second item
+<span class="k">3.</span> Third item
+<span class="k">4.</span> Fourth item
+</code></pre></div>
+
+<p>虽然以下写法也是允许的，并且渲染的结果是一样的：</p>
+<div class="highlight"><pre><span></span><code><span class="k">1.</span> First item
+<span class="k">1.</span> Second item
+<span class="k">1.</span> Third item
+<span class="k">1.</span> Fourth item
+</code></pre></div>
+
+<p>但在编写时，尽量使用前一种吧，特别是在需要经常翻阅的源文件，比如写在注释里的时候。</p>
+<p>所以现在的问题是，在 vim 里怎样（在修改的时候，初次编写时是不需要的）快速输入这样的列表编号？</p>
+<p><strong>0x01</strong></p>
+<p>当然常想到的肯定是 <code>nl</code>、<code>cat -n</code> ，或者 <code>:put =range...</code> 这样的用法，但对于编辑已有文字段落时不是很合适。</p>
+<p>经过搜索，对于一篇文档的的几行文字，可以使用以下的写法：</p>
+<ol>
+<li>选中需要调整的若干行，在指定位置插入 0 和点，比如若干行开头 <code>shift-v, I, 0.</code>，或者若干行的某个位置 <code>ctrl-v, j/k..., I, 0.</code>；或者把已有的替换成为 <code>ctrl-v, j/k..., r, 0</code>，等等；</li>
+<li>再次选中这些新添加的 0，依次改成 1、2、…，<code>ctrl-v, j/k..., g, ctrl-a</code>，完成。</li>
+</ol>
+<p>比如：</p>
+<p>在第 2 行和第 3 行之间插入了新的内容：</p>
+<div class="highlight"><pre><span></span><code><span class="k">1.</span> First item
+<span class="k">2.</span> Second item
+<span class="k">2.</span> Insert new item
+<span class="k">3.</span> Third item
+<span class="k">4.</span> Fourth item
+</code></pre></div>
+
+<p>先把行首数字更换成 0：</p>
+<div class="highlight"><pre><span></span><code><span class="k">0.</span> First item
+<span class="k">0.</span> Second item
+<span class="k">0.</span> Insert new item
+<span class="k">0.</span> Third item
+<span class="k">0.</span> Fourth item
+</code></pre></div>
+
+<p>选中这些 0 并修改：</p>
+<div class="highlight"><pre><span></span><code><span class="k">1.</span> First item
+<span class="k">2.</span> Second item
+<span class="k">3.</span> Insert new item
+<span class="k">4.</span> Third item
+<span class="k">5.</span> Fourth item
+</code></pre></div>
+
+<p>完成。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/markdown.html">markdown</a>,                 <a href="../../../../tag/vim.html">vim</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/03/02/from-nerdtree-to-nvim-tree.html">从 NERDTree 切换到 nvim-tree</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/04/02/vim-paste-very-slow-issue.html">往 vim 粘贴大段文本会卡顿的问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2018/09/20/vim-unicode.html">Vim 里的特殊字符处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2017/01/18/vim_open_with_file_line.html">vim 里打开 file:line</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/02/01/from-markdown-to-epub.html">从 markdown 生成 epub 文件</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2012/08/07/how_to_use_ctrl_shift_fn_keys_in_putty.html">
+                &laquo; 如何在 PuTTY 里使用 Ctrl-Fn 及 Shift-Fn 组合键
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2013/09/11/pthread-rwlock-writer-starvation.html">
+                读写锁 rwlock 实现里的避免写锁饥饿问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

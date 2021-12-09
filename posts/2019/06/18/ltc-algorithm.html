@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Litecoin (LTC) 算法 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2019/06/18/ltc-algorithm.html">
+        <meta name="twitter:title" content="Litecoin (LTC) 算法">
+        <meta name="twitter:description" content="跟之前分析过的 BTC 算法类似，Litecon (LTC) 的算法也是寻找一个整数（nonce），以满足某个要求。它使用了 Scrypt 哈希算法，而不再是两次 sha256。以 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2019/06/18/ltc-algorithm.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Litecoin (LTC) 算法">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="跟之前分析过的 BTC 算法类似，Litecon (LTC) 的算法也是寻找一个整数（nonce），以满足某个要求。它使用了 Scrypt 哈希算法，而不再是两次 sha256。以 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2019/06/18/ltc-algorithm.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2019/06/18/ltc-algorithm.html" rel="bookmark" title="Permalink to Litecoin (LTC) 算法">Litecoin (LTC) 算法</a>
+                </h2>
+                <p class="post-meta">
+                    2019-06-18 Tuesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2019/06/18/ltc-algorithm.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>跟之前分析过的 BTC 算法类似，Litecon (LTC) 的算法也是寻找一个整数（nonce），以满足某个要求。它使用了 Scrypt 哈希算法，而不再是两次 sha256。以下考察这个算法：</p>
+<p><strong>1. 输入：</strong></p>
+<ol>
+<li>version，4 个字节</li>
+<li>prev_block，32 个字节</li>
+<li>mrkl_root，32 个字节</li>
+<li>timestamp，4 个字节</li>
+<li>bits，4 个字节</li>
+<li>nonce，4 个字节</li>
+</ol>
+<p>其中前五个由网络决定，第六个输入 nonce 是需要尝试的整数。</p>
+<p><strong>2. 计算过程：</strong></p>
+<ol>
+<li>输入字段按小端格式化；</li>
+<li>送入 Scrypt 算法，得到输出、逆序并作为计算结果</li>
+</ol>
+<p>以 Python 代码举例（因为 Python 标准库里还没有包含 Scrypt 的实现，所以这里使用了<a href="https://pypi.org/project/scrypt">第三方的模块</a>）</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrypt</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="k">def</span> <span class="nf">bits_to_target</span><span class="p">(</span><span class="n">bits</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">bits</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFF</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">256</span> <span class="o">**</span> <span class="p">((</span><span class="n">bits</span> <span class="o">&gt;&gt;</span> <span class="mi">24</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">bits_to_diff</span><span class="p">(</span><span class="n">bits</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">208</span><span class="p">)</span> <span class="o">*</span> <span class="mi">65535</span> <span class="o">/</span> <span class="n">bits_to_target</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">ltc_hash</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">prev_block</span><span class="p">,</span> <span class="n">mrkl_root</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">nonce</span><span class="p">):</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I32s32s3I&#39;</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span>
+                        <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">prev_block</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">mrkl_root</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">timestamp</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">scrypt</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">chunk</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</code></pre></div>
+
+<p><strong>3. 输出：</strong></p>
+<p>输出 32 个字节的结果</p>
+<p><strong>4. 计算举例：</strong></p>
+<p>以区块高度 123456 的真实数据举例（具体信息可以从 <a href="https://chainz.cryptoid.info/ltc/block.dws?123456.htm">这个网页</a> 看到）；</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">version</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prev_block</span> <span class="o">=</span> <span class="s1">&#39;4db8730cf48ef656e834b8b87085e0f1b3acd51bcf2d51cb0d7e82060eb219f3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mrkl_root</span> <span class="o">=</span> <span class="s1">&#39;96f43925c25013f7266e271bad8eca1a3797c82ce08859b428d7e2f7fcf6c2b6&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timestamp</span> <span class="o">=</span> <span class="mi">1335278279</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bits</span> <span class="o">=</span> <span class="mh">0x1d00ac0c</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nonce</span> <span class="o">=</span> <span class="mi">2701658624</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hash_golden</span> <span class="o">=</span> <span class="s1">&#39;000000007001e74b2bd5f4038a5c7557485cc23db8977017a32d59b236bf5c1e&#39;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ltc_hash</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">prev_block</span><span class="p">,</span> <span class="n">mrkl_root</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">bits_to_target</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span> <span class="o">==</span> <span class="n">hash_golden</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;result: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">result: 000000007001e74b2bd5f4038a5c7557485cc23db8977017a32d59b236bf5c1e</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;target: </span><span class="si">{</span><span class="n">bits_to_target</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span><span class="si">:</span><span class="s1">064x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">target: 00000000ac0c0000000000000000000000000000000000000000000000000000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;diff:   </span><span class="si">{</span><span class="n">bits_to_diff</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">diff:   1.4879438743075106</span>
+</code></pre></div>
+
+<p>从上述代码及输出的结果可以观察到，LTC 算法的要求是，所求解出来的这个 nonce，必须要能够让 Scrypt 输出的结果（以大端来看）必须小于由 <code>bits</code> 决定的一个数（上面代码里的 <code>target</code>）。</p>
+<p>同样的，这个算法也是验算容易，但要找到这样一个能满足要求的整数，需要进行大量的计算。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/hash.html">hash</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/12/30/elliptic-curve-montgomery-modular-multiplication.html">椭圆曲线和蒙哥马利算法的一些记录</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/11/02/one-time-password.html">一次性密码算法 One-Time Password (OTP)</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2016/06/18/btc-algorithm.html">Bitcoin (BTC) 算法</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2016/06/16/base-encode-decode-algorithm.html">Base64, Base58 等算法的编码和解码过程</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2019/05/20/golang_interface.html">
+                &laquo; Go 语言里的接口赋值问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2019/06/20/pthread_memory_leak_issue.html">
+                使用 pthread 时遇到的资源不足的问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

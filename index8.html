@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
+
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html" rel="bookmark" title="Permalink to 混用不同版本的 libc 造成程序崩溃">混用不同版本的 libc 造成程序崩溃</a>
+                </h2>
+                <p class="post-meta">
+                    2016-03-25 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2016/03/25/app_crash_because_of_multiple_libc_instances.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>程序发生崩溃，调试器提示崩溃发生在 libc 的 free() 函数里面：</p>
+<div class="highlight"><pre><span></span><code><span class="n">Debug</span><span class="w"> </span><span class="n">Assertion</span><span class="w"> </span><span class="n">Failed</span><span class="o">:</span><span class="w"> </span><span class="n">_CrtIsValidHeapPointer</span><span class="p">(</span><span class="n">pUserData</span><span class="p">)</span>
+</code></pre></div>
+
+<p>初步判断，可能是堆（Heap）被写坏了。</p>
+<p>于是修改代码，在程序 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2016/02/26/highlight_all_occurrences_of_selected_word.html" rel="bookmark" title="Permalink to Highlight All Occurrences of Selected Word">Highlight All Occurrences of Selected Word</a>
+                </h2>
+                <p class="post-meta">
+                    2016-02-26 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2016/02/26/highlight_all_occurrences_of_selected_word.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>在选中某个单词（比如变量、函数、自定义类型，等等）时，如果能把屏幕上所有出现这个单词的地方，都高亮显示出来，对于程序 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html" rel="bookmark" title="Permalink to Remove Trailing Whitespace in Visual Studio">Remove Trailing Whitespace in Visual Studio</a>
+                </h2>
+                <p class="post-meta">
+                    2016-02-24 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2016/02/24/remove_trailing_whitespace_in_visual_studio.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>编程习惯里通常会建议删除行尾的空格。在 Visual Studio 里，可以通过 <code>Ctrl+K, Ctrl+\</code> 的按键操作来实现。</p>
+<p>不过每次通过手动的方式，未免有 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2016/01/28/what_is_ulp.html" rel="bookmark" title="Permalink to What is ULP?">What is ULP?</a>
+                </h2>
+                <p class="post-meta">
+                    2016-01-28 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2016/01/28/what_is_ulp.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>The maximum relative error is defined as ulp (units in the last place).</p>
+<p>The ULP is defined as follows:</p>
+<div class="highlight"><pre><span></span><code>If x is a real number that lies between two finite consecutive
+floating-point numbers a and b, without being equal to one of them,
+then ulp(x) = |b - a|, otherwise ulp …</code></pre></div>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2016/01/22/find_the_file_by_inode_number.html" rel="bookmark" title="Permalink to Find the file by inode number">Find the file by inode number</a>
+                </h2>
+                <p class="post-meta">
+                    2016-01-22 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2016/01/22/find_the_file_by_inode_number.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <P>
+在命令行下会遇到一些文件名里包含有中文、符号或者某些奇怪字符的文件，如果命令的自动补全不完整，键盘操作起来 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/12/30/cl_set_event_callback_in_ocl.html" rel="bookmark" title="Permalink to Set Event Callback in OpenCL">Set Event Callback in OpenCL</a>
+                </h2>
+                <p class="post-meta">
+                    2015-12-30 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/12/30/cl_set_event_callback_in_ocl.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>这个 API 用来注册回调函数，在（Event 对应的）Command 执行到指定状态时，回调函数会被触发。这个 API 在使用及实现上不是很复杂。 以下 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/12/25/iphone_photo_library_ghost_space.html" rel="bookmark" title="Permalink to iPhone Photo Library "Ghost" Space">iPhone Photo Library "Ghost" Space</a>
+                </h2>
+                <p class="post-meta">
+                    2015-12-25 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/12/25/iphone_photo_library_ghost_space.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>最近 iPhone 手机遇到个问题：照片拍了很多了，想清理一下，结果发现即使是删掉了绝大部分照片，照片图库仍然占用了大量的 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html" rel="bookmark" title="Permalink to Merging the upstream repository into the fork">Merging the upstream repository into the fork</a>
+                </h2>
+                <p class="post-meta">
+                    2015-12-15 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/vcs.html">VCS</a>
+                    &middot; <a href="./posts/2015/12/15/merging_the_upstream_repository_into_the_fork.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>如何在 git 里合并上游仓库的更新？这里是一个 GitHub 的文档， <a href="https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/">https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/</a>，关于对 <code>fork</code> 进行更新。</p>
+<p>记录一下，备忘。</p>
+<p>o 切换到 <code>master</code> 分支 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/12/08/dial_toll_free_numbers_in_skype.html" rel="bookmark" title="Permalink to Dial Toll Free Numbers in Skype">Dial Toll Free Numbers in Skype</a>
+                </h2>
+                <p class="post-meta">
+                    2015-12-08 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2015/12/08/dial_toll_free_numbers_in_skype.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>电话会议，一般是用电话拨进去参加的会议，其中有些号码是免费的，有些则是付费的。</p>
+<p>当然，如果 Dial-In Number 里包括了以下这些：</p>
+<blockquote>
+<p>USA …</p></blockquote>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2015/11/17/global_and_local_work_size.html" rel="bookmark" title="Permalink to Global and Local Work Size in OpenCL">Global and Local Work Size in OpenCL</a>
+                </h2>
+                <p class="post-meta">
+                    2015-11-17 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2015/11/17/global_and_local_work_size.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>The work-items in a given work-group execute concurrently on the processing elements of a single compute unit. This is a critical point in understanding the concurrency in OpenCL. ... OpenCL only assures that the workitems within a work-group execute concurrently (and share processor resources on the device).</p>
+<ul>
+<li><strong>global work offset</strong>: what …</li></ul>
+            </div>
+        </section>
+    </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index7.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 8/12</li>
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index9.html">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
+
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

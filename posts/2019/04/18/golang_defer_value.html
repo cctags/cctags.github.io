@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Go 语言里的 defer 参数传值问题 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2019/04/18/golang_defer_value.html">
+        <meta name="twitter:title" content="Go 语言里的 defer 参数传值问题">
+        <meta name="twitter:description" content="使用 defer 时遇到的一些问题，专门记录一下。 先说结论，defer 函数时，所有变量是按值（Go 语言都是传值）来暂存，等到作用域结束前 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2019/04/18/golang_defer_value.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Go 语言里的 defer 参数传值问题">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="使用 defer 时遇到的一些问题，专门记录一下。 先说结论，defer 函数时，所有变量是按值（Go 语言都是传值）来暂存，等到作用域结束前 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2019/04/18/golang_defer_value.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2019/04/18/golang_defer_value.html" rel="bookmark" title="Permalink to Go 语言里的 defer 参数传值问题">Go 语言里的 defer 参数传值问题</a>
+                </h2>
+                <p class="post-meta">
+                    2019-04-18 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2019/04/18/golang_defer_value.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>使用 <code>defer</code> 时遇到的一些问题，专门记录一下。</p>
+<p>先说结论，<code>defer</code> 函数时，所有变量是按值（Go 语言都是传值）来暂存，等到作用域结束前执行调用。对于基于指针的方法调用，那指针里的值（即地址）会被暂存，而多次改变指针内容后 <code>defer</code> 的行为可能跟编码时设想的不一样。（如果是闭包，则是在后续执行时直接用到变量本身，可以读取和修改。）所以要区分变量的位置，是在栈上的，是全局，函数的参数，<code>for</code> 循环的变量等等；暂存的是变量的值，还是变量的地址；另外是函数还是闭包。</p>
+<!-- ** 例子：** -->
+
+<!-- ```go -->
+<!-- func dump(i int) { -->
+<!--    tracef("i: @%v, val=%v\n", &i, i) -->
+<!-- } -->
+
+<!-- func main() { -->
+<!--    var i int -->
+<!--    tracef("i: @%v, %v\n", &i, i) -->
+
+<!--    for _, i = range []int{1, 2, 3} { -->
+<!--        defer tracef("i: @%v, val=%v\n", &i, i) // (1) -->
+<!--        defer dump(i)                           // (2) -->
+<!--    } -->
+<!-- } -->
+
+<!-- // Output: -->
+<!-- // [main.main] >> i: @0xc0000100d8, 0 -->
+<!-- // [main.dump] >> i: @0xc0000101b0, val=3 -->
+<!-- // [main.main] >> i: @0xc0000100d8, val=3 -->
+<!-- // [main.dump] >> i: @0xc0000101d8, val=2 -->
+<!-- // [main.main] >> i: @0xc0000100d8, val=2 -->
+<!-- // [main.dump] >> i: @0xc000010200, val=1 -->
+<!-- // [main.main] >> i: @0xc0000100d8, val=1 -->
+<!-- ``` -->
+
+<!-- 在 (1) 处，``&i`` 和 ``i`` 分别是栈上变量 ``i`` 的地址和值，都按传值的方式，在循环里依次被暂存起来；作用域结束前执行 ``defer`` 调用时，会被重新压栈传递，调用 ``tracef()`` 里的打印。 -->
+
+<!-- 在 (2) 处，``i`` 的值，被暂存起来，执行时重新传递，并调用 ``dump()``；在 ``dump()`` 里，打印的是作为函数参数的 ``i`` 的地址和值，其值是从暂存的地方传递过来的，而变量是 ``dump()`` 自己的，并不是原先栈上的 ``i``。 -->
+
+<!-- ** 作为对比：** -->
+
+<!-- ```go -->
+<!-- func dump(i int) { -->
+<!--    tracef("i: @%v, val=%v\n", &i, i) -->
+<!-- } -->
+
+<!-- func main() { -->
+<!--    // var i int -->
+<!--    // tracef("i: @%v, %v\n", &i, i) -->
+
+<!--    for i := range []int{1, 2, 3} { -->
+<!--        defer tracef("i: @%v, val=%v\n", &i, i) // (1) -->
+<!--        defer dump(i) -->
+<!--    } -->
+<!-- } -->
+
+<!-- // Output: -->
+<!-- // [main.dump] >> i: @0xc00009a080, val=3 -->
+<!-- // [main.main] >> i: @0xc00009a058, val=3 -->
+<!-- // [main.dump] >> i: @0xc00009a108, val=2 -->
+<!-- // [main.main] >> i: @0xc00009a050, val=2 -->
+<!-- // [main.dump] >> i: @0xc00009a130, val=1 -->
+<!-- // [main.main] >> i: @0xc00009a008, val=1 -->
+<!-- ``` -->
+
+<!-- 在 (1) 处，``&i`` 和 ``i`` 分别是 ``for`` 循环里的变量 ``i`` 的地址和值，从打印来看，每次都不一样，地址越来越小。 -->
+
+<p><strong>通过指针调用的例子：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">MyObject</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">value</span><span class="w"> </span><span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">n</span><span class="w"> </span><span class="nx">MyObject</span><span class="p">)</span><span class="w"> </span><span class="nx">F</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">tracef</span><span class="p">(</span><span class="s">&quot;n: @%p, %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">n</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">n</span><span class="w"> </span><span class="o">*</span><span class="nx">MyObject</span><span class="p">)</span><span class="w"> </span><span class="nx">PF</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">tracef</span><span class="p">(</span><span class="s">&quot;n: @%p, %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="nx">n</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="nx">MyObject</span>
+<span class="w">    </span><span class="nx">tracef</span><span class="p">(</span><span class="s">&quot;n: @%p, %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">n</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="p">[]</span><span class="nx">MyObject</span><span class="p">{</span><span class="nx">MyObject</span><span class="p">{</span><span class="mi">123</span><span class="p">},</span><span class="w"> </span><span class="nx">MyObject</span><span class="p">{</span><span class="mi">456</span><span class="p">},</span><span class="w"> </span><span class="nx">MyObject</span><span class="p">{</span><span class="mi">789</span><span class="p">}}</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">()</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">F</span><span class="p">()</span><span class="w">               </span><span class="c1">// (1)</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">PF</span><span class="p">()</span><span class="w">              </span><span class="c1">// (2)</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">F</span><span class="p">()</span><span class="w"> </span><span class="p">}()</span><span class="w">  </span><span class="c1">// (3)</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">PF</span><span class="p">()</span><span class="w"> </span><span class="p">}()</span><span class="w"> </span><span class="c1">// (4)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Output:</span>
+<span class="c1">// [main.main] &gt;&gt; n: @0xc0000100d8, {0}</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc0000101c8, {789}</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc000010200, {789}</span>
+<span class="c1">//</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc000010238, {789}</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc000010270, {456}</span>
+<span class="c1">//</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc0000102a8, {789}</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc0000102e0, {123}</span>
+</code></pre></div>
+
+<p>在 (1) 处，栈上变量 <code>n</code> 的值被暂存，<code>defer</code> 的内容在后续执行时，通过传值赋给 <code>MyObject.F()</code>，其打印出来的值，跟期望的一致，而打印出来的地址，是 <code>MyObject.F()</code> 参数本身的地址，与栈上变量 <code>n</code> 无关；</p>
+<p>在 (2) 处，栈上变量 <code>n</code> 的地址被暂存，<code>defer</code> 的内容在后续执行时，地址通过传值赋给 <code>MyObject.PF()</code>，其打印出来的地址，就是栈上变量 <code>n</code> 的地址，而打印出来的值，是当前栈上变量 <code>n</code> 里的内容，即循环最后一次的赋值。显然这里跟设想的不一样。</p>
+<p>如果用 C 语言来理解和对比的话，(1) 相当于 <code>(n).F()</code>，而 (2) 相当于 <code>(&amp;n)-&gt;PF()</code>，所以暂存的分别是 <code>n</code> 和 <code>&amp;n</code>。对于 (2) 来说，在循环过程中，因为暂存的只是 <code>&amp;n</code> 地址，所以在后面 <strong>执行时刻</strong> 看到的是通过地址 <code>&amp;n</code> 所指向变量 <code>n</code> 里的值，而不是之前这个变量 <code>n</code> 里每次 <strong><code>defer</code> 时刻</strong> 的值。</p>
+<p>在 (3) 处，是在执行时，把栈上变量 <code>n</code> 传值赋给 <code>(n).F()</code>，所以打印的地址是参数变量的地址，值是循环最后一次的赋值。</p>
+<p>在 (4) 处，是在执行时，把栈上变量 <code>&amp;n</code> 传值赋给 <code>(&amp;n)-&gt;PF()</code>，所以打印的地址就是栈上变量 <code>n</code> 的地址，而值也是循环最后一次的赋值。</p>
+<p><strong>作为对比：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">MyObject</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">value</span><span class="w"> </span><span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">n</span><span class="w"> </span><span class="nx">MyObject</span><span class="p">)</span><span class="w"> </span><span class="nx">F</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">tracef</span><span class="p">(</span><span class="s">&quot;n: @%p, %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">n</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">n</span><span class="w"> </span><span class="o">*</span><span class="nx">MyObject</span><span class="p">)</span><span class="w"> </span><span class="nx">PF</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">tracef</span><span class="p">(</span><span class="s">&quot;n: @%p, %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="nx">n</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// var n MyObject</span>
+<span class="w">    </span><span class="c1">// tracef(&quot;n: @%p, %v&quot;, &amp;n, n)</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="p">[]</span><span class="nx">MyObject</span><span class="p">{</span><span class="nx">MyObject</span><span class="p">{</span><span class="mi">123</span><span class="p">},</span><span class="w"> </span><span class="nx">MyObject</span><span class="p">{</span><span class="mi">456</span><span class="p">},</span><span class="w"> </span><span class="nx">MyObject</span><span class="p">{</span><span class="mi">789</span><span class="p">}}</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">()</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">F</span><span class="p">()</span><span class="w">               </span><span class="c1">// (1)</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">PF</span><span class="p">()</span><span class="w">              </span><span class="c1">// (2)</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">F</span><span class="p">()</span><span class="w"> </span><span class="p">}()</span><span class="w">  </span><span class="c1">// (3)</span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">n</span><span class="p">.</span><span class="nx">PF</span><span class="p">()</span><span class="w"> </span><span class="p">}()</span><span class="w"> </span><span class="c1">// (4)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Output:</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc000010128, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc0000101b8, {789}</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc000010128, {789}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc000010200, {789}</span>
+<span class="c1">//</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc000010120, {456}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc000010238, {456}</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc000010120, {456}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc000010270, {456}</span>
+<span class="c1">//</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {123}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc0000102a0, {123}</span>
+<span class="c1">// [main.(*MyObject).PF] &gt;&gt; n: @0xc0000100d8, {123}</span>
+<span class="c1">// [main.MyObject.F] &gt;&gt; n: @0xc0000102c8, {123}</span>
+</code></pre></div>
+
+<p>这里 (1) 和 (2) 暂存的是 <code>for</code> 循环变量 <code>n</code> 的值和地址。从 (2) 的打印看出来，循环变量 <code>n</code> 每次所在位置都不一样，也就是在每次循环时在新的位置生成了一个变量，所以这样打印的结果是符合预期的。</p>
+<p>而 (3) 和 (4)，是在执行时，才把对应 <code>defer</code> 时的循环变量 <code>n</code> 及 <code>&amp;n</code> 赋值并调用，变量里的值和上面 (1) (2) 一样。另外，可以看到每一次的 (2) 和 (4) 里的地址是一样的。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/golang.html">golang</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">Go 语言里 Kong 命令行解析工具的参数验证问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/20/golang_interface.html">Go 语言里的接口赋值问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/10/golang_errors.html">Go 语言里的 errors 错误包装处理</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/03/golang_panic_position.html">Go 语言里的 panic 状态位置问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2019/05/01/golang_unittest_cover.html">Go 语言里的单元测试覆盖率</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2019/03/31/zynq_usb_drive_issue.html">
+                &laquo; Zynq USB Drive Issue
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2019/04/26/golang_range_gotcha.html">
+                Go 语言里的 range 问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

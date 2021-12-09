@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux kernel printk 以及 pr_err, dev_err 等包装函数 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2021/12/05/linux-kernel-printk-alias-function.html">
+        <meta name="twitter:title" content="Linux kernel printk 以及 pr_err, dev_err 等包装函数">
+        <meta name="twitter:description" content="pr_err() 等包装函数 在 Linux 内核里打印信息，除了使用 printk，还可以用 pr_err() 等包装函数，比如： pr_err("page allocation failed\n"); 这个调用相当于 printk(KERN_ERR "page allocation failed\n …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2021/12/05/linux-kernel-printk-alias-function.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux kernel printk 以及 pr_err, dev_err 等包装函数">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="pr_err() 等包装函数 在 Linux 内核里打印信息，除了使用 printk，还可以用 pr_err() 等包装函数，比如： pr_err("page allocation failed\n"); 这个调用相当于 printk(KERN_ERR "page allocation failed\n …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2021/12/05/linux-kernel-printk-alias-function.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2021/12/05/linux-kernel-printk-alias-function.html" rel="bookmark" title="Permalink to Linux kernel printk 以及 pr_err, dev_err 等包装函数">Linux kernel printk 以及 pr_err, dev_err 等包装函数</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-05 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2021/12/05/linux-kernel-printk-alias-function.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>pr_err() 等包装函数</strong></p>
+<p>在 Linux 内核里打印信息，除了使用 printk，还可以用 pr_err() 等包装函数，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pr_err</span><span class="p">(</span><span class="s">&quot;page allocation failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre></div>
+
+<p>这个调用相当于 <code>printk(KERN_ERR "page allocation failed\n");</code> ，当然写起来更简洁。</p>
+<p>从内核头文件 <code>include/linux/printk.h</code> 里看到，对于每一个 log level，都有包装函数对应：</p>
+<ul>
+<li>KERN_EMERG: pr_emerg()</li>
+<li>KERN_ALERT: pr_alert()</li>
+<li>KERN_CRIT: pr_crit()</li>
+<li>KERN_ERR: pr_err()</li>
+<li>KERN_WARNING: pr_warn()</li>
+<li>KERN_NOTICE: pr_notice()</li>
+<li>KERN_INFO: pr_info()</li>
+<li>KERN_DEBUG: pr_debug()</li>
+</ul>
+<p><strong>pr_fmt 宏</strong></p>
+<p>观察这些包装函数的定义，比如 pr_err：</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define pr_err(fmt, ...) \</span>
+<span class="cp">    printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)</span>
+</code></pre></div>
+
+<p>除了包装 printk + KERN_ERR 以外，还用到了 pr_fmt 这个宏，而在 pr_fmt 的注释里，是这样建议的：</p>
+<div class="highlight"><pre><span></span><code>...
+ <span class="k">*</span> This macro can be used to generate a unified format string for pr_*()
+ <span class="k">*</span> macros. A common use is to prefix all pr_*() messages in a file with a common
+ <span class="k">*</span> string. For example, defining this at the top of a source file:
+ <span class="k">*</span>
+ *     #define pr_fmt(fmt) KBUILD_MODNAME &quot;: &quot; fmt
+ <span class="k">*</span>
+ * would prefix all pr_info, pr_emerg... messages in the file with the module
+ <span class="k">*</span> name.
+ */
+</code></pre></div>
+
+<p>就是说，它允许在模块里重定义 pr_fmt，从而在本模块的日志前面加上某些前缀信息。所以内核好多文件里，在文件开头的位置，一般都有 <code>#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt</code> 这样一句定义。</p>
+<p>比如，查看内核启动日志：</p>
+<div class="highlight"><pre><span></span><code><span class="n">smp</span><span class="o">:</span><span class="w"> </span><span class="n">Bringing</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="n">secondary</span><span class="w"> </span><span class="n">CPUs</span><span class="w"> </span><span class="o">...</span>
+</code></pre></div>
+
+<p>它对应的代码是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="nl">FILE</span><span class="p">:</span><span class="w"> </span><span class="n">kernel</span><span class="o">/</span><span class="n">smp</span><span class="p">.</span><span class="n">c</span>
+
+<span class="cp">#define pr_fmt(fmt) KBUILD_MODNAME &quot;: &quot; fmt</span>
+<span class="p">...</span>
+
+<span class="n">pr_info</span><span class="p">(</span><span class="s">&quot;Bringing up secondary CPUs ...</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre></div>
+
+<p>所以日志里的 "smp: " 前缀，是由 pr_fmt 定义的，这样可以进一步地简化并统一内核模块里的打印。</p>
+<p>如果搜索内核代码，还会看到这样的定义，可以借鉴并使用到自己的代码里去：</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define pr_fmt(fmt) KBUILD_MODNAME &quot;: %s: &quot; fmt, __func__</span>
+<span class="cp">#define pr_fmt(fmt) KBUILD_MODNAME &quot;:%s:%d: &quot; fmt, __func__, __LINE__</span>
+<span class="cp">#define pr_fmt(fmt) &quot;kasan test: %s &quot; fmt, __func__</span>
+<span class="cp">#define pr_fmt(fmt) &quot;debug_vm_pgtable: [%-25s]: &quot; fmt, __func__</span>
+</code></pre></div>
+
+<p><strong>dev_err() 等包装函数</strong></p>
+<p><code>Linux kernel coding style</code> 里有一节 <code>Printing kernel messages</code>：</p>
+<div class="highlight"><pre><span></span><code>There are a number of driver model diagnostic macros in &lt;linux/device.h&gt;
+which you should use to make sure messages are matched to the right device
+and driver, and are tagged with the right level:  dev_err(), dev_warn(),
+dev_info(), and so forth.  For messages that aren&#39;t associated with a
+particular device, &lt;linux/printk.h&gt; defines pr_notice(), pr_info(),
+pr_warn(), pr_err(), etc.
+</code></pre></div>
+
+<p>这是说，对于设备驱动实现代码里，建议使用 dev_err()、dev_warn()、dev_info() 等等打印函数，它们会在 printk 的基础上，加上当前模块相关的信息，使得打印更加清晰和通用。这些包装函数包括：</p>
+<ul>
+<li>KERN_EMERG: dev_emerg()</li>
+<li>KERN_ALERT: dev_alert()</li>
+<li>KERN_CRIT: dev_crit()</li>
+<li>KERN_ERR: dev_err()</li>
+<li>KERN_WARNING: dev_warn()</li>
+<li>KERN_NOTICE: dev_notice()</li>
+<li>KERN_INFO: dev_info()</li>
+<li>KERN_DEBUG: dev_dbg()</li>
+</ul>
+<p>这套函数的实现在 <code>drivers/base/core.c</code> 里，用 <code>define_dev_printk_level</code> 宏定义了函数的实现。</p>
+<p>类似于 <code>pr_fmt</code>，这套函数也有 <code>dev_fmt</code>，驱动代码里可以重新定义。</p>
+<p>使用的时候，可以这样：</p>
+<div class="highlight"><pre><span></span><code><span class="n">dev_err</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pdev</span><span class="o">-&gt;</span><span class="n">dev</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;no memory resource defined</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre></div>
+
+<p><strong>参考资料</strong></p>
+<ul>
+<li>Documentation/process/coding-style.rst</li>
+<li>Documentation/core-api/printk-basics.rst</li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2021/12/03/linux-kernel-printk-log-level.html">
+                &laquo; Linux kernel printk log level
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html">
+                Linux kernel printk 占位符 %p 和 %px &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

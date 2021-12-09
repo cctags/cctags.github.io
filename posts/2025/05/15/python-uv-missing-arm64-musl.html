@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python 包管理器 uv 没有 arm64 musl 安装包 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">
+        <meta name="twitter:title" content="Python 包管理器 uv 没有 arm64 musl 安装包">
+        <meta name="twitter:description" content="项目里要在嵌入式设备上面跑起某个工具，因为工具本身需要高版本的 Python，而系统里自带的只是 Python 3.7，所以准备通过 uv …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python 包管理器 uv 没有 arm64 musl 安装包">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="项目里要在嵌入式设备上面跑起某个工具，因为工具本身需要高版本的 Python，而系统里自带的只是 Python 3.7，所以准备通过 uv …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html" rel="bookmark" title="Permalink to Python 包管理器 uv 没有 arm64 musl 安装包">Python 包管理器 uv 没有 arm64 musl 安装包</a>
+                </h2>
+                <p class="post-meta">
+                    2025-05-15 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2025/05/15/python-uv-missing-arm64-musl.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>项目里要在嵌入式设备上面跑起某个工具，因为工具本身需要高版本的 Python，而系统里自带的只是 Python 3.7，所以准备通过 uv 来安装高版本的虚拟环境。</p>
+<p>因为系统是基于 musl 库，所以从 <a href="https://github.com/astral-sh/uv/releases">uv Release</a> 发布页面里，找到 arm64 musl 对应的包 <strong>uv-aarch64-unknown-linux-musl.tar.gz</strong>，下载并解压缩到设备上系统的 <code>/usr/bin/</code> 目录下，可以直接运行。</p>
+<p>uv 提供了各种版本的 Python 安装包，可以从 <a href="https://github.com/astral-sh/python-build-standalone">astral-sh/python-build-standalone</a> 项目下看到。使用时，通过 <code>uv python list</code> 显示可用的版本，并通过 <code>uv python install &lt;ver&gt;</code> 下载并安装指定版本。</p>
+<h1>问题</h1>
+<p>实际在开发环境里遇到的问题是这样的，除了本地自带的 Python，uv 对于 arm64/musl 的平台，并没有提供支持和下载：</p>
+<div class="highlight"><pre><span></span><code><span class="gp"># </span>uv<span class="w"> </span>python<span class="w"> </span>list
+<span class="go">cpython-3.7.1-linux-aarch64-musl    /usr/bin/python3.7</span>
+<span class="go">cpython-3.7.1-linux-aarch64-musl    /usr/bin/python3 -&gt; python3.7</span>
+<span class="go">cpython-3.7.1-linux-aarch64-musl    /usr/bin/python -&gt; python3</span>
+</code></pre></div>
+
+<p>从 uv 在线文档页面 <a href="https://docs.astral.sh/uv/concepts/python-versions/#cpython-distributions">python-versions / CPython distributions</a> 里看到，arm64/musl 现在还没有支持：</p>
+<div class="highlight"><pre><span></span><code>Additionally, some platforms may not be supported (e.g., distributions are
+not yet available for musl Linux on ARM).
+</code></pre></div>
+
+<p>另外，对于这个问题，python-build-standalone 的 <a href="https://github.com/astral-sh/python-build-standalone/pull/569">Issue: Add support for aarch64 musl</a> 已经有讨论。从内容来看，uv 项目方因为编译原因，没有提供 arm64/musl 的版本。项目开发者<a href="https://github.com/astral-sh/python-build-standalone/pull/569#issuecomment-2858971493">是这样回复的</a>：</p>
+<div class="highlight"><pre><span></span><code>I would use the Python versions from the distribution instead of the uv managed ones for now.
+</code></pre></div>
+
+<h1>临时解决办法</h1>
+<p>不得已，只能通过为项目单独编译高版本的 Python 来解决。考虑到其他已有工具相关的版本兼容问题，目前只是拷贝安装到某个新建目录，并通过设置环境变量指向来使用：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONHOME</span><span class="o">=</span>xxx
+<span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>xxx/:xxx/lib-dynload
+<span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>yyy
+<span class="gp">$</span>
+<span class="gp">$ </span>./app<span class="w"> </span>...
+</code></pre></div>
+
+<h1>更新</h1>
+<p>从 issue 里的讨论来看，新版本已经有支持，所以在板子上进行了尝试。</p>
+<p>先把 <code>uv</code> 升级到最新版本，并运行：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>uv<span class="w"> </span>python<span class="w"> </span>list
+<span class="go">cpython-3.14.0rc2-linux-aarch64-musl                 &lt;download available&gt;</span>
+<span class="go">cpython-3.14.0rc2+freethreaded-linux-aarch64-musl    &lt;download available&gt;</span>
+<span class="go">cpython-3.13.7-linux-aarch64-musl                    &lt;download available&gt;</span>
+<span class="go">cpython-3.13.7+freethreaded-linux-aarch64-musl       &lt;download available&gt;</span>
+<span class="go">cpython-3.12.11-linux-aarch64-musl                   &lt;download available&gt;</span>
+<span class="go">cpython-3.11.13-linux-aarch64-musl                   &lt;download available&gt;</span>
+<span class="go">cpython-3.10.18-linux-aarch64-musl                   &lt;download available&gt;</span>
+<span class="go">cpython-3.9.23-linux-aarch64-musl                    &lt;download available&gt;</span>
+<span class="go">cpython-3.7.1-linux-aarch64-musl                     /usr/bin/python3.7</span>
+<span class="go">cpython-3.7.1-linux-aarch64-musl                     /usr/bin/python3 -&gt; python3.7</span>
+<span class="go">cpython-3.7.1-linux-aarch64-musl                     /usr/bin/python -&gt; python3</span>
+</code></pre></div>
+
+<p>从结果里可以看到，已经有了 Python 各个版本的预编译支持。</p>
+<p>接下来下载安装：</p>
+<div class="highlight"><pre><span></span><code><span class="go">uv python install 3.12</span>
+</code></pre></div>
+
+<p>但在创建虚拟环境时还是有问题：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>uv<span class="w"> </span>venv<span class="w"> </span>-p<span class="w"> </span><span class="m">3</span>.12<span class="w"> </span>--prompt<span class="w"> </span>xxx
+<span class="go">error: Querying Python at `python3.12` failed with exit status exit status: 127</span>
+
+<span class="go">[stderr]</span>
+<span class="go">Error relocating python3.12: copy_file_range: symbol not found</span>
+<span class="go">Error relocating python3.12: secure_getenv: symbol not found</span>
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/python.html">python</a>,                 <a href="../../../../tag/uv.html">uv</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">Python 代码格式工具 ruff 的配置文件问题</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2025/01/02/python-package-manager-uv.html">Python 包管理器 uv</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">SeaweedFS ec decode missing shard 的问题及解决</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/25/python-positional-and-keyword-argument.html">Python 函数的位置参数（positional argument）和关键字参数（keyword argument）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">Python Turtle 画圆时的圆心位置问题</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2025/05/01/python-ruff-config-file.html">
+                &laquo; Python 代码格式工具 ruff 的配置文件问题
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

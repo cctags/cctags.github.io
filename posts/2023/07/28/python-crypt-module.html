@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Python crypt 模块 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2023/07/28/python-crypt-module.html">
+        <meta name="twitter:title" content="Python crypt 模块">
+        <meta name="twitter:description" content="Linux 下的用户名和密码是加盐哈希后保存在 /etc/shadow 文件里的。这里 有文件格式的介绍。 Python 标准库里，有一个 crypt 模块，可以用来生 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2023/07/28/python-crypt-module.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Python crypt 模块">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="Linux 下的用户名和密码是加盐哈希后保存在 /etc/shadow 文件里的。这里 有文件格式的介绍。 Python 标准库里，有一个 crypt 模块，可以用来生 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2023/07/28/python-crypt-module.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2023/07/28/python-crypt-module.html" rel="bookmark" title="Permalink to Python crypt 模块">Python crypt 模块</a>
+                </h2>
+                <p class="post-meta">
+                    2023-07-28 Friday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2023/07/28/python-crypt-module.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>Linux 下的用户名和密码是加盐哈希后保存在 <code>/etc/shadow</code> 文件里的。<a href="https://www.cyberciti.biz/faq/understanding-etcshadow-file/">这里</a> 有文件格式的介绍。</p>
+<p>Python 标准库里，有一个 crypt 模块，可以用来生成密码哈希。</p>
+<p>crypt 定义了几个方法：</p>
+<ul>
+<li>crypt.METHOD_SHA512</li>
+<li>crypt.METHOD_SHA256</li>
+<li>crypt.METHOD_MD5</li>
+<li>crypt.METHOD_CRYPT</li>
+</ul>
+<p>使用 <code>crypt.crypt()</code> 方法来完成密码哈希：</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">crypt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">crypt</span><span class="o">.</span><span class="n">crypt</span><span class="p">(</span><span class="s1">&#39;abcdef&#39;</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">crypt</span><span class="o">.</span><span class="n">mksalt</span><span class="p">(</span><span class="n">crypt</span><span class="o">.</span><span class="n">METHOD_SHA512</span><span class="p">))</span>
+<span class="go">&#39;$6$N8LmyBy7vIQWGr50$dU.wj61pDDFieqclv0MsFhYFn5qMpK3Ec4L6F6lOKqmj2kQEYNhoYnYVG.XxwgW1cGEyw6cOAUlqMlVy.V7aC0&#39;</span>
+</code></pre></div>
+
+<p>按照文档里的说法，crypt 模块将会从标准库中删除：</p>
+<blockquote>
+<p>Deprecated since version 3.11, will be removed in version 3.13: The crypt
+module is deprecated (see PEP 594 for details and alternatives). The hashlib
+module is a potential replacement for certain use cases. The passlib package
+can replace all use cases of this module.</p>
+</blockquote>
+<p><strong>替代方法一：base64 + hashlib</strong></p>
+<p>使用标准库里的 base64 和 hashlib：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">salt</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">password</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">pbkdf2_hmac</span><span class="p">(</span><span class="s1">&#39;sha512&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="s1">&#39;abcdef&#39;</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">),</span> <span class="n">salt</span><span class="p">,</span> <span class="mi">200000</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SHA512 :: $6$</span><span class="si">{}</span><span class="s1">$</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">salt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)))</span>
+</code></pre></div>
+
+<p><strong>替代方法二：passlib</strong></p>
+<p>https://pypi.org/project/passlib/</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="https://docs.python.org/3/library/crypt.html">https://docs.python.org/3/library/crypt.html</a></li>
+<li><a href="https://www.cyberciti.biz/faq/understanding-etcshadow-file/">https://www.cyberciti.biz/faq/understanding-etcshadow-file/</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/linux.html">linux</a>,                 <a href="../../../../tag/python.html">python</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/11/19/python_console_hex_display.html">Python 命令行里显示十六进制</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2011/01/11/file-transfer.html">终端与远程之间的文件传递</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2023/06/08/python-pow-modular-inverse.html">
+                &laquo; Python 内置函数 pow 计算逆元
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2023/08/18/python-turtle-circle-center-position.html">
+                Python Turtle 画圆时的圆心位置问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>定制 SoC 的 U-Boot SPL image type 类型 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html">
+        <meta name="twitter:title" content="定制 SoC 的 U-Boot SPL image type 类型">
+        <meta name="twitter:description" content="开发板 SoC 系统上电启动时，从 boot rom 开始运行、并加载后续程序；被加载的通常是 U-Boot SPL，它运行并加载其他后续的程序。按先后 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="定制 SoC 的 U-Boot SPL image type 类型">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="开发板 SoC 系统上电启动时，从 boot rom 开始运行、并加载后续程序；被加载的通常是 U-Boot SPL，它运行并加载其他后续的程序。按先后 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html" rel="bookmark" title="Permalink to 定制 SoC 的 U-Boot SPL image type 类型">定制 SoC 的 U-Boot SPL image type 类型</a>
+                </h2>
+                <p class="post-meta">
+                    2022-06-30 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2022/06/30/u-boot-spl-image-type-for-soc.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>开发板 SoC 系统上电启动时，从 <code>boot rom</code> 开始运行、并加载后续程序；被加载的通常是 <code>U-Boot SPL</code>，它运行并加载其他后续的程序。按先后顺序，一般是这样的：<code>boot rom --&gt; U-Boot SPL --&gt; sbi --&gt; U-Boot --&gt; Linux Kernel --&gt; ..</code> 其中，<code>U-Boot SPL</code> 是 Secondary Program Loader 的缩写，这个名字很明确地说明了它的启动时机。当然，除了最开始的 <code>boot rom</code> 是固化的，从第二步开始，只要符合 SoC 的设计约定，可以替换成其他程序。</p>
+<h2>是否需要 SPL 自定义类型</h2>
+<p>对于新研发的 SoC 来说，需要实现 SPL 对板子的支持。</p>
+<p>如果通用的代码基本能满足 SoC 板子的要求，那么对于为数不多的额外设置，可以在 <code>spl_board_init_f</code> 等处添加适当的回调，满足 boot rom 以及其他的要求即可。</p>
+<p>但如果板子相关要求较多，配置复杂，或者其他一些实际的需求，比如 boot rom 需要验证后续程序是否符合要求，等等，那还是需要自定义打包类型，从而把相关功能以及实现代码归拢在一起，保持 U-Boot 代码结构，方便项目的开发和维护。以下记录了为 SoC 定制 SPL 镜像类型的过程。U-Boot 源码基于 2021-10 版本。</p>
+<h2>Image Types</h2>
+<p>镜像程序的类型定义。除了多种标准类型外，还包括了很多厂商自定义的类型。所以需要这样修改，大概是这样的：</p>
+<p>文件：include/image.h</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>        IH_TYPE_SOCFPGAIMAGE_V1,        /* Altera SOCFPGA A10 Preloader */
+<span class="w"> </span>        IH_TYPE_MTKIMAGE,               /* MediaTek BootROM loadable Image */
+<span class="w"> </span>        IH_TYPE_IMX8MIMAGE,             /* Freescale IMX8MBoot Image    */
+<span class="w"> </span>        IH_TYPE_IMX8IMAGE,              /* Freescale IMX8Boot Image     */
+<span class="w"> </span>        IH_TYPE_COPRO,                  /* Coprocessor Image for remoteproc*/
+<span class="w"> </span>        IH_TYPE_SUNXI_EGON,             /* Allwinner eGON Boot Image */
+<span class="gi">+        IH_TYPE_XXX,                    /* XXX Boot Image */</span>
+
+<span class="w"> </span>        IH_TYPE_COUNT,                  /* Number of image types */
+<span class="w"> </span>};
+
+<span class="w"> </span>/*
+<span class="w"> </span> * Compression Types
+</code></pre></div>
+
+<h2>表格里类型相关的入口</h2>
+<p>类型相关的名字定义，用于查找和调试打印。是这样定义的：</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/*</span>
+<span class="cm"> * Translation table for entries of a specific type; used by</span>
+<span class="cm"> * get_table_entry_id() and get_table_entry_name().</span>
+<span class="cm"> */</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">table_entry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w">     </span><span class="n">id</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">char</span><span class="w">    </span><span class="o">*</span><span class="n">sname</span><span class="p">;</span><span class="w">         </span><span class="cm">/* short (input) name to find table entry */</span>
+<span class="w">        </span><span class="kt">char</span><span class="w">    </span><span class="o">*</span><span class="n">lname</span><span class="p">;</span><span class="w">         </span><span class="cm">/* long (output) name to print for messages */</span>
+<span class="p">}</span><span class="w"> </span><span class="n">table_entry_t</span><span class="p">;</span>
+</code></pre></div>
+
+<p>所以大概这样修改：</p>
+<p>文件：common/image.c</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>        {       IH_TYPE_FIRMWARE_IVT, &quot;firmware_ivt&quot;, &quot;Firmware with HABv4 IVT&quot; },
+<span class="w"> </span>        {       IH_TYPE_PMMC,        &quot;pmmc&quot;,        &quot;TI Power Management Micro-Controller Firmware&quot;,},
+<span class="w"> </span>        {       IH_TYPE_STM32IMAGE, &quot;stm32image&quot;, &quot;STMicroelectronics STM32 Image&quot; },
+<span class="w"> </span>        {       IH_TYPE_MTKIMAGE,   &quot;mtk_image&quot;,   &quot;MediaTek BootROM loadable Image&quot; },
+<span class="w"> </span>        {       IH_TYPE_COPRO, &quot;copro&quot;, &quot;Coprocessor Image&quot;},
+<span class="w"> </span>        {       IH_TYPE_SUNXI_EGON, &quot;sunxi_egon&quot;,  &quot;Allwinner eGON Boot Image&quot; },
+<span class="gi">+        {       IH_TYPE_XXX,    &quot;xxx&quot;,     &quot;XXX Boot Image&quot; },</span>
+<span class="w"> </span>        {       -1,                 &quot;&quot;,           &quot;&quot;,                   },
+<span class="w"> </span>};
+
+<span class="w"> </span>static const table_entry_t uimage_comp[] = {
+<span class="w"> </span>        {       IH_COMP_NONE,   &quot;none&quot;,         &quot;uncompressed&quot;,         },
+<span class="w"> </span>        {       IH_COMP_BZIP2,  &quot;bzip2&quot;,        &quot;bzip2 compressed&quot;,     },
+</code></pre></div>
+
+<h2>打包镜像文件的实现</h2>
+<p>镜像文件的打包格式需要按照 SoC 里 boot rom 的要求来实现，包括各种参数的设置、验证，等等。</p>
+<p>按照 U-Boot 的开发格式，代码文件放在这里：tools/xxx.c。代码就不贴了，这里说一下大概的实现要求和过程：</p>
+<p>定义文件头格式：对于自定义的镜像格式，定义文件头是有必要的。其中需要包括版本信息、实际文件大小、CRC 校验值、加载目标地址、硬件相关的设置参数，等等。当然，还有一些本身的特殊标志值。这些都是 <code>boot rom</code> 在加载时所需要知道的。</p>
+<p>定义一些回调函数：</p>
+<ol>
+<li>检查文件头是否完整： <code>xxx_verify_header</code>；</li>
+<li>打印文件头以及镜像文件相关信息：<code>xxx_print_header</code>；</li>
+<li>设置文件头：<code>xxx_set_header</code>。包括计算并设置每一个字段。有一个有说特别说一下，Boot rom 在跳转过来以后，需要知道从哪里开始运行。考虑到文件头在镜像文件起始的位置，一种做法是文件头里指明运行起始地址；也可以不指明，从默认起始地址开始，这时此处需要硬编码一条跳转指令，跳过文件头，打包程序需要实现这个逻辑。</li>
+<li>检查文件头类型：<code>xxx_check_image_type</code>，确保加载镜像文件符合规范；</li>
+<li>其他 ……</li>
+</ol>
+<p>把这些信息统一注册（具体的结构格式，可以进一步参考 <code>struct image_type_params</code> 的定义，在文件 <code>tools/imagetool.h</code> 里）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">U_BOOT_IMAGE_TYPE</span><span class="p">(</span>
+<span class="w">        </span><span class="n">XXX</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;XXXBoot Image&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">xxx_file_head</span><span class="p">),</span>
+<span class="w">        </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">        </span><span class="n">xxx_check_params</span><span class="p">,</span>
+<span class="w">        </span><span class="n">xxx_verify_header</span><span class="p">,</span>
+<span class="w">        </span><span class="n">xxx_print_header</span><span class="p">,</span>
+<span class="w">        </span><span class="n">xxx_set_header</span><span class="p">,</span>
+<span class="w">        </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">        </span><span class="n">xxx_check_image_type</span><span class="p">,</span>
+<span class="w">        </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">        </span><span class="n">xxx_vrec_header</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p>并修改文件 tools/Makefile，加入编译：</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span># common objs for dumpimage and mkimage
+<span class="w"> </span>dumpimage-mkimage-objs := aisimage.o \
+<span class="w"> </span>    ...
+<span class="w"> </span>    ...
+<span class="w"> </span>    $(ROCKCHIP_OBS) \
+<span class="w"> </span>    socfpgaimage.o \
+<span class="w"> </span>    sunxi_egon.o \
+<span class="gi">+    xxx.o \</span>
+<span class="w"> </span>    lib/crc16.o \
+<span class="w"> </span>    lib/hash-checksum.o \
+<span class="w"> </span>    lib/sha1.o \
+</code></pre></div>
+
+<h2>生成镜像文件</h2>
+<p>有了打包工具，接下来是使用。</p>
+<p>修改文件：scripts/Makefile.spl</p>
+<div class="highlight"><pre><span></span><code><span class="cp">ifdef CONFIG_TARGET_XXX</span>
+<span class="nv">INPUTS-y</span><span class="w">        </span><span class="o">+=</span><span class="w"> </span><span class="k">$(</span>obj<span class="k">)</span>/u-boot-spl-xxx.bin
+<span class="cp">endif</span>
+
+<span class="nv">MKIMAGEFLAGS_u-boot-spl-xxx.bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>-T<span class="w"> </span>xxx<span class="w"> </span>-e<span class="w"> </span><span class="k">$(</span>CONFIG_SPL_TEXT_BASE<span class="k">)</span>
+
+<span class="nf">$(obj)/u-boot-spl-xxx.bin</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">obj</span><span class="k">)</span>/<span class="n">u</span>-<span class="n">boot</span>-<span class="n">spl</span>.<span class="n">bin</span> <span class="n">FORCE</span>
+<span class="w">        </span><span class="k">$(</span>call<span class="w"> </span>if_changed,mkimage<span class="k">)</span>
+</code></pre></div>
+
+<p>如果把这里的依赖关系展开来看，实际调用了 <code>./tools/mkimage</code> 打包工具，通过 <code>-T</code> 选项指定新实现的类型，以及 <code>-e</code> 选项指定代码入口。这样，当启用 <code>CONFIG_TARGET_XXX</code> 时，在编译生成默认的 <code>u-boot-spl.bin</code> 后，会进一步打包并生成成 <code>u-boot-spl-xxx.bin</code>。</p>
+<p>这两个文件的关系： <code>file head</code> + <code>u-boot-spl.bin</code> =&gt; <code>u-boot-spl-xxx.bin</code>，即：</p>
+<div class="highlight"><pre><span></span><code>+-------------------+  -
+| file head ... ... |   \
++-------------------+    \
+|                   |     \
+|                   |      &gt;&gt;&gt;  u-boot-spl-xxx.bin
+| u-boot-spl.bin    |     /
+|                   |    /
+|                   |   /
++-------------------+  -
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/soc.html">soc</a>,                 <a href="../../../../tag/u-boot.html">u-boot</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/10/16/u-boot-spl-memory-leak.html">U-Boot SPL 加载后续程序过程中的内存泄漏问题</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/04/09/ram-watch-point-register.html">
+                &laquo; ARM Watch Point 寄存器
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/07/03/linux-clock-tree.html">
+                Linux clock tree 的实现 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

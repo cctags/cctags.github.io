@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux Kernel pr_debug(), dev_dbg() 以及动态调试 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">
+        <meta name="twitter:title" content="Linux Kernel pr_debug(), dev_dbg() 以及动态调试">
+        <meta name="twitter:description" content="pr_err(), pr_info(), ... / dev_err(), dev_info(), ... 系列函数，在 pr_fmt / dev_fmt 的基础上，调用 vprintk_emit() 实现打印输出。但 pr_debug() / dev_dbg() 比较特殊，有不一样的代码路径。 文件：include/linux/printk.h /* If you are writing …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux Kernel pr_debug(), dev_dbg() 以及动态调试">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="pr_err(), pr_info(), ... / dev_err(), dev_info(), ... 系列函数，在 pr_fmt / dev_fmt 的基础上，调用 vprintk_emit() 实现打印输出。但 pr_debug() / dev_dbg() 比较特殊，有不一样的代码路径。 文件：include/linux/printk.h /* If you are writing …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html" rel="bookmark" title="Permalink to Linux Kernel pr_debug(), dev_dbg() 以及动态调试">Linux Kernel pr_debug(), dev_dbg() 以及动态调试</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-09 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>pr_err(), pr_info(), ... / dev_err(), dev_info(), ... 系列函数，在 pr_fmt / dev_fmt 的基础上，调用 vprintk_emit() 实现打印输出。但 pr_debug() / dev_dbg() 比较特殊，有不一样的代码路径。</p>
+<p>文件：include/linux/printk.h</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/* If you are writing a driver, please use dev_dbg instead */</span>
+<span class="cp">#if defined(CONFIG_DYNAMIC_DEBUG) || \</span>
+<span class="cp">        (defined(CONFIG_DYNAMIC_DEBUG_CORE) &amp;&amp; defined(DYNAMIC_DEBUG_MODULE))</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;linux/dynamic_debug.h&gt;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * pr_debug - Print a debug-level message conditionally</span>
+<span class="cm"> * @fmt: format string</span>
+<span class="cm"> * @...: arguments for the format string</span>
+<span class="cm"> *</span>
+<span class="cm"> * This macro expands to dynamic_pr_debug() if CONFIG_DYNAMIC_DEBUG is</span>
+<span class="cm"> * set. Otherwise, if DEBUG is defined, it&#39;s equivalent to a printk with</span>
+<span class="cm"> * KERN_DEBUG loglevel. If DEBUG is not defined it does nothing.</span>
+<span class="cm"> *</span>
+<span class="cm"> * It uses pr_fmt() to generate the format string (dynamic_pr_debug() uses</span>
+<span class="cm"> * pr_fmt() internally).</span>
+<span class="cm"> */</span>
+<span class="cp">#define pr_debug(fmt, ...)                      \</span>
+<span class="cp">        dynamic_pr_debug(fmt, ##__VA_ARGS__)</span>
+<span class="cp">#elif defined(DEBUG)</span>
+<span class="cp">#define pr_debug(fmt, ...) \</span>
+<span class="cp">        printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)</span>
+<span class="cp">#else</span>
+<span class="cp">#define pr_debug(fmt, ...) \</span>
+<span class="cp">        no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)</span>
+<span class="cp">#endif</span>
+</code></pre></div>
+
+<p>文件：include/linux/dev_printk.h</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#if defined(CONFIG_DYNAMIC_DEBUG) || \</span>
+<span class="cp">        (defined(CONFIG_DYNAMIC_DEBUG_CORE) &amp;&amp; defined(DYNAMIC_DEBUG_MODULE))</span>
+<span class="cp">#define dev_dbg(dev, fmt, ...)                                          \</span>
+<span class="cp">        dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)</span>
+<span class="cp">#elif defined(DEBUG)</span>
+<span class="cp">#define dev_dbg(dev, fmt, ...)                                          \</span>
+<span class="cp">        dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__)</span>
+<span class="cp">#else</span>
+<span class="cp">#define dev_dbg(dev, fmt, ...)                                          \</span>
+<span class="cp">({                                                                      \</span>
+<span class="cp">        if (0)                                                          \</span>
+<span class="cp">                dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__); \</span>
+<span class="cp">})</span>
+<span class="cp">#endif</span>
+</code></pre></div>
+
+<p>这里有三条路径：</p>
+<ol>
+<li>如果开启编译选项 <code>CONFIG_DYNAMIC_DEBUG</code>，会进入 dynamic debug 功能（并且，这时某个模块是否开启 <code>DEBUG</code>，决定了这个模块里的 dynamic debug 是否默认使能）；</li>
+<li>如果开启编译选项 <code>DEBUG</code> 后，就跟其他的 pr_<em>() / dev_</em>() 函数一样（除了不同的 log level）；</li>
+<li>否则，就关闭 debug 打印；</li>
+</ol>
+<p>这里要走读一下第一种情况：</p>
+<div class="highlight"><pre><span></span><code><span class="n">dev_dbg</span>
+<span class="w">  </span><span class="n">dynamic_dev_dbg</span>
+<span class="w">    </span><span class="n">_dynamic_func_call</span><span class="p">(...,</span><span class="w"> </span><span class="n">__dynamic_dev_dbg</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
+
+<span class="n">pr_debug</span>
+<span class="w">  </span><span class="n">dynamic_pr_debug</span>
+<span class="w">    </span><span class="n">_dynamic_func_call</span><span class="p">(...,</span><span class="w"> </span><span class="n">__dynamic_pr_debug</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
+</code></pre></div>
+
+<p>这两个函数在 <code>lib/dynamic_debug.c</code> 文件里实现，所以就走到了动态调试（dynamic debug）功能里。</p>
+<p><strong>动态调试（dynamic debug）</strong></p>
+<p>这个功能，由编译选项 <code>CONFIG_DYNAMIC_DEBUG</code> 控制。</p>
+<p>开启以后，可以通过 <code>&lt;debugfs&gt;/dynamic_debug/control</code> 在运行时动态地打开或者关闭 pr_debug() / dev_dbg() 的打印输出：</p>
+<div class="highlight"><pre><span></span><code>mount<span class="w"> </span>-t<span class="w"> </span>debugfs<span class="w"> </span>none<span class="w"> </span>/proc/sys/debug
+<span class="nb">cd</span><span class="w"> </span>/proc/sys/debug/dynamic_debug
+</code></pre></div>
+
+<p>运行 <code>cat control</code>，可以显示所有 pr_debug / dev_dbg 的调用，以及每个调用当前的 debug print 的 flag。比如：</p>
+<div class="highlight"><pre><span></span><code><span class="n">drivers</span><span class="o">/</span><span class="n">mmc</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">core</span><span class="p">.</span><span class="nl">c</span><span class="p">:</span><span class="mi">269</span><span class="w"> </span><span class="o">[</span><span class="n">mmc_core</span><span class="o">]</span><span class="n">mmc_mrq_pr_debug</span><span class="w"> </span><span class="o">=</span><span class="n">p</span><span class="w"> </span><span class="ss">&quot;&lt;%s: starting CMD%u arg %08x flags %08x&gt;\012&quot;</span>
+<span class="n">drivers</span><span class="o">/</span><span class="n">mmc</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">core</span><span class="p">.</span><span class="nl">c</span><span class="p">:</span><span class="mi">275</span><span class="w"> </span><span class="o">[</span><span class="n">mmc_core</span><span class="o">]</span><span class="n">mmc_mrq_pr_debug</span><span class="w"> </span><span class="o">=</span><span class="n">p</span><span class="w"> </span><span class="ss">&quot;%s: starting %sCMD%u arg %08x flags %08x\012&quot;</span>
+<span class="p">...</span>
+<span class="n">init</span><span class="o">/</span><span class="n">main</span><span class="p">.</span><span class="nl">c</span><span class="p">:</span><span class="mi">1414</span><span class="w"> </span><span class="o">[</span><span class="n">main</span><span class="o">]</span><span class="n">run_init_process</span><span class="w"> </span><span class="o">=</span><span class="n">p</span><span class="w"> </span><span class="ss">&quot;  with arguments:\012&quot;</span>
+<span class="n">init</span><span class="o">/</span><span class="n">main</span><span class="p">.</span><span class="nl">c</span><span class="p">:</span><span class="mi">1416</span><span class="w"> </span><span class="o">[</span><span class="n">main</span><span class="o">]</span><span class="n">run_init_process</span><span class="w"> </span><span class="o">=</span><span class="n">p</span><span class="w"> </span><span class="ss">&quot;    %s\012&quot;</span>
+<span class="p">...</span>
+</code></pre></div>
+
+<p>每一行表示了一个调用的位置，按 <code>filename:lineno [module]function flags format</code> 的格式，依次是调用所在的文件、行号、所属内核模块、函数、控制 flag 以及格式化字符串。其中的 flag，如果是下划线，表示关闭打印；如果是 p 表示使能。目前可以使用的，包括：</p>
+<div class="highlight"><pre><span></span><code>p    enables the pr_debug() callsite.
+_    enables no flags.
+
+Decorator flags add to the message-prefix, in order:
+t    Include thread ID, or &lt;intr&gt;
+m    Include module name
+f    Include the function name
+s    Include the source file name
+l    Include line number
+</code></pre></div>
+
+<p>使能和关闭某个打印：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;file a/b/c/xxx.c +p&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;file a/b/c/xxx.c =_&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+</code></pre></div>
+
+<p>除了 <code>file</code> 控制单个文件外，还有 <code>func</code> 来指定函数、<code>module</code> 指定模块、<code>format</code> 指定格式化字符串，等等。并且支持通配符，方便操作，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;module xxx =p&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;func yyy +pfl&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;func zzz* =_&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;format \&quot;string\&quot; +pmfl&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+</code></pre></div>
+
+<p><strong>bootargs</strong></p>
+<p>在为某个设备实现驱动的过程中，出于调试目的，如果每次这样调用 echo，还是有点麻烦的。这时，可以在 <code>bootargs</code> 里设置启动参数：</p>
+<div class="highlight"><pre><span></span><code>setenv<span class="w"> </span>bootargs<span class="w"> </span>...<span class="w"> </span>&lt;module&gt;.dyndbg<span class="o">=</span><span class="s2">&quot;+p&quot;</span>
+</code></pre></div>
+
+<p>这样，这个驱动模块的调试打印就打开了。</p>
+<p><strong>使用举例</strong></p>
+<p>比如在开发时，遇到 mmc 相关的问题，可以对 <code>mmc_core</code> 驱动模块进行调试和观察。</p>
+<p>先看一下驱动模块里已经包含了哪些调试打印：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># cat control | grep mmc_core</span>
+drivers/mmc/core/core.c:269<span class="w"> </span><span class="o">[</span>mmc_core<span class="o">]</span><span class="nv">mmc_mrq_pr_debug</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;&lt;%s: starting CMD%u arg %08x flags %08x&gt;\012&quot;</span>
+drivers/mmc/core/core.c:275<span class="w"> </span><span class="o">[</span>mmc_core<span class="o">]</span><span class="nv">mmc_mrq_pr_debug</span><span class="w"> </span><span class="o">=</span>p<span class="w"> </span><span class="s2">&quot;%s: starting %sCMD%u arg %08x flags %08x\012&quot;</span>
+...
+drivers/mmc/core/host.c:269<span class="w"> </span><span class="o">[</span>mmc_core<span class="o">]</span><span class="nv">mmc_of_parse</span><span class="w"> </span><span class="o">=</span>_<span class="w"> </span><span class="s2">&quot;\042bus-width\042 property is missing, assuming 1 bit.\012&quot;</span>
+...
+</code></pre></div>
+
+<p>把 <code>mmc_core</code> 模块的打印全部使能或者关闭：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;module mmc_core +p&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;module mmc_core =_&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+</code></pre></div>
+
+<p>针对某个函数：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;func mmc_mrq_pr_debug +p&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+</code></pre></div>
+
+<p>针对某个文件：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;file drivers/mmc/core/core.c +pfl&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+</code></pre></div>
+
+<p>针对某个文件的某些行：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;file drivers/mmc/core/core.c:200-400 +pmfl&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>control
+</code></pre></div>
+
+<p>这样就可以在运行时通过动态地开关来观察打印和判断问题，而不是到处加打印、重新编译、安装内核并重启。而且，模块里已有调试打印的地方，通常是这个模块在开发和调试时最需要注意的一些关键位置，或者关键配置字段，相对于一边走读代码一边加打印，这样要有效率的多。</p>
+<p><strong>对比</strong></p>
+<p>通常系统的 <code>printk</code> 默认设置：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># cat /proc/sys/kernel/printk</span>
+<span class="m">4</span><span class="w">       </span><span class="m">4</span><span class="w">       </span><span class="m">1</span><span class="w">       </span><span class="m">7</span>
+</code></pre></div>
+
+<p>实际使用中，需要定义 <code>DEBUG</code> 宏并重新编译；并且在运行时：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="m">8</span><span class="w"> </span>&gt;<span class="w">  </span>/proc/sys/kernel/printk
+</code></pre></div>
+
+<p>这样才可以得到调试打印。</p>
+<p>所以，也可以通过 <code>/proc/sys/kernel/printk</code> 设置 log level，但细度不一样，也不能像 dynamic debug 这样在运行时精确地控制文件、模块、函数甚至某一行。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>lib/dynamic_debug.c</li>
+<li>include/linux/printk.h</li>
+<li>include/linux/dev_printk.h</li>
+<li>Documentation/admin-guide/dynamic-debug-howto.rst</li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html">
+                &laquo; Linux kernel printk 占位符 %p 和 %px
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2022/04/09/ram-watch-point-register.html">
+                ARM Watch Point 寄存器 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

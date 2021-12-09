@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>技术笔记</title>
+        <link rel="stylesheet" href="./theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="./theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="./theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="./theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="./theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="./" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="./pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <h1 class="content-subhead">Recent Posts</h1>
+
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2011/03/15/use_examdiff_in_clearcase.html" rel="bookmark" title="Permalink to Use ExamDiff in ClearCase">Use ExamDiff in ClearCase</a>
+                </h2>
+                <p class="post-meta">
+                    2011-03-15 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/vcs.html">VCS</a>
+                    &middot; <a href="./posts/2011/03/15/use_examdiff_in_clearcase.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>由于习惯了使用 ExamDiff 来比较代码，对于 ClearCase 自带的代码比较工具，不是很适应。所以尝试着在 ClearCase 里使用 ExamDiff，按以下步骤：</p>
+<p>(1) 写个小 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2011/02/11/wx_id_yes_not_yes.html" rel="bookmark" title="Permalink to wxPython 里的 wx.ID_YES 与 wx.YES 不是一回事">wxPython 里的 wx.ID_YES 与 wx.YES 不是一回事</a>
+                </h2>
+                <p class="post-meta">
+                    2011-02-11 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2011/02/11/wx_id_yes_not_yes.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>基于 wxPython 写了一个小程序，看到了以下两个不一样的 YES：</p>
+<ul>
+<li>wx.MessageDialog() 返回的是 <a href="https://wxpython.org/Phoenix/docs/html/wx.MessageDialog.html#wx.MessageDialog.ShowModal">wx.ID_YES, ...</a></li>
+<li>wx.MessageBox() 返回的是 <a href="https://wxpython.org/Phoenix/docs/html/wx.functions.html#wx.MessageBox">wx.YES, ...</a></li>
+</ul>
+<p>使用的时候要注意。</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2011/01/11/file-transfer.html" rel="bookmark" title="Permalink to 终端与远程之间的文件传递">终端与远程之间的文件传递</a>
+                </h2>
+                <p class="post-meta">
+                    2011-01-11 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/tools.html">Tools</a>
+                    &middot; <a href="./posts/2011/01/11/file-transfer.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>经常需要在终端和远程服务器之间进行文件传递，以下是几种常用的方法：</p>
+<ul>
+<li>ssh（文件比较大时，会比较慢）<ul>
+<li>rz/sz <a href="https://linux.die.net/man/1/sz">https://linux.die.net/man/1 …</a></li></ul></li></ul>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2010/12/28/update-svn-repo-format.html" rel="bookmark" title="Permalink to git-svn 提示仓库格式错误">git-svn 提示仓库格式错误</a>
+                </h2>
+                <p class="post-meta">
+                    2010-12-28 Tuesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/vcs.html">VCS</a>
+                    &middot; <a href="./posts/2010/12/28/update-svn-repo-format.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>问题：使用 git 操作一个 svn 仓库时，报错如下：</p>
+<div class="highlight"><pre><span></span><code>Expected FS format &#39;2&#39;; found format &#39;3&#39;
+</code></pre></div>
+
+<p>解决办法：</p>
+<ul>
+<li>在 <strong>v1.5</strong> 的软件环境下：<code>svnadmin dump /path/to/repo1 &gt; dump.db</code></li>
+<li>切换到 <strong>v1.4</strong> 的 …</li></ul>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2010/12/27/the-difference-between-svn-and-git.html" rel="bookmark" title="Permalink to 体验 svn 和 git 的使用差异">体验 svn 和 git 的使用差异</a>
+                </h2>
+                <p class="post-meta">
+                    2010-12-27 Monday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/vcs.html">VCS</a>
+                    &middot; <a href="./posts/2010/12/27/the-difference-between-svn-and-git.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>很长时间以来，一直是用 svn。最近开始学习和使用 git。通过一段时间的使用，感受到它们有不小的差异。</p>
+<p><strong>svn</strong></p>
+<ul>
+<li>有全局唯一的版本 …</li></ul>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2010/12/13/temporary_object_memory_leak.html" rel="bookmark" title="Permalink to 临时对象引起的内存泄漏">临时对象引起的内存泄漏</a>
+                </h2>
+                <p class="post-meta">
+                    2010-12-13 Monday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2010/12/13/temporary_object_memory_leak.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题</h3>
+<p>程序退出时，VC 开发环境提示有多处内存泄漏。</p>
+<h3>※ 调试</h3>
+<p>经过数次尝试之后，找到了重现的方法，以及问题出现的操作路径 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2010/09/08/server_unavailable.html" rel="bookmark" title="Permalink to 资源泄漏导致程序无法响应">资源泄漏导致程序无法响应</a>
+                </h2>
+                <p class="post-meta">
+                    2010-09-08 Wednesday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2010/09/08/server_unavailable.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题</h3>
+<p>程序提交测试后，发现了一个问题，某些情况下，在运行了几十个小时、甚至更长时间之后，服务端会失去响应，从而导致 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2010/03/13/ftp_upload_block.html" rel="bookmark" title="Permalink to FTP 上传文件被阻塞的问题">FTP 上传文件被阻塞的问题</a>
+                </h2>
+                <p class="post-meta">
+                    2010-03-13 Saturday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2010/03/13/ftp_upload_block.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h3>※ 问题</h3>
+<p>程序里有一个功能是通过 FTP 上传升级包来完成系统的升级。</p>
+<p>使用过程中发现，某些情况下，在某个文件升级时，进度条 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2009/09/17/load_kernel_module.html" rel="bookmark" title="Permalink to Linux 内核模块加载过程">Linux 内核模块加载过程</a>
+                </h2>
+                <p class="post-meta">
+                    2009-09-17 Thursday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2009/09/17/load_kernel_module.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            
+<H2>0x0</H2>
+
+<P>
+项目开发过程中，尝试加载一个内核模块时出错，查看系统日志，有以下错误信息：
+</P>
+
+<PRE>
+  iscsi_sfnet: disagrees about version of symbol struct_module
+</PRE>
+
+<P>
+经过调试发现，是因为 …</p>
+            </div>
+        </section>
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="./posts/2009/02/27/filesystem_review.html" rel="bookmark" title="Permalink to 文件系统学习笔记">文件系统学习笔记</a>
+                </h2>
+                <p class="post-meta">
+                    2009-02-27 Friday
+                    &middot; By
+                    <a href="./author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="./category/programming.html">Programming</a>
+                    &middot; <a href="./posts/2009/02/27/filesystem_review.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+  <OL>
+  <LI><A HREF="#toc1">环境搭建</A>
+    <UL>
+    <LI><A HREF="#toc2">1.1. 宿主机的安装</A>
+    <LI><A HREF="#toc3">1.2. 虚拟机的安装</A>
+    </UL>
+  <LI><A HREF="#toc4">编译内核</A>
+  <LI><A HREF="#toc5">文件系统相关工具的使用</A>
+  <LI><A HREF="#toc6">文件系统的层次</A>
+  <LI><A HREF="#toc7">VFS</A>
+    <UL>
+    <LI><A HREF="#toc8">5.1. 内存里的结 …</a></li></ul></li></li></li></li></li></ol>
+            </div>
+        </section>
+    </div>
+<div class="footer">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a class="pure-button" href="./index11.html">Previous</a>
+            </li>
+            <li class="pure-menu-item">Pages: 12/12</li>
+            <li class="pure-menu-item">
+                <a class="pure-button pure-button-disabled" href="#">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        </div>
+
+        <script src="./theme/js/zepto.min.js"></script>
+        <script src="./theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

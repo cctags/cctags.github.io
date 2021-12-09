@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>解码 PDF 文档 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2024/12/01/decrypt_pdf_file.html">
+        <meta name="twitter:title" content="解码 PDF 文档">
+        <meta name="twitter:description" content="问题： 供应商提供的产品手册是设置了密码的 PDF 文件，每次在打开时都需要输入密码。 现在的问题是能否清除密码。 解决： 查 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2024/12/01/decrypt_pdf_file.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="解码 PDF 文档">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题： 供应商提供的产品手册是设置了密码的 PDF 文件，每次在打开时都需要输入密码。 现在的问题是能否清除密码。 解决： 查 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2024/12/01/decrypt_pdf_file.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2024/12/01/decrypt_pdf_file.html" rel="bookmark" title="Permalink to 解码 PDF 文档">解码 PDF 文档</a>
+                </h2>
+                <p class="post-meta">
+                    2024-12-01 Sunday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2024/12/01/decrypt_pdf_file.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>问题：</strong></p>
+<p>供应商提供的产品手册是设置了密码的 PDF 文件，每次在打开时都需要输入密码。</p>
+<p>现在的问题是能否清除密码。</p>
+<p><strong>解决：</strong></p>
+<p>查找下来，<code>pypdf</code> 项目可以解决。项目主页在这里：<a href="https://github.com/py-pdf/pypdf">https://github.com/py-pdf/pypdf</a></p>
+<p>使用方法大概是这样的：</p>
+<p>1, 创建 Python 虚拟环境</p>
+<p>2, 下载并安装 <code>pypdf</code> 包：</p>
+<div class="highlight"><pre><span></span><code><span class="go">pip install pypdf</span>
+</code></pre></div>
+
+<p>3, <code>pypdf</code> 的文档里描述了<a href="https://pypdf.readthedocs.io/en/latest/user/encryption-decryption.html#decrypt">Decrypt</a>相关的调用方法：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pypdf</span> <span class="kn">import</span> <span class="n">PdfReader</span><span class="p">,</span> <span class="n">PdfWriter</span>
+
+<span class="n">reader</span> <span class="o">=</span> <span class="n">PdfReader</span><span class="p">(</span><span class="s2">&quot;encrypted-pdf.pdf&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">reader</span><span class="o">.</span><span class="n">is_encrypted</span><span class="p">:</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="s2">&quot;XXXXXX&quot;</span><span class="p">)</span>
+
+<span class="n">writer</span> <span class="o">=</span> <span class="n">PdfWriter</span><span class="p">(</span><span class="n">clone_from</span><span class="o">=</span><span class="n">reader</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;decrypted-pdf.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</code></pre></div>
+
+<p>示例里生成的 <code>decrypted-pdf.pdf</code> 可以直接打开浏览。</p>
+<p>对于实际的产品手册，适当地调整代码即可。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/pdf.html">pdf</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2015/10/28/change_the_background_color_in_pdf_reader.html">Change the Background Color in PDF Reader</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2024/10/21/use-ocr.html">
+                &laquo; 使用 OCR 识别扫描文件的一些记录
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2024/12/15/kong-command-line-parser-argument-validate-issue.html">
+                Go 语言里 Kong 命令行解析工具的参数验证问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
