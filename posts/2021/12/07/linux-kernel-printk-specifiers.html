@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux kernel printk 占位符 %p 和 %px &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html">
+        <meta name="twitter:title" content="Linux kernel printk 占位符 %p 和 %px">
+        <meta name="twitter:description" content="1. %p Linux 内核里的 printk 可以打印指针地址，这和 printf() 是一样的： void *p = 0x1234; printk("p = %p\n", p); 这里是想打印所指向的地址。实际运行起来后 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux kernel printk 占位符 %p 和 %px">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="1. %p Linux 内核里的 printk 可以打印指针地址，这和 printf() 是一样的： void *p = 0x1234; printk("p = %p\n", p); 这里是想打印所指向的地址。实际运行起来后 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html" rel="bookmark" title="Permalink to Linux kernel printk 占位符 %p 和 %px">Linux kernel printk 占位符 %p 和 %px</a>
+                </h2>
+                <p class="post-meta">
+                    2021-12-07 Tuesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>1. %p</strong></p>
+<p>Linux 内核里的 printk 可以打印指针地址，这和 printf() 是一样的：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x1234</span><span class="p">;</span>
+<span class="n">printk</span><span class="p">(</span><span class="s">&quot;p = %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+</code></pre></div>
+
+<p>这里是想打印所指向的地址。实际运行起来后，看到的输出却是这样的：</p>
+<div class="highlight"><pre><span></span><code>p = (____ptrval____)
+</code></pre></div>
+
+<p>或者是这样的（并不是真实的地址）：</p>
+<div class="highlight"><pre><span></span><code>p = 000000008a425fc2
+</code></pre></div>
+
+<p>通过查询代码和文档，内核打印这样实现目的，是为了避免内核地址的泄漏。</p>
+<p>而显示内核地址，很可能仅仅是出于开发和调试的目的。对于研发过程中的这种需求，从文档中可以看到，可以在 bootargs 里加上参数 <code>no_hash_pointers</code> 来解决。</p>
+<p>即使是这样，内核里也有非常明确的提醒，除非是调试，一定要避免使用这个选项。</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**********************************************************</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w">   </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w">   </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w">                                                      </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="nx">This</span><span class="w"> </span><span class="nx">system</span><span class="w"> </span><span class="nx">shows</span><span class="w"> </span><span class="nx">unhashed</span><span class="w"> </span><span class="nx">kernel</span><span class="w"> </span><span class="nx">memory</span><span class="w"> </span><span class="nx">addresses</span><span class="w">   </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="nx">via</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">console</span><span class="p">,</span><span class="w"> </span><span class="nx">logs</span><span class="p">,</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nx">other</span><span class="w"> </span><span class="nx">interfaces</span><span class="p">.</span><span class="w"> </span><span class="nx">This</span><span class="w">    </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="nx">might</span><span class="w"> </span><span class="nx">reduce</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">security</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">system</span><span class="p">.</span><span class="w">            </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w">                                                      </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="nx">If</span><span class="w"> </span><span class="nx">you</span><span class="w"> </span><span class="nx">see</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">message</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nx">you</span><span class="w"> </span><span class="nx">are</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="nx">debugging</span><span class="w">    </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">kernel</span><span class="p">,</span><span class="w"> </span><span class="nx">report</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">immediately</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">system</span><span class="w">   </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="nx">administrator</span><span class="p">!</span><span class="w">                                       </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w">                                                      </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**</span><span class="w">   </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w"> </span><span class="nx">NOTICE</span><span class="w">   </span><span class="o">**</span>
+<span class="p">[</span><span class="w">    </span><span class="m m-Double">0.000000</span><span class="p">]</span><span class="w"> </span><span class="o">**********************************************************</span>
+</code></pre></div>
+
+<p><strong>2. %px</strong></p>
+<p>当然，如果实在是想打印内核地址，可以用 %px 占位符，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x1234</span><span class="p">;</span>
+<span class="n">printk</span><span class="p">(</span><span class="s">&quot;p = %px</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+</code></pre></div>
+
+<p>同样的，按文档里的使用约定，这种用法是不合理的，应该尽量避免。</p>
+<p><strong>3. %p 的扩展</strong></p>
+<p>从 <code>lib/vsprintf.c</code> 里的 <code>pointer()</code> 函数可以看到，%p 后面还可以跟更多占位符，来实现多种内核数据类型的格式化，比如字符串、MAC 地址、IP 地址、UUID、struct clk 名字、fourcc 等等。因为功能太多了，确实不容易记忆，所以在需要使用的时候，参考 <code>pointer()</code> 函数里详细的注释说明，就可以了。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>lib/vsprintf.c</li>
+<li>Documentation/core-api/printk-formats.rst</li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2021/12/05/linux-kernel-printk-alias-function.html">
+                &laquo; Linux kernel printk 以及 pr_err, dev_err 等包装函数
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">
+                Linux Kernel pr_debug(), dev_dbg() 以及动态调试 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
