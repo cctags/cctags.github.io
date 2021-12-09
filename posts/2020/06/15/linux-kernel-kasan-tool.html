@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux 内核 KASAN 内存检查工具 &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2020/06/15/linux-kernel-kasan-tool.html">
+        <meta name="twitter:title" content="Linux 内核 KASAN 内存检查工具">
+        <meta name="twitter:description" content="开启了 kasan 功能以后，每次分配内存，会有额外的 shadow memory，大小为 1/8，用来标记内存分配的信息。每连续 8 个字节，如果都可以访 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2020/06/15/linux-kernel-kasan-tool.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux 内核 KASAN 内存检查工具">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="开启了 kasan 功能以后，每次分配内存，会有额外的 shadow memory，大小为 1/8，用来标记内存分配的信息。每连续 8 个字节，如果都可以访 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2020/06/15/linux-kernel-kasan-tool.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2020/06/15/linux-kernel-kasan-tool.html" rel="bookmark" title="Permalink to Linux 内核 KASAN 内存检查工具">Linux 内核 KASAN 内存检查工具</a>
+                </h2>
+                <p class="post-meta">
+                    2020-06-15 Monday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2020/06/15/linux-kernel-kasan-tool.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p>开启了 kasan 功能以后，每次分配内存，会有额外的 shadow memory，大小为 1/8，用来标记内存分配的信息。每连续 8 个字节，如果都可以访问，shadow byte 标记为 0；如果 1、2、……、7 个字节可以访问，shadow byte 标记为 1、2、……、7；否则标记为一些预定义的标记值，这些值都小于 0，且代表了具体的内存分配状态：</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define KASAN_FREE_PAGE         0xFF  </span><span class="cm">/* page was freed */</span>
+<span class="cp">#define KASAN_PAGE_REDZONE      0xFE  </span><span class="cm">/* redzone for kmalloc_large allocations */</span>
+<span class="cp">#define KASAN_KMALLOC_REDZONE   0xFC  </span><span class="cm">/* redzone inside slub object */</span>
+<span class="cp">#define KASAN_KMALLOC_FREE      0xFB  </span><span class="cm">/* object was freed (kmem_cache_free/kfree) */</span>
+<span class="cp">#define KASAN_KMALLOC_FREETRACK 0xFA  </span><span class="cm">/* object was freed and has free track set */</span>
+</code></pre></div>
+
+<p>在每次访存的代码里，编译器会插入特别指令 <code>__asan_loadXX</code> 或者 <code>__asan_storeXX</code>，这些指令在经过一些封装后，会调用到 <code>check_region_inline()</code> 函数：</p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">__always_inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">check_region_inline</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span>
+<span class="w">                                                </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">write</span><span class="p">,</span>
+<span class="w">                                                </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">ret_ip</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">kasan_arch_is_ready</span><span class="p">())</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">addr</span><span class="p">))</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">kasan_report</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="n">ret_ip</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unlikely</span><span class="p">((</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;</span>
+<span class="w">                </span><span class="n">kasan_shadow_to_mem</span><span class="p">((</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">KASAN_SHADOW_START</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">kasan_report</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="n">ret_ip</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">likely</span><span class="p">(</span><span class="o">!</span><span class="n">memory_is_poisoned</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">)))</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">kasan_report</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="n">ret_ip</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>这个函数里，会依次进行检查：</p>
+<ol>
+<li>检查 KASAN 是否启用；</li>
+<li>检查访存大小是否为 0，这是不合理的；</li>
+<li>检查访存区域的结尾处是否在起始处前面，这也是不合理的；</li>
+<li>检查访存区域与 shadow byte 里的标记是否有冲突，比如 "out-of-bounds"、"use-after-free"，等等；</li>
+<li>如果有不合理的访存发生，会通过 kasan_report() 输出访存错误的类型、当时的调用栈、以及这片内存分配时的调用栈等等信息；</li>
+</ol>
+<p>实现代码在 <code>mm/kasan/generic.c</code> 以及其他一些文件里。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>mm/kasan/generic.c</li>
+<li>Documentation/dev-tools/kasan.rst</li>
+<li>Documentation/translations/zh_CN/dev-tools/kasan.rst</li>
+<li><a href="https://www.cnblogs.com/linhaostudy/p/14028917.html">https://www.cnblogs.com/linhaostudy/p/14028917.html</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2020/04/16/issue_of_upgrade_psutil.html">
+                &laquo; Ubuntu 无法更新 psutil 的问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html">
+                Boot With Small Pages on RISC-V &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Boot With Small Pages on RISC-V &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html">
+        <meta name="twitter:title" content="Boot With Small Pages on RISC-V">
+        <meta name="twitter:description" content="问题 在 RISC-V 上启动 Linux Kernel 时，内核本身占用的内存页面使用的是大页模式（其中，32 位 CPU 用的是 4MB 模式，64 位 CPU 用的是 2MB 模式，这 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Boot With Small Pages on RISC-V">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="问题 在 RISC-V 上启动 Linux Kernel 时，内核本身占用的内存页面使用的是大页模式（其中，32 位 CPU 用的是 4MB 模式，64 位 CPU 用的是 2MB 模式，这 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html" rel="bookmark" title="Permalink to Boot With Small Pages on RISC-V">Boot With Small Pages on RISC-V</a>
+                </h2>
+                <p class="post-meta">
+                    2021-10-14 Thursday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">Programming</a>
+                    &middot; <a href="../../../../posts/2021/10/14/boot-with-small-pages-on-risc-v.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>问题</h2>
+<p>在 RISC-V 上启动 Linux Kernel 时，内核本身占用的内存页面使用的是大页模式（其中，32 位 CPU 用的是 4MB 模式，64 位 CPU 用的是 2MB 模式，这是由硬件决定的），从内核实现来看，这有助于代码的简洁和效率。</p>
+<p>仔细分析后发现，第一个 2MB 物理内存页里面放的是 sbi 程序，实际只使用了一百多 KB，几乎是完全空闲掉了；Linux Kernel 内核本身放在了从第二个开始的若干个物理内存页，实际数量取决于内核大小。</p>
+<p>所以目前的问题是，因为项目里所配置的内存容量有限，第一个物理内存页的空闲空间必须充分使用起来。</p>
+<h2>内核本身改用 4KB 分页</h2>
+<p>考虑到第一个物理页面的使用率不足，主要还是 2MB 分页引起的，所以解决办法是切换到 4KB 分页模式，提高使用率。</p>
+<p>目前 Linux Kernel 里这部分代码实现的是固定的大页模式，没有选项可以使用，所以只能修改内核来实现（基本 5.14 版本的内核）。</p>
+<p><strong>1. 以下是修改步骤</strong></p>
+<p>这是所用到函数之间的调用关系：</p>
+<div class="highlight"><pre><span></span><code>_start @ arch/riscv/kernel/head.S
+    _start_kernel
+        setup_vm()  &lt;-------------- (*)
+        start_kernel()
+          setup_arch()
+            paging_init()
+              setup_vm_final()  &lt;-- (*)
+</code></pre></div>
+
+<p>(1) 为了与原代码兼容，添加了一个编译选项 <code>CONFIG_BOOT_WITH_SMALL_PAGES</code>，只有打开这个选项时，才会使用到 4KB 分页；</p>
+<p>(2) 预分配了 <code>pmd_t</code> 和 <code>pte_t</code> 内存，其尺寸取决于内核本身的大小（目前暂定 4MB），这是考虑到了项目的实际情况；另外还有 dtb 的占用；</p>
+<p>(3) <code>setup_vm()</code> 函数里，因为 4KB 分页的实际情况，跟大页对比下来，需要多建立一级映射：</p>
+<ul>
+<li>除了原有的 <code>trampoline_pmd</code>，添加了 <code>trampoline_pte</code>；</li>
+<li>除了原有的 <code>early_pg_dir</code>，添加了 <code>early_kernel_pmd</code> 和 <code>early_kernel_pte</code>；</li>
+<li>除了原有的 <code>early_dtb_pmd</code>，添加了 <code>early_dtb_pte</code>；</li>
+</ul>
+<p>(4) <code>setup_vm_final()</code> 函数里，根据 <code>CONFIG_BOOT_WITH_SMALL_PAGES</code> 的选项，选择相应的物理页面尺寸，去调用后续的函数；</p>
+<p><strong>2. 补丁：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="gh">diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c</span>
+<span class="gd">--- a/arch/riscv/mm/init.c</span>
+<span class="gi">+++ b/arch/riscv/mm/init.c</span>
+<span class="gu">@@ -249,6 +249,13 @@ static pte_t fixmap_pte[PTRS_PER_PTE] __page_aligned_bss;</span>
+
+<span class="w"> </span>pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+#define MAX_KERNEL_MEGA_PAGES   4</span>
+<span class="gi">+#define MAX_EARLY_MAPPING_SIZE  (MAX_KERNEL_MEGA_PAGES &lt;&lt; PMD_SHIFT)</span>
+<span class="gi">+static pmd_t early_kernel_pmd[PTRS_PER_PMD] __initdata __aligned(PAGE_SIZE);</span>
+<span class="gi">+static pte_t early_kernel_pte[PTRS_PER_PTE * MAX_KERNEL_MEGA_PAGES] __initdata __aligned(PAGE_SIZE);</span>
+<span class="gi">+#endif</span>
+<span class="gi">+</span>
+<span class="w"> </span>#ifdef CONFIG_XIP_KERNEL
+<span class="w"> </span>#define trampoline_pg_dir      ((pgd_t *)XIP_FIXUP(trampoline_pg_dir))
+<span class="w"> </span>#define fixmap_pte             ((pte_t *)XIP_FIXUP(fixmap_pte))
+<span class="gu">@@ -330,6 +337,11 @@ static pmd_t fixmap_pmd[PTRS_PER_PMD] __page_aligned_bss;</span>
+<span class="w"> </span>static pmd_t early_pmd[PTRS_PER_PMD] __initdata __aligned(PAGE_SIZE);
+<span class="w"> </span>static pmd_t early_dtb_pmd[PTRS_PER_PMD] __initdata __aligned(PAGE_SIZE);
+
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+pte_t trampoline_pte[PTRS_PER_PTE * MAX_KERNEL_MEGA_PAGES] __page_aligned_bss;</span>
+<span class="gi">+static pte_t early_dtb_pte[PTRS_PER_PTE * 2] __initdata __aligned(PAGE_SIZE);</span>
+<span class="gi">+#endif</span>
+<span class="gi">+</span>
+<span class="w"> </span>#ifdef CONFIG_XIP_KERNEL
+<span class="w"> </span>#define trampoline_pmd ((pmd_t *)XIP_FIXUP(trampoline_pmd))
+<span class="w"> </span>#define fixmap_pmd     ((pmd_t *)XIP_FIXUP(fixmap_pmd))
+<span class="gu">@@ -563,6 +575,12 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)</span>
+<span class="w"> </span>#ifndef __PAGETABLE_PMD_FOLDED
+<span class="w"> </span>   pmd_t fix_bmap_spmd, fix_bmap_epmd;
+<span class="w"> </span>#endif
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   uintptr_t va, end_va;</span>
+<span class="gi">+   uintptr_t pmd_offset;</span>
+<span class="gi">+   pte_t *pte;</span>
+<span class="gi">+   uintptr_t load_sz;</span>
+<span class="gi">+#endif</span>
+
+<span class="w"> </span>   kernel_map.virt_addr = KERNEL_LINK_ADDR;
+
+<span class="gu">@@ -587,16 +605,25 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)</span>
+
+<span class="w"> </span>   pfn_base = PFN_DOWN(kernel_map.phys_addr);
+
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   map_size = PAGE_SIZE;</span>
+<span class="gi">+#else</span>
+<span class="w"> </span>   /*
+<span class="w"> </span>    * Enforce boot alignment requirements of RV32 and
+<span class="w"> </span>    * RV64 by only allowing PMD or PGD mappings.
+<span class="w"> </span>    */
+<span class="w"> </span>   map_size = PMD_SIZE;
+<span class="gi">+#endif</span>
+
+<span class="w"> </span>   /* Sanity check alignment and size */
+<span class="w"> </span>   BUG_ON((PAGE_OFFSET % PGDIR_SIZE) != 0);
+<span class="w"> </span>   BUG_ON((kernel_map.phys_addr % map_size) != 0);
+
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   load_sz = ALIGN(kernel_map.size, PMD_SIZE);</span>
+<span class="gi">+   BUG_ON(load_sz &gt; MAX_EARLY_MAPPING_SIZE);</span>
+<span class="gi">+#endif</span>
+<span class="gi">+</span>
+<span class="w"> </span>#ifdef CONFIG_64BIT
+<span class="w"> </span>   /*
+<span class="w"> </span>    * The last 4K bytes of the addressable memory can not be mapped because
+<span class="gu">@@ -622,6 +649,20 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)</span>
+<span class="w"> </span>   /* Setup trampoline PGD and PMD */
+<span class="w"> </span>   create_pgd_mapping(trampoline_pg_dir, kernel_map.virt_addr,
+<span class="w"> </span>              (uintptr_t)trampoline_pmd, PGDIR_SIZE, PAGE_TABLE);
+<span class="gi">+</span>
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   end_va = kernel_map.virt_addr + load_sz;</span>
+<span class="gi">+   for (va = kernel_map.virt_addr; va &lt; end_va; va += map_size) {</span>
+<span class="gi">+       pmd_offset = (va - kernel_map.virt_addr) &gt;&gt; PMD_SHIFT;</span>
+<span class="gi">+       pte = &amp;trampoline_pte[PTRS_PER_PTE * pmd_offset];</span>
+<span class="gi">+</span>
+<span class="gi">+       create_pmd_mapping(trampoline_pmd, va,</span>
+<span class="gi">+                  (uintptr_t)pte, PMD_SIZE, PAGE_TABLE);</span>
+<span class="gi">+       create_pte_mapping(pte, va,</span>
+<span class="gi">+                  kernel_map.phys_addr + (va - kernel_map.virt_addr),</span>
+<span class="gi">+                  map_size, PAGE_KERNEL_EXEC);</span>
+<span class="gi">+   }</span>
+<span class="gi">+#else</span>
+<span class="w"> </span>#ifdef CONFIG_XIP_KERNEL
+<span class="w"> </span>   create_pmd_mapping(trampoline_pmd, kernel_map.virt_addr,
+<span class="w"> </span>              kernel_map.xiprom, PMD_SIZE, PAGE_KERNEL_EXEC);
+<span class="gu">@@ -629,6 +670,7 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)</span>
+<span class="w"> </span>   create_pmd_mapping(trampoline_pmd, kernel_map.virt_addr,
+<span class="w"> </span>              kernel_map.phys_addr, PMD_SIZE, PAGE_KERNEL_EXEC);
+<span class="w"> </span>#endif
+<span class="gi">+#endif</span>
+<span class="w"> </span>#else
+<span class="w"> </span>   /* Setup trampoline PGD */
+<span class="w"> </span>   create_pgd_mapping(trampoline_pg_dir, kernel_map.virt_addr,
+<span class="gu">@@ -640,7 +682,23 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)</span>
+<span class="w"> </span>    * us to reach paging_init(). We map all memory banks later
+<span class="w"> </span>    * in setup_vm_final() below.
+<span class="w"> </span>    */
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   end_va = kernel_map.virt_addr + load_sz;</span>
+<span class="gi">+   for (va = kernel_map.virt_addr; va &lt; end_va; va += map_size) {</span>
+<span class="gi">+       pmd_offset = (va - kernel_map.virt_addr) &gt;&gt; PMD_SHIFT;</span>
+<span class="gi">+       pte = &amp;early_kernel_pte[PTRS_PER_PTE * pmd_offset];</span>
+<span class="gi">+</span>
+<span class="gi">+       create_pgd_mapping(early_pg_dir, va,</span>
+<span class="gi">+                  (uintptr_t)early_kernel_pmd, PGDIR_SIZE, PAGE_TABLE);</span>
+<span class="gi">+       create_pmd_mapping(early_kernel_pmd, va,</span>
+<span class="gi">+                  (uintptr_t)pte, PMD_SIZE, PAGE_TABLE);</span>
+<span class="gi">+       create_pte_mapping(pte, va,</span>
+<span class="gi">+                  kernel_map.phys_addr + (va - kernel_map.virt_addr),</span>
+<span class="gi">+                  map_size, PAGE_KERNEL_EXEC);</span>
+<span class="gi">+   }</span>
+<span class="gi">+#else</span>
+<span class="w"> </span>   create_kernel_page_table(early_pg_dir, map_size, true);
+<span class="gi">+#endif</span>
+
+<span class="w"> </span>#ifndef __PAGETABLE_PMD_FOLDED
+<span class="w"> </span>   /* Setup early PMD for DTB */
+<span class="gu">@@ -649,10 +707,24 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)</span>
+<span class="w"> </span>#ifndef CONFIG_BUILTIN_DTB
+<span class="w"> </span>   /* Create two consecutive PMD mappings for FDT early scan */
+<span class="w"> </span>   pa = dtb_pa &amp; ~(PMD_SIZE - 1);
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   end_va = DTB_EARLY_BASE_VA + PMD_SIZE * 2;</span>
+<span class="gi">+   for (va = DTB_EARLY_BASE_VA; va &lt; end_va; va += map_size) {</span>
+<span class="gi">+       pmd_offset = (va - DTB_EARLY_BASE_VA) &gt;&gt; PMD_SHIFT;</span>
+<span class="gi">+       pte = &amp;early_dtb_pte[PTRS_PER_PTE * pmd_offset];</span>
+<span class="gi">+</span>
+<span class="gi">+       create_pmd_mapping(early_dtb_pmd, va,</span>
+<span class="gi">+                  (uintptr_t)pte, PMD_SIZE, PAGE_TABLE);</span>
+<span class="gi">+       create_pte_mapping(pte, va,</span>
+<span class="gi">+                  pa + (va - DTB_EARLY_BASE_VA),</span>
+<span class="gi">+                  map_size, PAGE_KERNEL);</span>
+<span class="gi">+   }</span>
+<span class="gi">+#else</span>
+<span class="w"> </span>   create_pmd_mapping(early_dtb_pmd, DTB_EARLY_BASE_VA,
+<span class="w"> </span>              pa, PMD_SIZE, PAGE_KERNEL);
+<span class="w"> </span>   create_pmd_mapping(early_dtb_pmd, DTB_EARLY_BASE_VA + PMD_SIZE,
+<span class="w"> </span>              pa + PMD_SIZE, PMD_SIZE, PAGE_KERNEL);
+<span class="gi">+#endif</span>
+<span class="w"> </span>   dtb_early_va = (void *)DTB_EARLY_BASE_VA + (dtb_pa &amp; (PMD_SIZE - 1));
+<span class="w"> </span>#else /* CONFIG_BUILTIN_DTB */
+<span class="w"> </span>#ifdef CONFIG_64BIT
+<span class="gu">@@ -722,6 +794,12 @@ static void __init setup_vm_final(void)</span>
+<span class="w"> </span>   phys_addr_t pa, start, end;
+<span class="w"> </span>   u64 i;
+
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   pr_notice(&quot;%s: boot with small pages option on\n&quot;, __func__);</span>
+<span class="gi">+#else</span>
+<span class="gi">+   pr_notice(&quot;%s: boot with small pages option off\n&quot;, __func__);</span>
+<span class="gi">+#endif</span>
+<span class="gi">+</span>
+<span class="w"> </span>   /**
+<span class="w"> </span>    * MMU is enabled at this point. But page table setup is not complete yet.
+<span class="w"> </span>    * fixmap page table alloc functions should be used at this point
+<span class="gu">@@ -757,8 +835,13 @@ static void __init setup_vm_final(void)</span>
+<span class="w"> </span>   }
+
+<span class="w"> </span>#ifdef CONFIG_64BIT
+<span class="gi">+#ifdef CONFIG_BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   map_size = PAGE_SIZE;</span>
+<span class="gi">+#else</span>
+<span class="gi">+   map_size = PMD_SIZE;</span>
+<span class="gi">+#endif</span>
+<span class="w"> </span>   /* Map the kernel */
+<span class="gd">-   create_kernel_page_table(swapper_pg_dir, PMD_SIZE, false);</span>
+<span class="gi">+   create_kernel_page_table(swapper_pg_dir, map_size, false);</span>
+<span class="w"> </span>#endif
+
+<span class="w"> </span>   /* Clear fixmap PTE and PMD mappings */
+<span class="gh">diff --git a/init/Kconfig b/init/Kconfig</span>
+<span class="gd">--- a/init/Kconfig</span>
+<span class="gi">+++ b/init/Kconfig</span>
+<span class="gu">@@ -2021,6 +2021,11 @@ config PROFILING</span>
+<span class="w"> </span>config TRACEPOINTS
+<span class="w"> </span>   bool
+
+<span class="gi">+config BOOT_WITH_SMALL_PAGES</span>
+<span class="gi">+   bool &quot;Allow booting with small pages&quot;</span>
+<span class="gi">+   default n</span>
+<span class="gi">+   depends on RISCV</span>
+<span class="gi">+</span>
+<span class="w"> </span>endmenu        # General setup
+
+<span class="w"> </span>source &quot;arch/Kconfig&quot;
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>,                 <a href="../../../../tag/mm.html">mm</a>,                 <a href="../../../../tag/risc-v.html">risc-v</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2016/09/09/linux-virtual-memory-split-with-35-05.html">Linux Virtual Memory Split with 3.5G/0.5G</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html">Linux 添加 memory block</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2020/06/15/linux-kernel-kasan-tool.html">
+                &laquo; Linux 内核 KASAN 内存检查工具
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2021/11/19/python_console_hex_display.html">
+                Python 命令行里显示十六进制 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>

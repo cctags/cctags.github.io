@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Linux 添加 memory block &middot; 技术笔记</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2024/02/07/linux-add-memory-block.html">
+        <meta name="twitter:title" content="Linux 添加 memory block">
+        <meta name="twitter:description" content="需求 现在是这么一个情况，手头的一块开发板，在增加了内存后，需要在 Linux 系统里识别到、并能使用起来。 正常情况下，一般是 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2024/02/07/linux-add-memory-block.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Linux 添加 memory block">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="需求 现在是这么一个情况，手头的一块开发板，在增加了内存后，需要在 Linux 系统里识别到、并能使用起来。 正常情况下，一般是 …">
+        <meta property="og:site_name" content="技术笔记">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2024/02/07/linux-add-memory-block.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="技术笔记">技术笔记</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2024/02/07/linux-add-memory-block.html" rel="bookmark" title="Permalink to Linux 添加 memory block">Linux 添加 memory block</a>
+                </h2>
+                <p class="post-meta">
+                    2024-02-07 Wednesday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2024/02/07/linux-add-memory-block.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>需求</strong></p>
+<p>现在是这么一个情况，手头的一块开发板，在增加了内存后，需要在 Linux 系统里识别到、并能使用起来。</p>
+<p>正常情况下，一般是重新配置 devicetree 即可。比如，按 <a href="https://github.com/torvalds/linux/blob/master/Documentation/devicetree/usage-model.rst">内核文档</a> 以及 <a href="https://github.com/devicetree-org/devicetree-specification/blob/main/source/chapter3-devicenodes.rst#memory-node">devicetree 文档</a>，可以这样配置若干片内存区域（当然这里的字段个数，取决于 <code>#address-cells</code> 和  <code>#size-cells</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="nf">memory</span><span class="o">@</span><span class="mi">0</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kr">device_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;memory&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* 第一行，起始地址 0x0，内存大小 2GB</span>
+<span class="cm">     * 第二行，起始地址 0x100000000，内存大小 4GB</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kr">reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x000000000</span><span class="w"> </span><span class="mh">0x00000000</span><span class="w"> </span><span class="mh">0x00000000</span><span class="w"> </span><span class="mh">0x80000000</span>
+<span class="w">           </span><span class="mh">0x000000001</span><span class="w"> </span><span class="mh">0x00000000</span><span class="w"> </span><span class="mh">0x00000001</span><span class="w"> </span><span class="mh">0x00000000</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p>这样在重新加载后即可生效，并可以通过查看 <code>/proc/meminfo</code>、<code>/proc/iomem</code> 等方式来确认。</p>
+<p><strong>问题</strong></p>
+<p>现在碰到的问题是，在对 devicetree 进行修改并重新加载后，发现没有生效。</p>
+<p>经过调试，目前猜测是 u-boot 里的一个开关 <code>CONFIG_NR_DRAM_BANKS</code>，它限制了 u-boot 向 kernel 传递 devicetree 里对应 memory 字段的内容。但考虑到并没有提供 u-boot 源码，没办法重新编译，也就没办法确认问题原因，所以只能选择其他办法。</p>
+<p><strong>解决办法</strong></p>
+<p>对于 memory 字段，查找到 kernel 里的函数 <code>early_init_dt_scan_memory()</code> 是用来负责搜索和解析对应的内存区域：</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/**</span>
+<span class="cm"> * early_init_dt_scan_memory - Look for and parse memory nodes</span>
+<span class="cm"> */</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">__init</span><span class="w"> </span><span class="nf">early_init_dt_scan_memory</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">uname</span><span class="p">,</span>
+<span class="w">                                     </span><span class="kt">int</span><span class="w"> </span><span class="n">depth</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">endp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">reg</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="p">(</span><span class="n">dt_root_addr_cells</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt_root_size_cells</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">u64</span><span class="w"> </span><span class="n">base</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dt_mem_next_cell</span><span class="p">(</span><span class="n">dt_root_addr_cells</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">reg</span><span class="p">);</span>
+<span class="w">        </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dt_mem_next_cell</span><span class="p">(</span><span class="n">dt_root_size_cells</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">reg</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">early_init_dt_add_memory_arch</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>所以目前的解决办法是，在这个函数里，在某个时机主动调用一下 <code>early_init_dt_add_memory_arch(base, size)</code> 来添加内存，从而实现最开始的需求。修改大概是这样的：</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>/**
+<span class="w"> </span> * early_init_dt_scan_memory - Look for and parse memory nodes
+<span class="w"> </span> */
+<span class="w"> </span>int __init early_init_dt_scan_memory(unsigned long node, const char *uname,
+<span class="w"> </span>                                     int depth, void *data)
+<span class="w"> </span>{
+<span class="w"> </span>    ...
+
+<span class="w"> </span>    while ((endp - reg) &gt;= (dt_root_addr_cells + dt_root_size_cells)) {
+<span class="w"> </span>        u64 base, size;
+
+<span class="w"> </span>        base = dt_mem_next_cell(dt_root_addr_cells, &amp;reg);
+<span class="w"> </span>        size = dt_mem_next_cell(dt_root_size_cells, &amp;reg);
+
+<span class="gi">+        if (size == 0) {</span>
+<span class="gi">+            pr_err(&quot;**HACK**:\n&quot;);</span>
+<span class="gi">+            base = 0x100000000ull;</span>
+<span class="gi">+            size = 0x100000000ull;</span>
+<span class="gi">+            early_init_dt_add_memory_arch(base, size);</span>
+<span class="gi">+            continue;</span>
+<span class="gi">+        }</span>
+<span class="gi">+</span>
+<span class="w"> </span>        early_init_dt_add_memory_arch(base, size);
+<span class="w"> </span>    }
+
+<span class="w"> </span>    ...
+<span class="w"> </span>}
+</code></pre></div>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">Linux Kernel pr_debug(), dev_dbg() 以及动态调试</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2023/11/12/seaweedfs-ec-decode-missing-shard-issue.html">
+                &laquo; SeaweedFS ec decode missing shard 的问题及解决
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2024/04/02/vim-paste-very-slow-issue.html">
+                往 vim 粘贴大段文本会卡顿的问题 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
