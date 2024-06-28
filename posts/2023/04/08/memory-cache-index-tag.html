@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Cache 的组织和过程（VIVT、VIPT、PIPT） &middot; Gang Up</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2023/04/08/memory-cache-index-tag.html">
+        <meta name="twitter:title" content="Cache 的组织和过程（VIVT、VIPT、PIPT）">
+        <meta name="twitter:description" content="1. VIVT VA 里的 index 🡲 查找到 cache-line 🡲 跟 VA 里的 tag 比较 : * hit 🡲 返回（不经过 MMU） * miss 🡲 [VA->MMU->]PA 访存，写回 cache-line；VA 里的 tag 更新到 cache-line 🡲 返回 有别名问题。 2. VIPT …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2023/04/08/memory-cache-index-tag.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Cache 的组织和过程（VIVT、VIPT、PIPT）">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="1. VIVT VA 里的 index 🡲 查找到 cache-line 🡲 跟 VA 里的 tag 比较 : * hit 🡲 返回（不经过 MMU） * miss 🡲 [VA->MMU->]PA 访存，写回 cache-line；VA 里的 tag 更新到 cache-line 🡲 返回 有别名问题。 2. VIPT …">
+        <meta property="og:site_name" content="Gang Up">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2023/04/08/memory-cache-index-tag.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="Gang Up">Gang Up</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html" rel="bookmark" title="Permalink to Cache 的组织和过程（VIVT、VIPT、PIPT）">Cache 的组织和过程（VIVT、VIPT、PIPT）</a>
+                </h2>
+                <p class="post-meta">
+                    2023-04-08 Saturday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/programming.html">programming</a>
+                    &middot; <a href="../../../../posts/2023/04/08/memory-cache-index-tag.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <p><strong>1. VIVT</strong></p>
+<div class="highlight"><pre><span></span><code>VA<span class="w"> </span>里的<span class="w"> </span>index<span class="w"> </span>🡲<span class="w"> </span>查找到<span class="w"> </span>cache-line<span class="w"> </span>🡲<span class="w"> </span>跟<span class="w"> </span>VA<span class="w"> </span>里的<span class="w"> </span>tag<span class="w"> </span>比较 :
+*<span class="w"> </span>hit<span class="w"> </span>🡲<span class="w"> </span>返回（不经过<span class="w"> </span>MMU）
+*<span class="w"> </span>miss<span class="w"> </span>🡲<span class="w"> </span><span class="o">[</span>VA-&gt;MMU-&gt;<span class="o">]</span>PA<span class="w"> </span>访存，写回<span class="w"> </span>cache-line；VA<span class="w"> </span>里的<span class="w"> </span>tag<span class="w"> </span>更新到<span class="w"> </span>cache-line<span class="w"> </span>🡲<span class="w"> </span>返回
+</code></pre></div>
+
+<p>有别名问题。</p>
+<p><strong>2. VIPT</strong></p>
+<div class="highlight"><pre><span></span><code>VA<span class="w"> </span>里的<span class="w"> </span>index<span class="w"> </span>🡲<span class="w"> </span>查找到<span class="w"> </span>cache-line<span class="w"> </span>🡲<span class="w"> </span>跟<span class="w"> </span><span class="o">[</span>VA-&gt;MMU-&gt;<span class="o">]</span>PA<span class="w"> </span>里的<span class="w"> </span>tag<span class="w"> </span>比较 :
+*<span class="w"> </span>hit<span class="w"> </span>🡲<span class="w"> </span>返回
+*<span class="w"> </span>miss<span class="w"> </span>🡲<span class="w"> </span>PA<span class="w"> </span>访存，写回<span class="w"> </span>cache-line；PA<span class="w"> </span>里的<span class="w"> </span>tag<span class="w"> </span>更新到<span class="w"> </span>cache-line<span class="w"> </span>🡲<span class="w"> </span>返回
+</code></pre></div>
+
+<p>有别名问题。</p>
+<p><strong>3. PIPT</strong></p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>VA-&gt;MMU-&gt;<span class="o">]</span>PA<span class="w"> </span>里的<span class="w"> </span>index<span class="w"> </span>🡲<span class="w"> </span>查找到<span class="w"> </span>cache-line<span class="w"> </span>🡲<span class="w"> </span>跟<span class="w"> </span>PA<span class="w"> </span>里的<span class="w"> </span>tag<span class="w"> </span>比较 :
+*<span class="w"> </span>hit<span class="w"> </span>🡲<span class="w"> </span>返回
+*<span class="w"> </span>miss<span class="w"> </span>🡲<span class="w"> </span>PA<span class="w"> </span>访存，写回<span class="w"> </span>cache-line；PA<span class="w"> </span>里的<span class="w"> </span>tag<span class="w"> </span>更新到<span class="w"> </span>cache-line<span class="w"> </span>🡲<span class="w"> </span>返回
+</code></pre></div>
+
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/586966358">https://zhuanlan.zhihu.com/p/586966358</a></li>
+</ul>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/kernel.html">kernel</a>,                 <a href="../../../../tag/linux.html">linux</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+        <div class="pure-menu">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">编译 devicetree source 文件</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/15/linux-pwm-driver.html">Linux PWM 驱动的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2022/07/03/linux-clock-tree.html">Linux clock tree 的实现</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/12/09/linux-kernel-dynamic-debug.html">Linux Kernel pr_debug(), dev_dbg() 以及动态调试</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="../../../../posts/2021/12/07/linux-kernel-printk-specifiers.html">Linux kernel printk 占位符 %p 和 %px</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2022/08/02/compile-devicetree-source.html">
+                &laquo; 编译 devicetree source 文件
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2023/06/08/python-pow-modular-inverse.html">
+                Python 内置函数 pow 计算逆元 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
