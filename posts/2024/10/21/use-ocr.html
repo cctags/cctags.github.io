@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>使用 OCR 的一些记录 &middot; Gang Up</title>
+        <link rel="stylesheet" href="../../../../theme/css/main.css">
+        <!--[if lte IE 8]>
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-old-ie-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="../../../../theme/css/grids-responsive-min.css">
+        <link rel="stylesheet" href="../../../../theme/css/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" href="../../../../theme/css/pygments.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:creator" content="">
+        <meta name="twitter:url" content="../../../../posts/2024/10/21/use-ocr.html">
+        <meta name="twitter:title" content="使用 OCR 的一些记录">
+        <meta name="twitter:description" content="0. 问题 需要对一篇扫描件里的内容进行识别和提取，以下是一些记录。 1. PDF 转换成图片 文档资料是 PDF 格式的，首先需要先 …">
+        <meta name="twitter:image" content="../../../../logo.png">
+        <meta property="og:url" content="../../../../posts/2024/10/21/use-ocr.html">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="使用 OCR 的一些记录">
+        <meta property="og:image" content="../../../../logo.png">
+        <meta property="og:description" content="0. 问题 需要对一篇扫描件里的内容进行识别和提取，以下是一些记录。 1. PDF 转换成图片 文档资料是 PDF 格式的，首先需要先 …">
+        <meta property="og:site_name" content="Gang Up">
+        <meta property="article:author" content="cctags">
+        <link rel="canonical" href="../../../../posts/2024/10/21/use-ocr.html">
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            <div class="sidebar pure-u-1">
+                <div class="header">
+                    <a id="menuLink" class="menu-link" href="#menu"><span></span></a>
+                    <div id="menu" class="pure-menu">
+                        <a class="pure-menu-heading" href="../../../../" title="Gang Up">Gang Up</a>
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/archives.html" title="Archives">Archives</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/categories.html" title="Categories">Categories</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/tags.html" title="Tags">Tags</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="/feeds/all.rss.xml" title="Rss">Rss</a>
+                            </li>
+
+                            <li class="pure-menu-item">
+                                <a class="pure-menu-link" href="../../../../pages/about.html" title="About">About</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+<div class="content pure-u-1 pure-u-md-3-5">
+    <div class="posts">
+        <section class="post">
+            <header class="post-header">
+                <h2 class="post-title">
+                    <a href="../../../../posts/2024/10/21/use-ocr.html" rel="bookmark" title="Permalink to 使用 OCR 的一些记录">使用 OCR 的一些记录</a>
+                </h2>
+                <p class="post-meta">
+                    2024-10-21 Monday
+                    &middot; By
+                    <a href="../../../../author/cctags.html">cctags</a>
+                    &middot; Posted in <a href="../../../../category/tools.html">Tools</a>
+                    &middot; <a href="../../../../posts/2024/10/21/use-ocr.html#disqus_thread">0 Comments</a>
+                </p>
+            </header>
+            <div class="post-description">
+            <h2>0. 问题</h2>
+<p>需要对一篇扫描件里的内容进行识别和提取，以下是一些记录。</p>
+<h2>1. PDF 转换成图片</h2>
+<p>文档资料是 PDF 格式的，首先需要先截取页面并转换成图片。</p>
+<p><strong>1. 使用 qpdf</strong></p>
+<p>qpdf 可以从一篇 PDF 里截取某些页面，并转存为 PDF 格式。</p>
+<p><strong>安装 qpdf 软件包：</strong></p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>qpdf
+</code></pre></div>
+
+<p><strong>截取。</strong>比如从 a.pdf 里，截取第 30 页至第 35 页，并另存为 b.pdf：</p>
+<div class="highlight"><pre><span></span><code>qpdf<span class="w"> </span>a.pdf<span class="w"> </span>--pages<span class="w"> </span>a.pdf<span class="w"> </span><span class="m">30</span>-35<span class="w"> </span>--<span class="w"> </span>b.pdf
+</code></pre></div>
+
+<p><strong>2. PDF 转换成图片</strong></p>
+<p>安装 <code>poppler-utils</code> 软件包：</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>poppler-utils
+</code></pre></div>
+
+<p>转换成图片：</p>
+<div class="highlight"><pre><span></span><code>pdftoppm<span class="w"> </span>b.pdf<span class="w"> </span>output<span class="w"> </span>-png
+</code></pre></div>
+
+<h2>2.1. 使用 tesseract 识别</h2>
+<p><strong>编译并安装 tesseract：</strong></p>
+<p>这里有<a href="https://tesseract-ocr.github.io/tessdoc/Compiling.html">编译过程</a>的描述说明。</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>https://github.com/tesseract-ocr/tesseract.git
+<span class="nb">cd</span><span class="w"> </span>tesseract
+./autogen.sh
+./configure<span class="w"> </span>--prefix<span class="o">=</span><span class="nv">$HOME</span>/local/
+make
+make<span class="w"> </span>install
+</code></pre></div>
+
+<p><strong>下载语言文件：</strong></p>
+<p>这里有<a href="https://tesseract-ocr.github.io/tessdoc/Data-Files.html">说明</a>，需要下载中文相关的文件，并保存到 <code>${HOME}/local/share/tessdata/</code> 目录下。当然也有 <code>tessdata_best</code> 和 <code>tessdata_fast</code> 可以使用。</p>
+<p><strong>运行软件：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">TESSDATA_PREFIX</span><span class="o">=</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span>/local/share/tessdata
+./tesseract<span class="w"> </span>input.png<span class="w"> </span>-<span class="w"> </span>-l<span class="w"> </span>chi_sim+eng<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>output.txt
+</code></pre></div>
+
+<p>识别出来的文本，在 <code>output.txt</code> 文件里面。</p>
+<h2>2.2. 使用 chineseocr_lite 识别</h2>
+<p>开源项目 <a href="https://github.com/DayBreak-u/chineseocr_lite">chineseocr_lite</a>，是一个超轻量级中文 ocr，支持竖排文字识别。</p>
+<p>项目地址：<a href="https://github.com/DayBreak-u/chineseocr_lite">https://github.com/DayBreak-u/chineseocr_lite</a></p>
+<p><strong>安装过程：</strong></p>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>先安装<span class="w"> </span>python3.6<span class="w"> </span>的虚拟环境
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/DayBreak-u/chineseocr_lite.git
+<span class="nb">cd</span><span class="w"> </span>chineseocr_lite
+pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+
+<p><strong>使用：</strong></p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>backend/main.py
+</code></pre></div>
+
+<p>通过浏览器访问即可。</p>
+<p><strong>改造程序：</strong></p>
+<p>之前步骤里已经把页面转存为图片了，以下代码片断里，就是对每一张图片，使用 <code>model.py</code> 里实现的 <code>OcrHandle</code> 来完成识别：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">model</span> <span class="kn">import</span> <span class="n">OcrHandle</span>
+
+<span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.png&#39;</span><span class="p">)):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">ocrhandle</span><span class="o">.</span><span class="n">text_predict</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">short_size</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<p><code>result</code> 变量里有完整的信息，按实际需求解析即可。</p>
+<h2>2.3. 使用 EasyOCR 识别</h2>
+<p>开源项目 <a href="https://github.com/jaidedai/easyocr">EasyOCR</a>，项目地址：<a href="https://github.com/jaidedai/easyocr">https://github.com/jaidedai/easyocr</a></p>
+<p><strong>安装过程</strong>：</p>
+<div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>easyocr
+</code></pre></div>
+
+<p>依赖项目都会自动安装。</p>
+<p><strong>使用：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">easyocr</span>
+
+<span class="n">reader</span> <span class="o">=</span> <span class="n">easyocr</span><span class="o">.</span><span class="n">Reader</span><span class="p">([</span><span class="s1">&#39;ch_sim&#39;</span><span class="p">,</span><span class="s1">&#39;en&#39;</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">readtext</span><span class="p">(</span><span class="s1">&#39;input.jpg&#39;</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>2.4. 使用 MinerU 识别</h2>
+<p>开源项目 <a href="https://github.com/opendatalab/MinerU">MinerU</a>，项目地址：<a href="https://github.com/opendatalab/MinerU">https://github.com/opendatalab/MinerU</a></p>
+<p><strong>安装过程：</strong></p>
+<div class="highlight"><pre><span></span><code>//<span class="w"> </span>先安装<span class="w"> </span>python3.10<span class="w"> </span>的虚拟环境
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>mineru<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10
+conda<span class="w"> </span>activate<span class="w"> </span>mineru
+
+pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>magic-pdf<span class="o">[</span>full<span class="o">]</span><span class="w"> </span>--extra-index-url<span class="w"> </span>https://wheels.myhloli.com
+</code></pre></div>
+
+<p>安装时碰到过一个问题，如果尝试按惯例安装 <code>pip install magic-pdf</code>，安装出来的版本很低，只有 0.6.1，跟文档里的使用说明对不上。</p>
+<p><strong>下载模型权重文件：</strong></p>
+<p>按照这篇<a href="https://github.com/opendatalab/MinerU/blob/master/docs/how_to_download_models_zh_cn.md">文档</a>来下载：</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>modelscope
+wget<span class="w"> </span>https://gcore.jsdelivr.net/gh/opendatalab/MinerU@master/scripts/download_models.py<span class="w"> </span>-O<span class="w"> </span>download_models.py
+python<span class="w"> </span>download_models.py
+</code></pre></div>
+
+<p>下载的模型在 <code>~/.cache/huggingface/hub</code> 目录下。另外，用户目录下会生成 <code>magic-pdf.json</code> 配置文件。</p>
+<p><strong>使用：</strong></p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>magic-pdf<span class="w"> </span>--help
+
+Usage:<span class="w"> </span>magic-pdf<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+
+Options:
+<span class="w">  </span>-v,<span class="w"> </span>--version<span class="w">                </span>display<span class="w"> </span>the<span class="w"> </span>version<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<span class="w">  </span>-p,<span class="w"> </span>--path<span class="w"> </span>PATH<span class="w">              </span><span class="nb">local</span><span class="w"> </span>filepath<span class="w"> </span>or<span class="w"> </span>directory.<span class="w"> </span>support<span class="w"> </span>PDF,<span class="w"> </span>PPT,
+<span class="w">                               </span>PPTX,<span class="w"> </span>DOC,<span class="w"> </span>DOCX,<span class="w"> </span>PNG,<span class="w"> </span>JPG<span class="w"> </span>files<span class="w">  </span><span class="o">[</span>required<span class="o">]</span>
+<span class="w">  </span>-o,<span class="w"> </span>--output-dir<span class="w"> </span>PATH<span class="w">        </span>output<span class="w"> </span><span class="nb">local</span><span class="w"> </span>directory<span class="w">  </span><span class="o">[</span>required<span class="o">]</span>
+<span class="w">  </span>-m,<span class="w"> </span>--method<span class="w"> </span><span class="o">[</span>ocr<span class="p">|</span>txt<span class="p">|</span>auto<span class="o">]</span><span class="w">  </span>the<span class="w"> </span>method<span class="w"> </span><span class="k">for</span><span class="w"> </span>parsing<span class="w"> </span>pdf.<span class="w"> </span>ocr:<span class="w"> </span>using<span class="w"> </span>ocr
+<span class="w">                               </span>technique<span class="w"> </span>to<span class="w"> </span>extract<span class="w"> </span>information<span class="w"> </span>from<span class="w"> </span>pdf.<span class="w"> </span>txt:
+<span class="w">                               </span>suitable<span class="w"> </span><span class="k">for</span><span class="w"> </span>the<span class="w"> </span>text-based<span class="w"> </span>pdf<span class="w"> </span>only<span class="w"> </span>and
+<span class="w">                               </span>outperform<span class="w"> </span>ocr.<span class="w"> </span>auto:<span class="w"> </span>automatically<span class="w"> </span>choose<span class="w"> </span>the
+<span class="w">                               </span>best<span class="w"> </span>method<span class="w"> </span><span class="k">for</span><span class="w"> </span>parsing<span class="w"> </span>pdf<span class="w"> </span>from<span class="w"> </span>ocr<span class="w"> </span>and<span class="w"> </span>txt.
+<span class="w">                               </span>without<span class="w"> </span>method<span class="w"> </span>specified,<span class="w"> </span>auto<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>used<span class="w"> </span>by
+<span class="w">                               </span>default.
+<span class="w">  </span>-l,<span class="w"> </span>--lang<span class="w"> </span>TEXT<span class="w">              </span>Input<span class="w"> </span>the<span class="w"> </span>languages<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>pdf<span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span>known<span class="o">)</span><span class="w"> </span>to
+<span class="w">                               </span>improve<span class="w"> </span>OCR<span class="w"> </span>accuracy.<span class="w">  </span>Optional.<span class="w"> </span>You<span class="w"> </span>should
+<span class="w">                               </span>input<span class="w"> </span><span class="s2">&quot;Abbreviation&quot;</span><span class="w"> </span>with<span class="w"> </span>language<span class="w"> </span>form<span class="w"> </span>url:<span class="w"> </span>ht
+<span class="w">                               </span>tps://paddlepaddle.github.io/PaddleOCR/latest/e
+<span class="w">                               </span>n/ppocr/blog/multi_languages.html#5-support-
+<span class="w">                               </span>languages-and-abbreviations
+<span class="w">  </span>-d,<span class="w"> </span>--debug<span class="w"> </span>BOOLEAN<span class="w">          </span>Enables<span class="w"> </span>detailed<span class="w"> </span>debugging<span class="w"> </span>information<span class="w"> </span>during
+<span class="w">                               </span>the<span class="w"> </span>execution<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>CLI<span class="w"> </span>commands.
+<span class="w">  </span>-s,<span class="w"> </span>--start<span class="w"> </span>INTEGER<span class="w">          </span>The<span class="w"> </span>starting<span class="w"> </span>page<span class="w"> </span><span class="k">for</span><span class="w"> </span>PDF<span class="w"> </span>parsing,<span class="w"> </span>beginning
+<span class="w">                               </span>from<span class="w"> </span><span class="m">0</span>.
+<span class="w">  </span>-e,<span class="w"> </span>--end<span class="w"> </span>INTEGER<span class="w">            </span>The<span class="w"> </span>ending<span class="w"> </span>page<span class="w"> </span><span class="k">for</span><span class="w"> </span>PDF<span class="w"> </span>parsing,<span class="w"> </span>beginning<span class="w"> </span>from
+<span class="w">                               </span><span class="m">0</span>.
+<span class="w">  </span>--help<span class="w">                       </span>Show<span class="w"> </span>this<span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span>exit.
+</code></pre></div>
+
+<p>比如：</p>
+<div class="highlight"><pre><span></span><code>magic-pdf<span class="w"> </span>-p<span class="w"> </span>input<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-m<span class="w"> </span>ocr<span class="w">  </span>-s<span class="w"> </span><span class="m">100</span><span class="w"> </span>-e<span class="w"> </span><span class="m">102</span>
+</code></pre></div>
+
+<p>运行结束后，生成的结果在 output 目录下。</p>
+            <p class="post-meta">
+                &num; 
+                Tagged as 
+                <a href="../../../../tag/ocr.html">ocr</a>                &middot; 
+            </p>            </div>
+        </section>
+        <h4>Read More:</h4>
+    </div>
+    <div class="footer">
+        <p class="nav-left">
+            <a href="../../../../posts/2024/04/02/vim-paste-very-slow-issue.html">
+                &laquo; 往 vim 粘贴大段文本会卡顿的问题
+            </a>
+        </p>
+        <p class="nav-right">
+            <a href="../../../../posts/2025/02/01/from-markdown-to-epub.html">
+                从 markdown 生成 epub 文件 &raquo;
+            </a>
+        </p>
+    </div>
+</div>
+        </div>
+
+        <script src="../../../../theme/js/zepto.min.js"></script>
+        <script src="../../../../theme/js/ui.js"></script>
+        <script>
+            Zepto(function($){
+                $('table').addClass('pure-table pure-table-bordered');
+            });
+        </script>
+        <script id="dsq-count-scr" src="//.disqus.com/count.js" async></script>
+    </body>
+</html>
